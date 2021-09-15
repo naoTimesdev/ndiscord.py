@@ -247,7 +247,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         interaction: :class:`discord.Interaction`
             The interaction to process
         """
-        if not interaction.type != InteractionType.application_command:
+        if interaction.type != InteractionType.application_command:
             return
 
         interaction_type = interaction.data.get('type', 1)
@@ -292,7 +292,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         """
         if cls is None:
             cls = ApplicationContext
-        return cls(self, bot=self, interaction=interaction)
+        return cls(bot=self, interaction=interaction)
 
     async def on_interaction(self, interaction: Interaction) -> None:
         """|coro|
