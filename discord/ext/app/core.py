@@ -375,7 +375,7 @@ class ApplicationCommand(_BaseApplication):
                     wrapped = wrap_callback(local)
                     await wrapped(ctx, error)
         finally:
-            ctx.bot.dispatch('application_command_error', ctx, error)
+            ctx.bot.dispatch('application_error', ctx, error)
 
     async def call_before_hooks(self, ctx: ApplicationContext) -> None:
         # now that we're done preparing we can call the pre-command hooks
