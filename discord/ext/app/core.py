@@ -25,24 +25,80 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import asyncio
-import inspect
-from typing_extensions import TypeGuard
-from collections import OrderedDict
-from discord.ext.commands.cog import Cog
 import functools
-import discord
-from discord.errors import ClientException
-from discord.enums import ApplicationCommandType, SlashCommandOptionType
-from typing import Any, ClassVar, Dict, List, Optional, Type, TypeVar, Union
+import inspect
+from collections import OrderedDict
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+    overload
+)
 
-from ._types import Coro, Hook, Check, CogT, ApplicationCallback, _BaseApplication, Error
-from .errors import *
+import discord
+from discord.enums import ApplicationCommandType, SlashCommandOptionType
+from discord.errors import ClientException
+from discord.ext.commands.cog import Cog
+from discord.member import Member
+from discord.message import Message
+from discord.user import User
+from typing_extensions import Concatenate, ParamSpec, TypeGuard
+
+from ._types import (ApplicationCallback, AcceptedInputType, Check, CogT, Coro, Error, Hook,
+                     _BaseApplication)
 from .context import ApplicationContext
+from .errors import *
+
+__all__ = (
+    'ApplicationCommand',
+    'Option',
+    'OptionChoice',
+    'SlashCommand',
+    'SlashCommandGroup',
+    'ContextMenuApplication',
+    'UserCommand',
+    'MessageCommand',
+    'option',
+    'application_command',
+    'slash_command',
+    'user_command',
+    'message_command',
+    'command',
+)
 
 T = TypeVar('T')
-AppCommandT = TypeVar('AppCommandT', bound="ApplicationCommand")
+AppCommandT = TypeVar('AppCommandT', bound="Union[ApplicationCommand, SlashCommand, UserCommand, MessageCommand]")
+ContextT = TypeVar('ContextT', bound="ApplicationContext")
 ErrorT = TypeVar('ErrorT', bound="Error")
 HookT = TypeVar('HookT', bound="Hook")
+SubAppCommandT = TypeVar('SubAppCommandT')
+DecoApp = Callable[..., T]
+
+if TYPE_CHECKING:
+    P = ParamSpec('P')
+else:
+    P = TypeVar('P')
+
+AppCommandWrap = Callable[
+    [
+        Union[
+            Callable[Concatenate[CogT, ContextT, P], Coro[T]],
+            Callable[Concatenate[ContextT, P], Coro[T]],
+        ]
+    ],
+    AppCommandT
+]
+
+MISSING: Any = discord.utils.MISSING
 
 
 def get_signature_parameters(func: ApplicationCallback):
@@ -91,11 +147,13 @@ class ApplicationCommand(_BaseApplication):
 
     _id: ClassVar[str]
     name: ClassVar[str]
+    guild_ids: ClassVar[List[int]]
 
     _before_invoke: ClassVar[Hook]
     _after_invoke: ClassVar[Hook]
     checks: ClassVar[Check]
     _callback: ClassVar[ApplicationCallback]
+    _children: ClassVar[Dict[str, SubAppCommandT]]
 
     # Error/checks handler, etc.
     on_error: Error
@@ -103,6 +161,7 @@ class ApplicationCommand(_BaseApplication):
     def __new__(cls: Type[AppCommandT], *args: Any, **kwargs: Any) -> AppCommandT:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs
+        self._children = {}
 
         return self
 
@@ -354,6 +413,69 @@ class ApplicationCommand(_BaseApplication):
         if hook is not None:
             await hook(ctx)
 
+    async def _invoke_children(self, ctx: ApplicationContext):
+        """|coro|
+
+        Execute all the children of the group command.
+        Only supported in /slash command for now.
+
+        This function is adapted from dislash.py implementation.
+
+        Parameters
+        -----------
+        ctx: :class:`.ApplicationContext`
+            The invocation context.
+
+        Raises
+        -------
+        ApplicationCommandInvokeError
+            An error occurred while invoking the command.
+        """
+        if not self._children:
+            # Exit fast if there's no child
+            return
+        data = ctx.interaction.data
+        options = data.get("options", [])
+        if not options:
+            return
+
+        first_opts = options[0]
+        if not first_opts:
+            return
+
+        group = None
+        subcmd = None
+        if first_opts.type == SlashCommandOptionType.sub_command_group.value:
+            group = self._children.get(first_opts.name)
+        elif first_opts.type == SlashCommandOptionType.sub_command.value:
+            subcmd = self._children.get(first_opts.name)
+
+        if group is not None:
+            option = first_opts.options[0]
+            if option is None or group.type == SlashCommandOptionType.sub_command.value:
+                subcmd = None
+            else:
+                subcmd = group.children.get(option.name)
+        if group is not None:
+            ctx.invoked_with += f" {group.name}"
+            ctx.invoked_subcommand_group = group
+            ctx.command_failed = True
+            try:
+                await group.invoke(ctx)
+            except Exception as err:
+                group.dispatch_error(ctx, err)
+                raise err
+
+        if subcmd is not None and option is not None:
+            ctx.invoked_with += f" {subcmd.name}"
+            ctx.invoked_subcommand = subcmd
+            ctx.command_failed = True
+            try:
+                await subcmd.invoke(ctx)
+            except Exception as err:
+                self.dispatch_error(ctx, err)
+                raise err
+
     async def invoke(self, ctx: ApplicationContext) -> None:
         """|coro|
 
@@ -374,6 +496,7 @@ class ApplicationCommand(_BaseApplication):
 
         injected = hooked_wrapped_callback(self, ctx, self.callback)
         await injected(*ctx.args, **ctx.kwargs)
+        await self._invoke_children(ctx)
 
     async def reinvoke(self, ctx: ApplicationContext, *, call_hooks: bool = False):
         """|coro|
@@ -480,12 +603,83 @@ class ApplicationCommand(_BaseApplication):
         finally:
             ctx.command = original
 
+    def add_command(self, command: "SlashCommand"):
+        """Adds a :class:`.SlashCommand` into the internal list of commands.
+
+        This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
+        :meth:`~.ApplicationCommand.group` shortcut decorators are used instead.
+
+        .. versionchanged:: 1.4
+             Raise :exc:`.CommandRegistrationError` instead of generic :exc:`.ClientException`
+
+        Parameters
+        -----------
+        command: :class:`Command`
+            The command to add.
+
+        Raises
+        -------
+        :exc:`.CommandRegistrationError`
+            If the command or its alias is already registered by different command.
+        TypeError
+            If the command passed is not a subclass of :class:`.Command`.
+        """
+
+        if command.type != (ApplicationCommandType.slash or ApplicationCommandType.slash_group):
+            raise TypeError('The command passed must be a subclass of SlashCommand')
+
+        if command.name in self._children:
+            raise ApplicationRegistrationError(command.name)
+
+        self._children[command.name] = command
+
+    @property
+    def commands(self) -> Set[AppCommandT]:
+        """Set[:class:`.ApplicationCommand`]: A unique set of commands without aliases that are registered."""
+        return set(self._children.values())
+
+    def walk_commands(self) -> Generator[AppCommandT, None, None]:
+        yield self.callback
+        for command in self.commands:
+            yield command
+            if command.type == ApplicationCommandType:
+                yield command.walk_commands()
+
+    # Decorator
+    @overload
+    def slash_command(
+        self,
+        name: str = ...,
+        description: str = ...,
+        guild_ids: Optional[List[int]] = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> AppCommandWrap:
+        ...
+
+    def slash_command(self, *args, **kwargs):
+        """A shortcut decorator that invokes :func:`.command` and adds it to
+        the internal command list via :meth:`~.Application.add_command`.
+
+        Returns
+        --------
+        Callable[..., :class:`ApplicationCommand`]
+            A decorator that converts the provided method into a ApplicationCommand, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> AppCommandT:
+            kwargs.setdefault('parent', self)
+            result = SlashCommand(func, *args, **kwargs)
+            self.add_command(result)
+            return result
+
+        return decorator
 
 class Option:
     def __init__(
         self, input_type: Type[Any], /, description: str = None, **kwargs,
     ):
-        self.name = Optional[str] = kwargs.pop('name', None)
+        self.name: Optional[str] = kwargs.pop('name', None)
         self.description = description or "No description provided"
         self.input_type = SlashCommandOptionType.from_datatype(input_type)
         self.required: bool = kwargs.pop('required', True)
@@ -514,17 +708,19 @@ class OptionChoice:
         self.value = value or name
 
     def to_dict(self):
-        return {
-            'name': self.name,
-            'value': self.value,
-        }
+        return {'name': self.name, 'value': self.value}
 
 
 class SlashCommand(ApplicationCommand):
     type = SlashCommandOptionType.value
 
     description: ClassVar[str]
-    options: List[]
+    options: List[Option]
+
+    def __new__(cls: Type[SlashCommand], *args, **kwargs) -> SlashCommand:
+        self = super().__new__(cls)
+        self.__original_kwargs__ = kwargs.copy()
+        return self
 
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
         if not asyncio.iscoroutinefunction(callback):
@@ -649,7 +845,302 @@ class SlashCommand(ApplicationCommand):
             'name': self.name,
             'description': self.description,
             'options': [o.to_dict() for o in self.options],
+            'type': self.type.value,
         }
         # TODO: Implement group/subcommand
 
         return as_dict
+
+
+class SlashCommandGroup():
+    pass
+
+
+class ContextMenuApplication(ApplicationCommand):
+    def __new__(cls: Type[ContextMenuApplication], *args, **kwargs) -> ContextMenuApplication:
+        self = super().__new__(cls)
+        self.__original_kwargs__ = kwargs.copy()
+        return self
+
+    def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
+        self._callback = callback
+        self.guild_ids: Optional[List[int]] = kwargs.get("guild_ids", None)
+
+        fn_name = kwargs.get("name") or callback.__name__
+        self.name = fn_name
+
+        self.params = get_signature_parameters(callback)
+
+        try:
+            checks = callback.__commands_checks__
+        except AttributeError:
+            checks = kwargs.get('checks', [])
+
+        self.checks: List[Check] = checks
+
+        self.cog: Optional[CogT] = None
+        self._before_invoke: Optional[Hook] = None
+        try:
+            before_invoke = callback.__before_invoke__
+        except AttributeError:
+            pass
+        else:
+            self.before_invoke(before_invoke)
+
+        self._after_invoke: Optional[Hook] = None
+        try:
+            after_invoke = callback.__after_invoke__
+        except AttributeError:
+            pass
+        else:
+            self.after_invoke(after_invoke)
+
+    async def _parse_arguments(self, ctx: ApplicationContext):
+        args = [ctx] if self.cog is None else [self.cog, ctx]
+        ctx.args = args
+
+        resolved = ctx.interaction.data.get('resolved')
+        if resolved is None:
+            ctx.args.append(MISSING)
+            return
+
+        if self.type == ApplicationCommandType.user:
+            if "members" in resolved:
+                members = resolved.members
+                for member_id, member_data in members.items():
+                    member_data["id"] = int(member_id)
+                    member = member_data
+                users = resolved.users
+                for user_id, user_data in users.items():
+                    user_data["id"] = int(user_id)
+                    user = user_data
+                member["user"] = user
+                ctx.args.append(
+                    Member(
+                        data=member,
+                        guild=ctx.interaction._state._get_guild(ctx.interaction.guild_id),
+                        state=ctx.interaction._state,
+                    )
+                )
+            else:
+                users = resolved.users
+                for user_id, user_data in users.items():
+                    user_data["id"] = int(user_id)
+                    user = user_data
+                ctx.args.append(User(data=user, state=ctx.interaction._state))
+        elif self.type == ApplicationCommandType.message:
+            messages = resolved.messages
+            for msg_id, msg_data in messages.items():
+                msg_data["id"] = int(msg_id)
+                msg = msg_data
+            channel = ctx.interaction._state._get_channel(int(msg["channel_id"]))
+            if channel is None:
+                data = await ctx.interaction._state.http.start_private_message(
+                    int(messages["author"]["id"])
+                )
+                channel = ctx.interaction._state.add_dm_channel(data)
+
+            ctx.args.append(
+                Message(state=ctx.interaction._state, channel=channel, data=msg)
+            )
+
+    def to_dict(self) -> Dict[str, Union[str, int]]:
+        return {"name": self.name, "type": self.type.value}
+
+
+class UserCommand(ContextMenuApplication):
+    type = ApplicationCommandType.user
+
+    def __new__(cls: Type[UserCommand], *args, **kwargs) -> UserCommand:
+        self = super().__new__(cls)
+        self.__original_kwargs__ = kwargs.copy()
+        return self
+
+
+class MessageCommand(ContextMenuApplication):
+    type = ApplicationCommandType.message
+
+    def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand:
+        self = super().__new__(cls)
+        self.__original_kwargs__ = kwargs.copy()
+        return self
+
+
+@overload
+def option(
+    name: str,
+    type: AcceptedInputType,
+    *,
+    description: str = None,
+    required: bool = True,
+    choices: List[Union[OptionChoice, str]] = [],
+    default: Optional[Any] = None,
+) -> Option:
+    ...
+
+def option(name, type=None, **kwargs):
+    """A decorator that can be used instead of typehinting Option"""
+    def decor(func):
+        nonlocal type
+        type = type or func.__annotations__.get(name, str)
+        func.__annotations__[name] = Option(type, **kwargs)
+        return func
+    return decor
+
+@overload
+def application_command(
+    cls: Type[AppCommandT] = SlashCommand,
+    *,
+    name: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[AppCommandT]:
+    ...
+
+@overload
+def application_command(
+    cls: Type[AppCommandT] = SlashCommand,
+    *,
+    name: Optional[str] = MISSING,
+    description: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[AppCommandT]:
+    ...
+
+def application_command(cls=SlashCommand, **attrs):
+    """A decorator that transforms a function into an :class:`.ApplicationCommand`. More specifically,
+    usually one of :class:`.SlashCommand`, :class:`.UserCommand`, or :class:`.MessageCommand`. The exact class
+    depends on the ``cls`` parameter.
+
+    By default the ``description`` attribute is received automatically from the
+    docstring of the function and is cleaned up with the use of
+    ``inspect.cleandoc``. If the docstring is ``bytes``, then it is decoded
+    into :class:`str` using utf-8 encoding.
+
+    The ``name`` attribute also defaults to the function name unchanged.
+
+    .. versionadded:: 2.0
+
+    Parameters
+    -----------
+    cls: :class:`.ApplicationCommand`
+        The class to construct with. By default this is :class:`.SlashCommand`.
+        You usually do not change this.
+    attrs
+        Keyword arguments to pass into the construction of the class denoted
+        by ``cls``.
+
+    Raises
+    -------
+    TypeError
+        If the function is not a coroutine or is already a command.
+    """
+
+    def decorator(func: Callable) -> cls:
+        if isinstance(func, ApplicationCommand):
+            func = func.callback
+        elif not callable(func):
+            raise TypeError(
+                "func needs to be a callable or a subclass of ApplicationCommand."
+            )
+        return cls(func, **attrs)
+
+    return decorator
+
+@overload
+def slash_command(
+    *,
+    name: Optional[str] = MISSING,
+    description: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[SlashCommand]:
+    ...
+
+def slash_command(**kwargs):
+    """Decorator for slash commands that invokes :func:`application_command`.
+
+    .. versionadded:: 2.0
+
+    Returns
+    --------
+    Callable[..., :class:`SlashCommand`]
+        A decorator that converts the provided method into a :class:`.SlashCommand`.
+    """
+    return application_command(cls=SlashCommand, **kwargs)
+
+@overload
+def user_command(
+    *,
+    name: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[UserCommand]:
+    ...
+
+def user_command(**kwargs):
+    """Decorator for user commands that invokes :func:`application_command`.
+
+    .. versionadded:: 2.0
+
+    Returns
+    --------
+    Callable[..., :class:`UserCommand`]
+        A decorator that converts the provided method into a :class:`.UserCommand`.
+    """
+    return application_command(cls=UserCommand, **kwargs)
+
+@overload
+def message_command(
+    *,
+    name: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[MessageCommand]:
+    ...
+
+def message_command(**kwargs):
+    """Decorator for message commands that invokes :func:`application_command`.
+
+    .. versionadded:: 2.0
+
+    Returns
+    --------
+    Callable[..., :class:`MessageCommand`]
+        A decorator that converts the provided method into a :class:`.MessageCommand`.
+    """
+    return application_command(cls=MessageCommand, **kwargs)
+
+@overload
+def command(
+    *,
+    cls: Type[AppCommandT] = SlashCommand,
+    name: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[AppCommandT]:
+    ...
+
+@overload
+def command(
+    *,
+    cls: Type[AppCommandT] = SlashCommand,
+    name: Optional[str] = MISSING,
+    description: Optional[str] = MISSING,
+    guild_ids: Optional[List[int]] = MISSING,
+    checks: Optional[List[Check]] = MISSING,
+) -> DecoApp[AppCommandT]:
+    ...
+
+def command(**kwargs):
+    """This is an alias for :meth:`application_command`.
+
+    .. versionadded:: 2.0
+
+    Returns
+    --------
+    Callable[..., :class:`ApplicationCommand`]
+        A decorator that converts the provided method into an :class:`.ApplicationCommand`.
+    """
+    return application_command(**kwargs)
