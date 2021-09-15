@@ -40,7 +40,7 @@ from .widget import Widget
 from .guild import Guild
 from .emoji import Emoji
 from .channel import _threaded_channel_factory, PartialMessageable
-from .enums import ChannelType
+from .enums import ApplicationCommandType, ChannelType
 from .mentions import AllowedMentions
 from .errors import *
 from .enums import Status, VoiceRegion
@@ -717,7 +717,11 @@ class Client(ApplicationCommandMixin):
                     raise
             else:
                 for cmd in cmds:
-                    parsed_cmd = utils.get(pending_registration, name=cmd['name'], type=cmd['type'])
+                    parsed_cmd = utils.get(
+                        pending_registration,
+                        name=cmd['name'],
+                        type=ApplicationCommandType(cmd['type']),
+                    )
                     parsed_cmd.id = int(cmd['id'])
                     self.register_application(parsed_cmd)
 
@@ -731,7 +735,7 @@ class Client(ApplicationCommandMixin):
             parsed_cmd = utils.get(
                 pending_registration,
                 name=glb_payload['name'],
-                type=glb_payload['type']
+                type=ApplicationCommandType(glb_payload['type']),
             )
             parsed_cmd.id = int(glb_payload['id'])
             self.register_application(parsed_cmd)
