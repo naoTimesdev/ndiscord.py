@@ -925,6 +925,7 @@ class ContextMenuApplication(ApplicationCommand):
     async def _parse_arguments(self, ctx: ApplicationContext):
         args = [ctx] if self.cog is None else [self.cog, ctx]
         ctx.args = args
+        ctx.kwargs = {}
 
         resolved = ctx.interaction.data.get('resolved')
         if resolved is None:
@@ -933,11 +934,11 @@ class ContextMenuApplication(ApplicationCommand):
 
         if self.type == ApplicationCommandType.user:
             if "members" in resolved:
-                members = resolved.members
+                members = resolved['members']
                 for member_id, member_data in members.items():
                     member_data["id"] = int(member_id)
                     member = member_data
-                users = resolved.users
+                users = resolved['users']
                 for user_id, user_data in users.items():
                     user_data["id"] = int(user_id)
                     user = user_data
@@ -956,11 +957,11 @@ class ContextMenuApplication(ApplicationCommand):
                     user = user_data
                 ctx.args.append(User(data=user, state=ctx.interaction._state))
         elif self.type == ApplicationCommandType.message:
-            messages = resolved.messages
+            messages = resolved['messages']
             for msg_id, msg_data in messages.items():
                 msg_data["id"] = int(msg_id)
                 msg = msg_data
-            channel = ctx.interaction._state._get_channel(int(msg["channel_id"]))
+            channel = ctx.interaction._state.get_channel(int(msg["channel_id"]))
             if channel is None:
                 data = await ctx.interaction._state.http.start_private_message(
                     int(messages["author"]["id"])
