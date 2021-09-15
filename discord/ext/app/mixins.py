@@ -187,7 +187,10 @@ class ApplicationCommandMixin(Generic[CogT]):
             The command to register.
 
         """
-        command.guild_ids.extend(self.debug_guilds)
+        if not isinstance(command.guild_ids, list) and len(self.debug_guilds) > 0:
+            command.guild_ids = self.debug_guilds
+        elif isinstance(command.guild_ids, list):
+            command.guild_ids.extend(self.debug_guilds)
         self._pending_registration.append(command)
 
     def remove_application(self, command: AppCommandT) -> Optional[AppCommandT]:
