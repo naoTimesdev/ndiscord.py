@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from .core import SlashCommand, UserCommand, MessageCommand
 
 __all__ = (
-    'ApplicationContext'
+    'ApplicationContext',
 )
 
 MISSING: Any = discord.utils.MISSING
