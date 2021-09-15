@@ -29,7 +29,6 @@ import discord.utils
 from discord.guild import Guild
 from discord.interactions import (
     Interaction,
-    InteractionChannel,
     InteractionResponse
 )
 from discord.member import Member
@@ -40,6 +39,8 @@ from discord.voice_client import VoiceProtocol
 if TYPE_CHECKING:
     from discord.client import Client
     from discord.ext.commands import AutoShardedBot, Bot, Cog
+
+    from discord.interactions import InteractionChannel
 
     from .core import SlashCommand, UserCommand, MessageCommand
 
@@ -126,7 +127,7 @@ class ApplicationContext(discord.abc.Messageable):
         return self.interaction.guild
 
     @discord.utils.cached_property
-    def channel(self) -> Optional[InteractionChannel]:
+    def channel(self) -> Optional["InteractionChannel"]:
         """Optional[:class:`.abc.MessageableChannel`]: Returns the channel associated with this context's command. None if not available."""
         return self.interaction.channel
 
