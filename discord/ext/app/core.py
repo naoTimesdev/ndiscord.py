@@ -169,6 +169,14 @@ class ApplicationCommand(_BaseApplication):
         return f"<discord.ext.app.{self.__class__.__name__} name={self.name}>"
 
     @property
+    def id(self) -> Optional[str]:
+        return getattr(self, '_id', None)
+
+    @id.setter
+    def id(self, value: str):
+        self._id = value
+
+    @property
     def callback(self) -> ApplicationCallback:
         return self._callback
 
@@ -642,7 +650,7 @@ class ApplicationCommand(_BaseApplication):
         yield self.callback
         for command in self.commands:
             yield command
-            if command.type == ApplicationCommandType:
+            if command.type == ApplicationCommandType.slash_group:
                 yield command.walk_commands()
 
     # Decorator
