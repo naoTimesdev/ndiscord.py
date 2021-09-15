@@ -765,7 +765,7 @@ class SlashCommand(ApplicationCommand):
     def has_parent(self):
         """:class:`bool`: Check if the command have parent or not.
         """
-        return hasattr(self, 'parent')
+        return hasattr(self, 'parent') and self.parent is not None
 
     async def _invoke_children(self, ctx: ApplicationContext):
         """|coro|
