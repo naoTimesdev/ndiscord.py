@@ -61,6 +61,7 @@ from .ui.view import View
 from .stage_instance import StageInstance
 from .threads import Thread
 from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from .ext.app import ApplicationCommandMixin, ApplicationCommand
 
 if TYPE_CHECKING:
     from .abc import SnowflakeTime, PrivateChannel, GuildChannel, Snowflake
@@ -109,7 +110,7 @@ def _cleanup_loop(loop: asyncio.AbstractEventLoop) -> None:
         _log.info('Closing the event loop.')
         loop.close()
 
-class Client:
+class Client(ApplicationCommandMixin):
     r"""Represents a client connection that connects to Discord.
     This class is used to interact with the Discord WebSocket and API.
 
@@ -218,6 +219,7 @@ class Client:
         proxy_auth: Optional[aiohttp.BasicAuth] = options.pop('proxy_auth', None)
         unsync_clock: bool = options.pop('assume_unsync_clock', True)
         self.http: HTTPClient = HTTPClient(connector, proxy=proxy, proxy_auth=proxy_auth, unsync_clock=unsync_clock, loop=self.loop)
+        self._app_cmd_ids: Optional[int] = None
 
         self._handlers: Dict[str, Callable] = {
             'ready': self._handle_ready
@@ -329,7 +331,7 @@ class Client:
         If this is not passed via ``__init__`` then this is retrieved
         through the gateway when an event contains the data. Usually
         after :func:`~discord.on_connect` is called.
-        
+
         .. versionadded:: 2.0
         """
         return self._connection.application_id
@@ -665,6 +667,75 @@ class Client:
                 # I am unsure why this gets raised here but suppress it anyway
                 return None
 
+    async def on_connect(self):
+        """|coro|
+
+        Initialize application registration
+        """
+        await self.register_application_commands()
+
+    async def register_application_commands(self):
+        """|coro|
+
+        Method to start registering and unregistering commands.
+        """
+        app_data = await self.http.application_info()
+        self._app_cmd_ids = int(app_data['id'])
+
+        pending_registration = self._pending_registration[:]
+
+        global_payloads: List[ApplicationCommand] = []
+        global_commands = await self.http.get_global_commands(self._app_cmd_ids)
+        for command in [cmd for cmd in pending_registration if cmd.guild_ids is None]:
+            if len(global_commands) > 0:
+                match_this = utils.find(lambda x: x['name'] == command.name and x.get('type', 1) == command.type.value, global_commands)
+                if match_this is not None:
+                    command.id = int(match_this['id'])
+                    global_payloads.append(command)
+
+        update_guild_commands: Dict[int, List[ApplicationCommand]] = {}
+        async for guild in self.fetch_guilds(limit=None):
+            update_guild_commands[guild.id] = []
+
+        for command in [cmd for cmd in pending_registration if cmd.guild_ids is not None]:
+            for guild_id in command.guild_ids:
+                to_update = update_guild_commands.get(guild_id, [])
+                update_guild_commands[guild_id] = to_update + [command]
+
+        for guild_id, payloads in update_guild_commands.items():
+            try:
+                cmds = await self.http.bulk_upsert_guild_commands(
+                    self._app_cmd_ids,
+                    guild_id,
+                    [p.to_dict() for p in payloads]
+                )
+            except Forbidden:
+                if not update_guild_commands[guild_id]:
+                    continue
+                else:
+                    _log.debug('Failed to bulk upsert guild commands for %s', str(guild_id))
+                    raise
+            else:
+                for cmd in cmds:
+                    parsed_cmd = utils.get(pending_registration, name=cmd['name'], type=cmd['type'])
+                    parsed_cmd.id = int(cmd['id'])
+                    self.register_application(parsed_cmd)
+
+        # Update global commands
+        update_globals = await self.http.bulk_upsert_global_commands(
+            self._app_cmd_ids,
+            [p.to_dict() for p in global_payloads]
+        )
+
+        for glb_payload in update_globals:
+            parsed_cmd = utils.get(
+                pending_registration,
+                name=glb_payload['name'],
+                type=glb_payload['type']
+            )
+            parsed_cmd.id = int(glb_payload['id'])
+            self.register_application(parsed_cmd)
+
     # properties
 
     def is_closed(self) -> bool:
@@ -687,7 +758,7 @@ class Client:
             self._connection._activity = value.to_dict() # type: ignore
         else:
             raise TypeError('activity must derive from BaseActivity.')
-    
+
     @property
     def status(self):
         """:class:`.Status`:
@@ -1636,7 +1707,68 @@ class Client:
     @property
     def persistent_views(self) -> Sequence[View]:
         """Sequence[:class:`.View`]: A sequence of persistent views added to the client.
-        
+
         .. versionadded:: 2.0
         """
         return self._connection.persistent_views
+
+    # application related
+
+    def get_applications(self):
+        """List[:class:`.ApplicationCommand`]: A list of application that are registered.
+
+        .. versionadded:: 2.0
+        """
+        all_apps = list(self.all_applications.values())
+        pending = self._pending_registration
+        return [app for app in all_apps if app not in pending]
+
+    def get_application(self, id: int) -> Optional[ApplicationCommand]:
+        """:class:`.ApplicationCommand`: Get an application by its ID.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        ------------
+        id: :class:`int`
+            The application ID.
+        """
+        all_apps = self.get_applications()
+        match = utils.find(lambda app: isinstance(app.id, int) and app.id == id, all_apps)
+        return match
+
+    def get_guild_applications(self, id: int) -> List[ApplicationCommand]:
+        """List[:class:`.ApplicationCommand`]: A list of application that are registered for a guild.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        ------------
+        id: :class:`int`
+            The guild ID.
+        """
+        non_pending = self.get_applications()
+        return [app for app in non_pending if id in app.guild_ids]
+
+    def get_guild_application(self, id: int, app_id: int):
+        """List[:class:`.ApplicationCommand`]: A list of application that are registered for a guild.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        ------------
+        id: :class:`int`
+            The guild ID.
+        app_id: class:`int`
+            The application ID.
+        """
+        non_pending_guild = self.get_guild_applications(id)
+        return utils.find(lambda app: isinstance(app.id, int) and app.id == app_id, non_pending_guild)
+
+    async def fetch_global_applications(self):
+        """|coro|
+
+        Get all registered global commands on Discord.
+
+        """
+        registered_commands = await self.http.get_global_commands(self.user.id)

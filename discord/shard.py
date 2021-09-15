@@ -465,6 +465,15 @@ class AutoShardedClient(Client):
         await self.http.close()
         self.__queue.put_nowait(EventItem(EventType.clean_close, None, None))
 
+    async def on_shard_connect(self):
+        """|coro|
+
+        Initialize application registration to first shard.
+        """
+        self.active_shard_count += 1
+        if self.active_shard_count == 1:
+            await self.register_application_commands()
+
     async def change_presence(
         self,
         *,
