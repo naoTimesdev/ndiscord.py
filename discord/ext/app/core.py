@@ -57,7 +57,6 @@ from ._types import (
     Check,
     CogT,
     Coro,
-    CoroFunc,
     Error,
     Hook,
     _BaseApplication
@@ -1321,7 +1320,7 @@ def check(predicate: Check) -> Callable[[T], T]:
         The predicate to check if the command should be invoked.
     """
 
-    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.checks.append(predicate)
         else:
@@ -1758,7 +1757,7 @@ def before_invoke(coro) -> Callable[[T], T]:
 
         bot.add_cog(What())
     """
-    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.before_invoke(coro)
         else:
@@ -1774,7 +1773,7 @@ def after_invoke(coro) -> Callable[[T], T]:
 
     .. versionadded:: 2.0
     """
-    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.after_invoke(coro)
         else:
