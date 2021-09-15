@@ -743,7 +743,7 @@ class OptionChoice:
 
 
 class SlashCommand(ApplicationCommand):
-    type = SlashCommandOptionType.value
+    type = ApplicationCommandType.slash
 
     description: ClassVar[str]
     options: List[Option]
