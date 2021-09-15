@@ -22,12 +22,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from discord.errors import DiscordException
+from discord.errors import ClientException, DiscordException
 
 __all__ = (
     'ApplicationCommandError',
     'ApplicationCheckFailure',
     'ApplicationCommandInvokeError',
+    'ApplicationRegistrationError',
 )
 
 class ApplicationCommandError(DiscordException):
@@ -63,3 +64,18 @@ class ApplicationCommandInvokeError(ApplicationCommandError):
     def __init__(self, e: Exception) -> None:
         self.original: Exception = e
         super().__init__(f'Command raised an exception: {e.__class__.__name__}: {e}')
+
+class ApplicationRegistrationError(ClientException):
+    """An exception raised when the command can't be added
+    because the name is already taken by a different command.
+
+    This inherits from :exc:`discord.ClientException`
+
+    Attributes
+    ----------
+    name: :class:`str`
+        The command name that had the error.
+    """
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+        super().__init__(f'The command {name} is already an existing command.')
