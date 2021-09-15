@@ -168,6 +168,13 @@ class ApplicationCommand(_BaseApplication):
     def __repr__(self):
         return f"<discord.ext.app.{self.__class__.__name__} name={self.name}>"
 
+    def __eq__(self, other: AppCommandT):
+        return (
+            isinstance(other, ApplicationCommand)
+            and self.name == other.name
+            and self.type == other.type
+        )
+
     @property
     def id(self) -> Optional[str]:
         return getattr(self, '_id', None)
