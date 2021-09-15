@@ -22,15 +22,16 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, overload
+from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
 
 from ._types import CogT, Check
 from .context import ApplicationContext
 from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command, AppCommandT
+from .errors import ApplicationRegistrationError
 
 import discord
 from discord.interactions import Interaction
-from discord.enums import InteractionType
+from discord.enums import ApplicationCommandType, InteractionType
 from discord.errors import DiscordException
 
 T = TypeVar('T')
@@ -41,11 +42,100 @@ __all__ = (
 )
 
 MISSING: Any = discord.utils.MISSING
+AppCommand = Union[SlashCommand, UserCommand, MessageCommand]
 
+
+class ApplicationCommandFactory:
+    def __init__(self):
+        self._slash_commands: Dict[str, SlashCommand] = {}
+        self._user_commands: Dict[str, UserCommand] = {}
+        self._message_commands: Dict[str, MessageCommand] = {}
+
+    @property
+    def slash_commands(self):
+        return self._slash_commands
+
+    @property
+    def user_commands(self):
+        return self._user_commands
+
+    @property
+    def message_commands(self):
+        return self._message_commands
+
+    slash = slash_commands
+    user = user_commands
+    message = message_commands
+
+    def add_command(self, command: AppCommandT):
+        if command.type is None:
+            return
+        if command.type == ApplicationCommandType.slash:
+            if command.name in self._slash_commands:
+                raise ApplicationRegistrationError(command.name)
+            self._slash_commands[command.name] = command
+        elif command.type == ApplicationCommandType.message:
+            if command.name in self._message_commands:
+                raise ApplicationRegistrationError(command.name)
+            self._message_commands[command.name] = command
+        elif command.type == ApplicationCommandType.user:
+            if command.name in self._user_commands:
+                raise ApplicationRegistrationError(command.name)
+            self._user_commands[command.name] = command
+
+    def get_command(self, name: str, type: ApplicationCommandType) -> Optional[AppCommand]:
+        location_enum = {
+            ApplicationCommandType.slash: self._slash_commands,
+            ApplicationCommandType.message: self._message_commands,
+            ApplicationCommandType.user: self._user_commands,
+        }
+        return location_enum[type].get(name, None)
+
+    def find_command(self, name: str) -> Optional[AppCommand]:
+        if name in self._slash_commands:
+            return self._slash_commands[name]
+        elif name in self._message_commands:
+            return self._message_commands[name]
+        elif name in self._user_commands:
+            return self._user_commands[name]
+        return None
+
+    def _remove_by_name(self, name: str, location: ApplicationCommandType = None):
+        location_enum = {
+            ApplicationCommandType.slash: self._slash_commands,
+            ApplicationCommandType.message: self._message_commands,
+            ApplicationCommandType.user: self._user_commands,
+        }
+        if location is not None:
+            try:
+                return location_enum[location].pop(name)
+            except KeyError:
+                return
+
+        try:
+            return self._slash_commands.pop(name)
+        except KeyError:
+            pass
+        try:
+            return self._user_commands.pop(name)
+        except KeyError:
+            pass
+        try:
+            return self._message_commands.pop(name)
+        except KeyError:
+            pass
+        return
+
+    def remove_command(self, command: Union[str, AppCommandT]) -> Optional[AppCommand]:
+        if isinstance(command, str):
+            return self._remove_by_name(command)
+        elif isinstance(command, ApplicationCommand):
+            return self._remove_by_name(command.name, command.type)
+        return None
 
 class ApplicationCommandMixin(Generic[CogT]):
     _debug_guilds: List[int]
-    all_applications: Dict[str, ApplicationCommand]
+    _app_factories: ApplicationCommandFactory
     _pending_registration: List[ApplicationCommand] = []
 
     def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin":
@@ -63,10 +153,14 @@ class ApplicationCommandMixin(Generic[CogT]):
                     _debug_guild.append(guild)
 
         self._debug_guilds = _debug_guild
-        self.all_applications = {}
+        self._app_factories = ApplicationCommandFactory()
         self._pending_registration = []
 
         return self
+
+    @property
+    def all_applications(self):
+        return self._app_factories
 
     @property
     def debug_guilds(self):
@@ -76,21 +170,50 @@ class ApplicationCommandMixin(Generic[CogT]):
         return self._debug_guilds
 
     def add_application(self, command: AppCommandT) -> None:
+        """
+        Register a new application command.
+
+        Parameters
+        ------------
+        command: :class:`.ApplicationCommand`
+            The command to register.
+
+        """
         command.guild_ids.extend(self.debug_guilds)
         self._pending_registration.append(command)
-        self.all_applications[command.name] = command
 
     def remove_application(self, command: AppCommandT) -> Optional[AppCommandT]:
-        pop_out = None
-        try:
-            pop_out = self.all_applications.pop(command.name)
-        except KeyError:
-            pass
+        """
+        Remove command from the list of registered commands.
+
+        Parameters
+        ------------
+        command: :class:`.ApplicationCommand`
+            The command to register.
+
+        """
+        pop_out = self._app_factories.remove_command(command)
         try:
             pop_out = self._pending_registration.pop(self._pending_registration.index(command))
         except ValueError:
             pass
         return pop_out
+
+    def register_application(self, command: AppCommandT):
+        """
+        Register the command to the factories and remove from pending section.
+        Please make sure the app already been registered to Discord.
+
+        Parameters
+        -----------
+        command: :class:`.ApplicationCommand`
+            The command to register.
+        """
+        if command in self._pending_registration:
+            self._pending_registration.remove(command)
+        if command.id is None:
+            raise TypeError(f'Cannot register {command.name} because missing application ID.')
+        self._app_factories.add_command(command)
 
     async def process_application_commands(self, interaction: Interaction):
         """|coro|
@@ -116,20 +239,22 @@ class ApplicationCommandMixin(Generic[CogT]):
         if not interaction.type != InteractionType.application_command:
             return
 
-        try:
-            command = self.all_applications[interaction.data.get('name')]
-        except KeyError:
-            self.dispatch('unknown_application')
+        interaction_type = interaction.data.get('type', 1)
+        inter_name = interaction.data.get('name')
+
+        command = self._app_factories.get_command(inter_name, ApplicationCommandType(interaction_type))
+        if command is None:
+            self.dispatch('unknown_application', interaction)
         else:
             ctx = await self.get_application_context(interaction)
             ctx.command = command
-            self.dispatch('application_command', ctx)
+            self.dispatch('application_before_invoke', ctx)
             try:
                 await ctx.command.invoke(ctx)
             except DiscordException as exc:
                 await ctx.command.dispatch_error(ctx, exc)
             else:
-                self.dispatch('application_command_finished', ctx)
+                self.dispatch('application_after_invoke', ctx)
 
     async def get_application_context(self, interaction: Interaction, cls = None) -> ApplicationContext:
         r"""|coro|
