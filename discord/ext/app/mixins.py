@@ -294,6 +294,22 @@ class ApplicationCommandMixin(Generic[CogT]):
             cls = ApplicationContext
         return cls(self, bot=self, interaction=interaction)
 
+    async def on_interaction(self, interaction: Interaction) -> None:
+        """|coro|
+
+        This event handle should handle all interaction coming from Discord.
+        This would pass the information into :meth:`.process_application_commands`
+
+        If you're overriding this, please dont forget to call the :meth:`.process_application_commands`
+        or the application wont work.
+
+        Parameters
+        ------------
+        interaction: :class:`discord.Interaction`
+            The interaction to process
+        """
+        await self.process_application_commands(interaction)
+
     @overload
     def application_command(
         self,
