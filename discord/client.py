@@ -1675,7 +1675,7 @@ class Client(ApplicationCommandMixin):
 
         This method should be used for when a view is comprised of components
         that last longer than the lifecycle of the program.
-        
+
         .. versionadded:: 2.0
 
         Parameters
@@ -1719,7 +1719,7 @@ class Client(ApplicationCommandMixin):
 
         .. versionadded:: 2.0
         """
-        all_apps = list(self.all_applications.values())
+        all_apps = self.all_applications.all_commands()
         pending = self._pending_registration
         return [app for app in all_apps if app not in pending]
 
@@ -1734,8 +1734,7 @@ class Client(ApplicationCommandMixin):
             The application ID.
         """
         all_apps = self.get_applications()
-        match = utils.find(lambda app: isinstance(app.id, int) and app.id == id, all_apps)
-        return match
+        return utils.find(lambda app: isinstance(app.id, int) and app.id == id, all_apps)
 
     def get_guild_applications(self, id: int) -> List[ApplicationCommand]:
         """List[:class:`.ApplicationCommand`]: A list of application that are registered for a guild.

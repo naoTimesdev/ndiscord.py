@@ -67,6 +67,14 @@ class ApplicationCommandFactory:
     user = user_commands
     message = message_commands
 
+    def all_commands(self) -> List[ApplicationCommand]:
+        slash_commands = list(self._slash_commands.values())
+        user_commands = list(self._user_commands.values())
+        message_commands = list(self._message_commands.values())
+        return slash_commands + user_commands + message_commands
+
+    values = all_commands
+
     def add_command(self, command: AppCommandT):
         if command.type is None:
             return
