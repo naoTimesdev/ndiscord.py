@@ -40,6 +40,8 @@ if TYPE_CHECKING:
     from discord.client import Client
     from discord.ext.commands import AutoShardedBot, Bot, Cog
 
+    from .core import SlashCommand, UserCommand, MessageCommand
+
 __all__ = (
     'ApplicationContext'
 )
@@ -48,6 +50,7 @@ MISSING: Any = discord.utils.MISSING
 
 BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client]")
 CogT = TypeVar('CogT', bound="Cog")
+AppCommandT = TypeVar('AppCommandT', bound="Union[SlashCommand, UserCommand, MessageCommand]")
 
 
 class ApplicationContext(discord.abc.Messageable):
@@ -90,7 +93,7 @@ class ApplicationContext(discord.abc.Messageable):
         interaction: Interaction,
         args: List[Any] = MISSING,
         kwargs: Dict[str, Any] = MISSING,
-        command: Any = MISSING,
+        command: AppCommandT = MISSING,
         command_failed: bool = False
     ) -> None:
         self.bot: BotT = bot
@@ -98,7 +101,7 @@ class ApplicationContext(discord.abc.Messageable):
         self.args: List[Any] = args
         self.kwargs: Dict[str, Any] = kwargs
         self.command_failed: bool = command_failed
-        self.command: Any = command
+        self.command: AppCommandT = command
 
         # Subcommand stuff for /slash command
         self.invoked_with = self.interaction.data.get('name')
