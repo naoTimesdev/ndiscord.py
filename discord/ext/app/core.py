@@ -908,10 +908,11 @@ class SlashCommand(ApplicationCommand):
         """
 
         def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
-            kwargs.setdefault('parent', self)
             # Remove guild_ids
             kwargs.pop('guild_ids', None)
             result = SlashCommand(func, *args, **kwargs)
+            # Set parent
+            setattr(result, 'parent', self)
             self.add_command(result)
             return result
 
@@ -941,6 +942,8 @@ class SlashCommand(ApplicationCommand):
             # Remove guild_ids
             kwargs.pop('guild_ids', None)
             result = SlashCommand(func, *args, **kwargs)
+            # Set parent
+            setattr(result, 'parent', self)
             # Override the sub_type
             result.sub_type = SlashCommandOptionType.sub_command_group
             self.add_command(result)
