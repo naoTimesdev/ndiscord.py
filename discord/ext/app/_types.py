@@ -21,9 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
-from typing import Any, Callable, Coroutine, TYPE_CHECKING, List, Protocol, Type, TypeVar, Union
+from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol, Type, TypeVar, Union
 
 if TYPE_CHECKING:
+    from .core import Option
     from .context import ApplicationContext
     from .errors import ApplicationCommandError
     from discord.ext.commands import Cog
@@ -53,6 +54,7 @@ class ApplicationCallback(Protocol):
     __commands_checks__: List[Check]
     __before_invoke__: Hook
     __after_invoke__: Hook
+    __slash_options__: Dict[str, "Option"]
 
     def __call__(self, ctx: ApplicationContext, *args: Any, **kwargs: Any) -> Any:
         ...

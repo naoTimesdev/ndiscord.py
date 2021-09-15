@@ -808,6 +808,9 @@ class SlashCommand(ApplicationCommand):
                 f'Callback for {self.name} command is missing "ctx" parameter.'
             )
 
+        # Get the slash option from class, if missing just return dict.
+        slash_options: Dict[str, Option] = getattr(self.callback, '__slash_options__', getattr(self, '__slash_options__', {}))
+
         for name, param in params:
             option = param.annotation
             if option == inspect.Parameter.empty:
@@ -817,6 +820,8 @@ class SlashCommand(ApplicationCommand):
                 option = Option(
                     option.__args__[0], description=_NO_DESC, required=False
                 )
+
+            option = slash_options.get(name, option)
 
             if not isinstance(option, Option):
                 option = Option(option, description=_NO_DESC)
@@ -989,10 +994,12 @@ def option(
 
 def option(name, type=None, **kwargs):
     """A decorator that can be used instead of typehinting Option"""
-    def decor(func):
+    def decor(func: ApplicationCallback):
         nonlocal type
         type = type or func.__annotations__.get(name, str)
-        func.__annotations__[name] = Option(type, **kwargs)
+        if not hasattr(func, '__slash_options__'):
+            func.__slash_options__ = {}
+        func.__slash_options__[name] = Option(type, **kwargs)
         return func
     return decor
 
