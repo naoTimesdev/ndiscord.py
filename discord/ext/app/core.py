@@ -82,11 +82,7 @@ HookT = TypeVar('HookT', bound="Hook")
 SubAppCommandT = TypeVar('SubAppCommandT')
 DecoApp = Callable[..., T]
 FuncT = TypeVar('FuncT', bound=Callable[..., Any])
-
-if TYPE_CHECKING:
-    P = ParamSpec('P')
-else:
-    P = TypeVar('P')
+P = ParamSpec('P')
 
 AppCommandWrap = Callable[
     [
