@@ -21,12 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
-from typing import Any, Callable, Coroutine, TYPE_CHECKING, List, Protocol, TypeVar, Union
+from typing import Any, Callable, Coroutine, TYPE_CHECKING, List, Protocol, Type, TypeVar, Union
 
 if TYPE_CHECKING:
     from .context import ApplicationContext
     from .errors import ApplicationCommandError
     from discord.ext.commands import Cog
+
+    from discord.abc import Snowflake, GuildChannel
+    from discord.member import Member
+    from discord.role import Role
 
 T = TypeVar('T')
 
@@ -38,6 +42,10 @@ CogT = TypeVar('CogT', bound='Cog')
 Check = Union[Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]], Callable[["ApplicationContext"], MaybeCoro[bool]]]
 Hook = Union[Callable[["Cog", "ApplicationContext"], Coro[Any]], Callable[["ApplicationContext"], Coro[Any]]]
 Error = Union[Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]], Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]]]
+
+PythonInputType = Type[Union[str, int, float, bool]]
+Mentionable = TypeVar('Mentionable', bound="Union[Snowflake, GuildChannel, Member, Role]")
+AcceptedInputType = Union[PythonInputType, int, Mentionable]
 
 class ApplicationCallback(Protocol):
     """A callback that can be used by an :class:`ApplicationCommand`."""
