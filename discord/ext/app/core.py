@@ -871,6 +871,8 @@ class SlashCommand(ApplicationCommand):
                 arg = await discord.utils.get_or_fetch(ctx.guild, 'member', arg_id)
                 if arg is None:
                     arg = ctx.guild.get_role(arg_id) or arg_id
+            if arg is None and op.default is not None:
+                arg = op.default
             kwargs[op.name] = arg
 
         ctx.args = args
