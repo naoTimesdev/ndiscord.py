@@ -56,7 +56,7 @@ class ApplicationCallback(Protocol):
     __after_invoke__: Hook
     __slash_options__: Dict[str, "Option"]
 
-    def __call__(self, ctx: ApplicationContext, *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Any:
         ...
 
 # Same thing as what ext.commands._types do
