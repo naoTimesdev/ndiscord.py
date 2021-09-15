@@ -342,15 +342,13 @@ class ApplicationCommandMixin(Generic[CogT]):
         Returns
         --------
         Callable[..., :class:`ApplicationCommand`]
-            A decorator that converts the provided method into an :class:`.ApplicationCommand`, adds it to the bot,
-            then returns it.
+            A decorator that converts the provided method into an :class:`.ApplicationCommand`,
+            adds it to the bot, then returns it.
         """
 
         def decorator(func) -> AppCommandT:
-            kwargs.setdefault("parent", self)
             result = command(**kwargs)(func)
-            setattr(result, 'parent', self)
-            self.add_application_command(result)
+            self.add_application(result)
             return result
 
         return decorator
