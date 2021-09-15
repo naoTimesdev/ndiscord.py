@@ -174,8 +174,8 @@ class ApplicationMissingRole(ApplicationCheckFailure):
         The required role that is missing.
         This is the parameter passed to :func:`~.app.has_role`.
     """
-    def __init__(self, missing_role: Snowflake) -> None:
-        self.missing_role: Snowflake = missing_role
+    def __init__(self, missing_role: "Snowflake") -> None:
+        self.missing_role: "Snowflake" = missing_role
         message = f'Role {missing_role!r} is required to run this command.'
         super().__init__(message)
 
@@ -190,8 +190,8 @@ class ApplicationBotMissingRole(ApplicationCheckFailure):
         The required role that is missing.
         This is the parameter passed to :func:`~.app.has_role`.
     """
-    def __init__(self, missing_role: Snowflake) -> None:
-        self.missing_role: Snowflake = missing_role
+    def __init__(self, missing_role: "Snowflake") -> None:
+        self.missing_role: "Snowflake" = missing_role
         message = f'Bot requires the role {missing_role!r} to run this command'
         super().__init__(message)
 
@@ -209,8 +209,8 @@ class ApplicationMissingAnyRole(ApplicationCheckFailure):
         The roles that the invoker is missing.
         These are the parameters passed to :func:`~.app.has_any_role`.
     """
-    def __init__(self, missing_roles: SnowflakeList) -> None:
-        self.missing_roles: SnowflakeList = missing_roles
+    def __init__(self, missing_roles: "SnowflakeList") -> None:
+        self.missing_roles: "SnowflakeList" = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
@@ -237,8 +237,8 @@ class ApplicationBotMissingAnyRole(ApplicationCheckFailure):
         These are the parameters passed to :func:`~.app.has_any_role`.
 
     """
-    def __init__(self, missing_roles: SnowflakeList) -> None:
-        self.missing_roles: SnowflakeList = missing_roles
+    def __init__(self, missing_roles: "SnowflakeList") -> None:
+        self.missing_roles: "SnowflakeList" = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
@@ -307,8 +307,8 @@ class ApplicationNSFWChannelRequired(ApplicationCheckFailure):
     channel: Union[:class:`.abc.GuildChannel`, :class:`.Thread`]
         The channel that does not have NSFW enabled.
     """
-    def __init__(self, channel: Union[GuildChannel, Thread]) -> None:
-        self.channel: Union[GuildChannel, Thread] = channel
+    def __init__(self, channel: Union["GuildChannel", "Thread"]) -> None:
+        self.channel: Union["GuildChannel", "Thread"] = channel
         super().__init__(f"Channel '{channel}' needs to be NSFW for this command to work.")
 
 class ApplicationNotOwner(ApplicationCheckFailure):
