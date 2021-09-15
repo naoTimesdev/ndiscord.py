@@ -47,7 +47,6 @@ from typing import (
 import discord
 from discord.enums import ApplicationCommandType, SlashCommandOptionType
 from discord.errors import ClientException
-from discord.ext.commands.cog import Cog
 from discord.member import Member
 from discord.message import Message
 from discord.user import User
@@ -82,6 +81,7 @@ ErrorT = TypeVar('ErrorT', bound="Error")
 HookT = TypeVar('HookT', bound="Hook")
 SubAppCommandT = TypeVar('SubAppCommandT')
 DecoApp = Callable[..., T]
+FuncT = TypeVar('FuncT', bound=Callable[..., Any])
 
 if TYPE_CHECKING:
     P = ParamSpec('P')
@@ -361,6 +361,11 @@ class ApplicationCommand(_BaseApplication):
     def _is_typing_optional(self, annotation: Union[T, Optional[T]]) -> TypeGuard[Optional[T]]:
         return getattr(annotation, '__origin__', None) is Union and type(None) in annotation.__args__  # type: ignore
 
+    @classmethod
+    def _get_overridden_method(cls, method: FuncT) -> Optional[FuncT]:
+        """Return None if the method is not overridden. Otherwise returns the overridden method."""
+        return getattr(method.__func__, '__cog_special_method__', method)
+
     async def dispatch_error(self, ctx: ApplicationContext, error: Exception) -> None:
         ctx.command_failed = True
         cog = self.cog
@@ -377,7 +382,7 @@ class ApplicationCommand(_BaseApplication):
 
         try:
             if cog is not None:
-                local = Cog._get_overridden_method(cog.cog_command_error)
+                local = self._get_overridden_method(cog.cog_command_error)
                 if local is not None:
                     wrapped = wrap_callback(local)
                     await wrapped(ctx, error)
@@ -400,7 +405,7 @@ class ApplicationCommand(_BaseApplication):
 
         # call the cog local hook if applicable:
         if cog is not None:
-            hook = Cog._get_overridden_method(cog.cog_before_invoke)
+            hook = self._get_overridden_method(cog.cog_before_invoke)
             if hook is not None:
                 await hook(ctx)
 
@@ -420,7 +425,7 @@ class ApplicationCommand(_BaseApplication):
 
         # call the cog local hook if applicable:
         if cog is not None:
-            hook = Cog._get_overridden_method(cog.cog_after_invoke)
+            hook = self._get_overridden_method(cog.cog_after_invoke)
             if hook is not None:
                 await hook(ctx)
 
@@ -604,7 +609,7 @@ class ApplicationCommand(_BaseApplication):
 
             cog = self.cog
             if cog is not None:
-                local_check = Cog._get_overridden_method(cog.cog_check)
+                local_check = self._get_overridden_method(cog.cog_check)
                 if local_check is not None:
                     ret = await discord.utils.maybe_coroutine(local_check, ctx)
                     if not ret:
