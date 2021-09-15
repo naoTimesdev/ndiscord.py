@@ -684,14 +684,16 @@ class ApplicationCommand(_BaseApplication):
         return decorator
 
     def to_dict(self):
+        _DEFAULT = "No description provided"
         options: Optional[List[Option]] = getattr(self, 'options', None)
         base_return = {
             'name': self.name,
-            'type': self.type,
+            'type': self.type.value,
         }
         if options:
             base_return['options'] = [o.to_dict() for o in options]
-        description = getattr(self, "description", "")
+        _desc_fallback = _DEFAULT if self.type == ApplicationCommandType.slash else ""
+        description = getattr(self, "description", _desc_fallback)
         base_return['description'] = description
         return base_return
 
@@ -861,17 +863,6 @@ class SlashCommand(ApplicationCommand):
         ctx.args = args
         ctx.kwargs = kwargs
 
-    def to_dict(self) -> Dict:
-        as_dict = {
-            'name': self.name,
-            'description': self.description,
-            'options': [o.to_dict() for o in self.options],
-            'type': self.type.value,
-        }
-        # TODO: Implement group/subcommand
-
-        return as_dict
-
 
 class SlashCommandGroup():
     pass
@@ -964,9 +955,6 @@ class ContextMenuApplication(ApplicationCommand):
             ctx.args.append(
                 Message(state=ctx.interaction._state, channel=channel, data=msg)
             )
-
-    def to_dict(self) -> Dict[str, Union[str, int]]:
-        return {"name": self.name, "description": "", "type": self.type.value}
 
 
 class UserCommand(ContextMenuApplication):
