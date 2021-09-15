@@ -29,7 +29,6 @@ import functools
 import inspect
 from collections import OrderedDict
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
@@ -52,8 +51,17 @@ from discord.message import Message
 from discord.user import User
 from typing_extensions import Concatenate, ParamSpec, TypeGuard
 
-from ._types import (ApplicationCallback, AcceptedInputType, Check, CogT, Coro, Error, Hook,
-                     _BaseApplication)
+from ._types import (
+    AcceptedInputType,
+    ApplicationCallback,
+    Check,
+    CogT,
+    Coro,
+    CoroFunc,
+    Error,
+    Hook,
+    _BaseApplication
+)
 from .context import ApplicationContext
 from .errors import *
 
@@ -62,7 +70,6 @@ __all__ = (
     'Option',
     'OptionChoice',
     'SlashCommand',
-    'SlashCommandGroup',
     'ContextMenuApplication',
     'UserCommand',
     'MessageCommand',
@@ -147,9 +154,8 @@ class ApplicationCommand(_BaseApplication):
 
     _before_invoke: ClassVar[Hook]
     _after_invoke: ClassVar[Hook]
-    checks: ClassVar[Check]
+    checks: ClassVar[List[Check]]
     _callback: ClassVar[ApplicationCallback]
-    _children: ClassVar[Dict[str, SubAppCommandT]]
 
     # Error/checks handler, etc.
     on_error: Error
@@ -157,7 +163,7 @@ class ApplicationCommand(_BaseApplication):
     def __new__(cls: Type[AppCommandT], *args: Any, **kwargs: Any) -> AppCommandT:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs
-        self._children = {}
+        self.checks = []
 
         return self
 
@@ -233,6 +239,9 @@ class ApplicationCommand(_BaseApplication):
         # Handle checks
         if not await self.can_run(ctx):
             raise ApplicationCheckFailure(f'The check functions for command {self.qualified_name} failed.')
+
+        # TODO: Check cooldowns
+        # -- Probably reimplement how discord.ext.commands.cooldown works
 
         await self._parse_arguments(ctx)
         await self.call_before_hooks(ctx)
@@ -429,69 +438,6 @@ class ApplicationCommand(_BaseApplication):
         if hook is not None:
             await hook(ctx)
 
-    async def _invoke_children(self, ctx: ApplicationContext):
-        """|coro|
-
-        Execute all the children of the group command.
-        Only supported in /slash command for now.
-
-        This function is adapted from dislash.py implementation.
-
-        Parameters
-        -----------
-        ctx: :class:`.ApplicationContext`
-            The invocation context.
-
-        Raises
-        -------
-        ApplicationCommandInvokeError
-            An error occurred while invoking the command.
-        """
-        if not self._children:
-            # Exit fast if there's no child
-            return
-        data = ctx.interaction.data
-        options = data.get("options", [])
-        if not options:
-            return
-
-        first_opts = options[0]
-        if not first_opts:
-            return
-
-        group = None
-        subcmd = None
-        if first_opts.type == SlashCommandOptionType.sub_command_group.value:
-            group = self._children.get(first_opts.name)
-        elif first_opts.type == SlashCommandOptionType.sub_command.value:
-            subcmd = self._children.get(first_opts.name)
-
-        if group is not None:
-            option = first_opts.options[0]
-            if option is None or group.type == SlashCommandOptionType.sub_command.value:
-                subcmd = None
-            else:
-                subcmd = group.children.get(option.name)
-        if group is not None:
-            ctx.invoked_with += f" {group.name}"
-            ctx.invoked_subcommand_group = group
-            ctx.command_failed = True
-            try:
-                await group.invoke(ctx)
-            except Exception as err:
-                group.dispatch_error(ctx, err)
-                raise err
-
-        if subcmd is not None and option is not None:
-            ctx.invoked_with += f" {subcmd.name}"
-            ctx.invoked_subcommand = subcmd
-            ctx.command_failed = True
-            try:
-                await subcmd.invoke(ctx)
-            except Exception as err:
-                self.dispatch_error(ctx, err)
-                raise err
-
     async def invoke(self, ctx: ApplicationContext) -> None:
         """|coro|
 
@@ -512,7 +458,6 @@ class ApplicationCommand(_BaseApplication):
 
         injected = hooked_wrapped_callback(self, ctx, self.callback)
         await injected(*ctx.args, **ctx.kwargs)
-        await self._invoke_children(ctx)
 
     async def reinvoke(self, ctx: ApplicationContext, *, call_hooks: bool = False):
         """|coro|
@@ -619,78 +564,6 @@ class ApplicationCommand(_BaseApplication):
         finally:
             ctx.command = original
 
-    def add_command(self, command: "SlashCommand"):
-        """Adds a :class:`.SlashCommand` into the internal list of commands.
-
-        This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
-        :meth:`~.ApplicationCommand.group` shortcut decorators are used instead.
-
-        .. versionchanged:: 1.4
-             Raise :exc:`.CommandRegistrationError` instead of generic :exc:`.ClientException`
-
-        Parameters
-        -----------
-        command: :class:`Command`
-            The command to add.
-
-        Raises
-        -------
-        :exc:`.CommandRegistrationError`
-            If the command or its alias is already registered by different command.
-        TypeError
-            If the command passed is not a subclass of :class:`.Command`.
-        """
-
-        if command.type != (ApplicationCommandType.slash or ApplicationCommandType.slash_group):
-            raise TypeError('The command passed must be a subclass of SlashCommand')
-
-        if command.name in self._children:
-            raise ApplicationRegistrationError(command.name)
-
-        self._children[command.name] = command
-
-    @property
-    def commands(self) -> Set[AppCommandT]:
-        """Set[:class:`.ApplicationCommand`]: A unique set of commands without aliases that are registered."""
-        return set(self._children.values())
-
-    def walk_commands(self) -> Generator[AppCommandT, None, None]:
-        yield self.callback
-        for command in self.commands:
-            yield command
-            if command.type == ApplicationCommandType.slash_group:
-                yield command.walk_commands()
-
-    # Decorator
-    @overload
-    def slash_command(
-        self,
-        name: str = ...,
-        description: str = ...,
-        guild_ids: Optional[List[int]] = ...,
-        *args: Any,
-        **kwargs: Any,
-    ) -> AppCommandWrap:
-        ...
-
-    def slash_command(self, *args, **kwargs):
-        """A shortcut decorator that invokes :func:`.command` and adds it to
-        the internal command list via :meth:`~.Application.add_command`.
-
-        Returns
-        --------
-        Callable[..., :class:`ApplicationCommand`]
-            A decorator that converts the provided method into a ApplicationCommand, adds it to the bot, then returns it.
-        """
-
-        def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> AppCommandT:
-            kwargs.setdefault('parent', self)
-            result = SlashCommand(func, *args, **kwargs)
-            self.add_command(result)
-            return result
-
-        return decorator
-
     def to_dict(self):
         _DEFAULT = "No description provided"
         options: Optional[List[Option]] = getattr(self, 'options', None)
@@ -744,6 +617,8 @@ class OptionChoice:
 
 class SlashCommand(ApplicationCommand):
     type = ApplicationCommandType.slash
+    sub_type = SlashCommandOptionType.sub_command
+    parent: SlashCommand = None
 
     description: ClassVar[str]
     options: List[Option]
@@ -772,6 +647,8 @@ class SlashCommand(ApplicationCommand):
         self.params = get_signature_parameters(callback)
         self.options: List[Option] = self.parse_options()
 
+        self._children: Dict[str, SlashCommand] = {}
+
         try:
             checks = callback.__commands_checks__
         except AttributeError:
@@ -795,6 +672,9 @@ class SlashCommand(ApplicationCommand):
             pass
         else:
             self.after_invoke(after_invoke)
+
+    def is_match(self, other: "SlashCommand"):
+        return self.name == other.name and self.sub_type == other.sub_type
 
     def parse_options(self) -> List[Option]:
         _NO_DESC = "No description provided"
@@ -878,9 +758,194 @@ class SlashCommand(ApplicationCommand):
         ctx.args = args
         ctx.kwargs = kwargs
 
+    @property
+    def children(self):
+        """Dict[:class:`str`, :class:`SlashCommand`]: A list of children"""
+        return self._children
 
-class SlashCommandGroup():
-    pass
+    def has_parent(self):
+        """:class:`bool`: Check if the command have parent or not.
+        """
+        return hasattr(self, 'parent')
+
+    async def _invoke_children(self, ctx: ApplicationContext):
+        """|coro|
+
+        Execute all the children of the slash group command.
+
+        Parameters
+        -----------
+        ctx: :class:`.ApplicationContext`
+            The invocation context.
+
+        Raises
+        -------
+        ApplicationCommandInvokeError
+            An error occurred while invoking the command.
+        """
+        if not self._children:
+            # Exit fast if there's no child
+            return
+        data = ctx.interaction.data
+        options = data.get('options', [])
+        if not options:
+            return
+
+        first_children = options[0]
+        if not first_children:
+            return
+        sub_command: Optional[SlashCommand] = None
+        if first_children.type == 2:
+            sub_command = self._children.get(first_children.name)
+            first_child_opts = first_children.get('options', [])
+            try:
+                ff_opt = first_child_opts[0]
+                if ff_opt and ff_opt.type == 1 and sub_command is not None:
+                    sub_command = sub_command.children.get(ff_opt.name)
+            except IndexError:
+                pass
+        else:
+            sub_command = self._children.get(first_children.name)
+
+        if sub_command is not None:
+            ctx.invoked_subcommand = sub_command
+            try:
+                await sub_command.invoke(ctx)
+            except Exception as err:
+                sub_command.dispatch_error(ctx, err)
+                ctx.command_failed = True
+                raise err
+
+    async def invoke(self, ctx: ApplicationContext) -> None:
+        await super().invoke(ctx)
+        await self._invoke_children(ctx)
+
+    def add_command(self, command: "SlashCommand"):
+        """Adds a :class:`.SlashCommand` into the internal list of commands.
+
+        This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
+        :meth:`~.ApplicationCommand.group` shortcut decorators are used instead.
+
+        .. versionchanged:: 1.4
+             Raise :exc:`.CommandRegistrationError` instead of generic :exc:`.ClientException`
+
+        Parameters
+        -----------
+        command: :class:`Command`
+            The command to add.
+
+        Raises
+        -------
+        :exc:`.CommandRegistrationError`
+            If the command or its alias is already registered by different command.
+        TypeError
+            If the command passed is not a subclass of :class:`.Command`.
+        """
+
+        if command.type != (ApplicationCommandType.slash or ApplicationCommandType.slash_group):
+            raise TypeError('The command passed must be a subclass of SlashCommand')
+
+        if command.name in self._children:
+            raise ApplicationRegistrationError(command.name)
+
+        if self.has_parent() and self.sub_type != SlashCommandOptionType.sub_command_group:
+            raise ApplicationRegistrationMaxDepthError(command.name)
+
+        self._children[command.name] = command
+
+    @property
+    def commands(self) -> Set[SlashCommand]:
+        """Set[:class:`.SlashCommand`]: A unique set of commands without aliases that are registered."""
+        return set(self._children.values())
+
+    def walk_commands(self) -> Generator[SlashCommand, None, None]:
+        """An iterator that recursively walks through all commands and subcommands.
+
+        Yields
+        ------
+        :class:`SlashCommand`:
+            A command or group from the internal list of commands.
+        """
+        yield self
+        for command in self.commands:
+            if command.sub_type == SlashCommandOptionType.sub_command_group:
+                yield command.walk_commands()
+            else:
+                yield command
+
+    def to_dict(self):
+        dict_res = super().to_dict()
+        if self._children:
+            child_res = self._children.to_dict()
+            if 'options' not in dict_res:
+                dict_res['options'] = []
+            dict_res['options'].extend(child_res)
+        if not self.has_parent() and 'type' in dict_res:
+            del dict_res['type']
+        elif self.has_parent():
+            dict_res['type'] = self.sub_type.value
+        return dict_res
+
+    # Decorator
+    @overload
+    def command(
+        self,
+        name: str = ...,
+        description: str = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> DecoApp[SlashCommand]:
+        ...
+
+    def command(self, *args, **kwargs):
+        """A decorator that would add a new subcommand to the parent command.
+
+        Returns
+        --------
+        Callable[..., :class:`.SlashCommand`]
+            A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
+            kwargs.setdefault('parent', self)
+            # Remove guild_ids
+            kwargs.pop('guild_ids', None)
+            result = SlashCommand(func, *args, **kwargs)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+    @overload
+    def group(
+        self,
+        name: str = ...,
+        description: str = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> DecoApp[SlashCommand]:
+        ...
+
+    def group(self, *args, **kwargs):
+        """A decorator that would add a new subcommand group to the parent command.
+
+        Returns
+        --------
+        Callable[..., :class:`.SlashCommand`]
+            A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
+            kwargs.setdefault('parent', self)
+            # Remove guild_ids
+            kwargs.pop('guild_ids', None)
+            result = SlashCommand(func, *args, **kwargs)
+            # Override the sub_type
+            result.sub_type = SlashCommandOptionType.sub_command_group
+            self.add_command(result)
+            return result
+
+        return decorator
 
 
 class ContextMenuApplication(ApplicationCommand):
@@ -921,6 +986,16 @@ class ContextMenuApplication(ApplicationCommand):
             pass
         else:
             self.after_invoke(after_invoke)
+
+    def walk_commands(self) -> Generator[ContextMenuApplication, None, None]:
+        """An iterator that recursively walks through all commands and subcommands.
+
+        Yields
+        ------
+        :class:`.ContextMenuApplication`:
+            A command or group from the internal list of commands.
+        """
+        yield self
 
     async def _parse_arguments(self, ctx: ApplicationContext):
         args = [ctx] if self.cog is None else [self.cog, ctx]
@@ -1171,3 +1246,538 @@ def command(**kwargs):
         A decorator that converts the provided method into an :class:`.ApplicationCommand`.
     """
     return application_command(**kwargs)
+
+
+# check decorators
+
+def check(predicate: Check) -> Callable[[T], T]:
+    r"""A decorator that adds a check to the :class:`.ApplicationCommand` or its
+    subclasses. These checks could be accessed via :attr:`.ApplicationCommand.checks`.
+
+    These checks should be predicates that take in a single parameter taking
+    a :class:`.Context`. If the check returns a ``False``\-like value then
+    during invocation a :exc:`.ApplicationCheckFailure` exception is raised and sent to
+    the :func:`.on_command_error` event.
+
+    If an exception should be thrown in the predicate then it should be a
+    subclass of :exc:`.ApplicationCommandError`. Any exception not subclassed from it
+    will be propagated while those subclassed will be sent to
+    :func:`.on_command_error`.
+
+    A special attribute named ``predicate`` is bound to the value
+    returned by this decorator to retrieve the predicate passed to the
+    decorator. This allows the following introspection and chaining to be done:
+
+    .. code-block:: python3
+
+        def owner_or_permissions(**perms):
+            original = commands.has_permissions(**perms).predicate
+            async def extended_check(ctx):
+                if ctx.guild is None:
+                    return False
+                return ctx.guild.owner_id == ctx.author.id or await original(ctx)
+            return commands.check(extended_check)
+
+    .. note::
+
+        The function returned by ``predicate`` is **always** a coroutine,
+        even if the original function was not a coroutine.
+
+    .. versionchanged:: 1.3
+        The ``predicate`` attribute was added.
+
+    Examples
+    ---------
+
+    Creating a basic check to see if the command invoker is you.
+
+    .. code-block:: python3
+
+        def check_if_it_is_me(ctx):
+            return ctx.message.author.id == 85309593344815104
+
+        @bot.command()
+        @commands.check(check_if_it_is_me)
+        async def only_for_me(ctx):
+            await ctx.send('I know you!')
+
+    Transforming common checks into its own decorator:
+
+    .. code-block:: python3
+
+        def is_me():
+            def predicate(ctx):
+                return ctx.message.author.id == 85309593344815104
+            return commands.check(predicate)
+
+        @bot.command()
+        @is_me()
+        async def only_me(ctx):
+            await ctx.send('Only you!')
+
+    Parameters
+    -----------
+    predicate: Callable[[:class:`ApplicationContext`], :class:`bool`]
+        The predicate to check if the command should be invoked.
+    """
+
+    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+        if isinstance(func, ApplicationCommand):
+            func.checks.append(predicate)
+        else:
+            if not hasattr(func, '__commands_checks__'):
+                func.__commands_checks__ = []
+            func.__commands_checks__.append(predicate)
+
+        return func
+
+    if inspect.iscoroutinefunction(predicate):
+        decorator.predicate = predicate
+    else:
+        @functools.wraps(predicate)
+        async def wrapper(ctx):
+            return predicate(ctx)
+        decorator.predicate = wrapper
+
+    return decorator
+
+def check_any(*checks: Check) -> Callable[[T], T]:
+    r"""A :func:`check` that is added that checks if any of the checks passed
+    will pass, i.e. using logical OR.
+
+    If all checks fail then :exc:`.CheckAnyFailure` is raised to signal the failure.
+    It inherits from :exc:`.ApplicationCheckFailure`.
+
+    .. note::
+
+        The ``predicate`` attribute for this function **is** a coroutine.
+
+    .. versionadded:: 2.0
+
+    Parameters
+    ------------
+    \*checks: Callable[[:class:`ApplicationContext`], :class:`bool`]
+        An argument list of checks that have been decorated with
+        the :func:`check` decorator.
+
+    Raises
+    -------
+    TypeError
+        A check passed has not been decorated with the :func:`check`
+        decorator.
+
+    Examples
+    ---------
+
+    Creating a basic check to see if it's the bot owner or
+    the server owner:
+
+    .. code-block:: python3
+
+        def is_guild_owner():
+            def predicate(ctx):
+                return ctx.guild is not None and ctx.guild.owner_id == ctx.author.id
+            return commands.check(predicate)
+
+        @bot.command()
+        @commands.check_any(commands.is_owner(), is_guild_owner())
+        async def only_for_owners(ctx):
+            await ctx.send('Hello mister owner!')
+    """
+
+    unwrapped = []
+    for wrapped in checks:
+        try:
+            pred = wrapped.predicate
+        except AttributeError:
+            raise TypeError(f'{wrapped!r} must be wrapped by commands.check decorator') from None
+        else:
+            unwrapped.append(pred)
+
+    async def predicate(ctx: ApplicationContext) -> bool:
+        errors = []
+        for func in unwrapped:
+            try:
+                value = await func(ctx)
+            except ApplicationCheckFailure as e:
+                errors.append(e)
+            else:
+                if value:
+                    return True
+        # if we're here, all checks failed
+        raise ApplicationCheckAnyFailure(unwrapped, errors)
+
+    return check(predicate)
+
+def has_role(item: Union[int, str]) -> Callable[[T], T]:
+    """A :func:`.check` that is added that checks if the member invoking the
+    command has the role specified via the name or ID specified.
+
+    If a string is specified, you must give the exact name of the role, including
+    caps and spelling.
+
+    If an integer is specified, you must give the exact snowflake ID of the role.
+
+    If the message is invoked in a private message context then the check will
+    return ``False``.
+
+    This check raises one of two special exceptions, :exc:`.ApplicationMissingRole` if the user
+    is missing a role, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
+    Both inherit from :exc:`.ApplicationCheckFailure`.
+
+    Parameters
+    -----------
+    item: Union[:class:`int`, :class:`str`]
+        The name or ID of the role to check.
+    """
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        if ctx.guild is None:
+            raise ApplicationNoPrivateMessage
+
+        # ctx.guild is None doesn't narrow ctx.author to Member
+        if isinstance(item, int):
+            role = discord.utils.get(ctx.author.roles, id=item)  # type: ignore
+        else:
+            role = discord.utils.get(ctx.author.roles, name=item)  # type: ignore
+        if role is None:
+            raise ApplicationMissingRole(item)
+        return True
+
+    return check(predicate)
+
+def bot_has_role(item: int) -> Callable[[T], T]:
+    """Similar to :func:`.has_role` except checks if the bot itself has the
+    role.
+
+    This check raises one of two special exceptions, :exc:`.ApplicationBotMissingRole` if the bot
+    is missing the role, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
+    Both inherit from :exc:`.CheckFailure`.
+    """
+
+    def predicate(ctx: ApplicationContext):
+        if ctx.guild is None:
+            raise ApplicationNoPrivateMessage
+
+        me = ctx.me
+        if isinstance(item, int):
+            role = discord.utils.get(me.roles, id=item)
+        else:
+            role = discord.utils.get(me.roles, name=item)
+        if role is None:
+            raise ApplicationBotMissingRole(item)
+        return True
+    return check(predicate)
+
+def has_any_role(*items: Union[int, str]) -> Callable[[T], T]:
+    r"""A :func:`.check` that is added that checks if the member invoking the
+    command has **any** of the roles specified. This means that if they have
+    one out of the three roles specified, then this check will return `True`.
+
+    Similar to :func:`.has_role`\, the names or IDs passed in must be exact.
+
+    This check raises one of two special exceptions, :exc:`.ApplicationMissingAnyRole` if the user
+    is missing all roles, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
+    Both inherit from :exc:`.ApplicationCheckFailure`.
+
+        Raise :exc:`.ApplicationMissingAnyRole` or :exc:`.ApplicationNoPrivateMessage`
+        instead of generic :exc:`.ApplicationCheckFailure`
+
+    Parameters
+    -----------
+    items: List[Union[:class:`str`, :class:`int`]]
+        An argument list of names or IDs to check that the member has roles wise.
+
+    Example
+    --------
+
+    .. code-block:: python3
+
+        @bot.command()
+        @commands.has_any_role('Library Devs', 'Moderators', 492212595072434186)
+        async def cool(ctx):
+            await ctx.send('You are cool indeed')
+    """
+    def predicate(ctx: ApplicationContext) -> bool:
+        if ctx.guild is None:
+            raise ApplicationNoPrivateMessage
+
+        # ctx.guild is None doesn't narrow ctx.author to Member
+        getter = functools.partial(discord.utils.get, ctx.author.roles)  # type: ignore
+        if any(getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items):
+            return True
+        raise ApplicationMissingAnyRole(list(items))
+
+    return check(predicate)
+
+def bot_has_any_role(*items: int) -> Callable[[T], T]:
+    """Similar to :func:`.has_any_role` except checks if the bot itself has
+    any of the roles listed.
+
+    This check raises one of two special exceptions, :exc:`.ApplicationBotMissingAnyRole` if the bot
+    is missing all roles, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
+    Both inherit from :exc:`.ApplicationCheckFailure`.
+    """
+    def predicate(ctx: ApplicationContext):
+        if ctx.guild is None:
+            raise ApplicationNoPrivateMessage
+
+        me = ctx.me
+        getter = functools.partial(discord.utils.get, me.roles)
+        if any(getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items):
+            return True
+        raise ApplicationBotMissingAnyRole(list(items))
+    return check(predicate)
+
+def has_permissions(**perms: bool) -> Callable[[T], T]:
+    """A :func:`.check` that is added that checks if the member has all of
+    the permissions necessary.
+
+    Note that this check operates on the current channel permissions, not the
+    guild wide permissions.
+
+    The permissions passed in must be exactly like the properties shown under
+    :class:`.discord.Permissions`.
+
+    This check raises a special exception, :exc:`.ApplicationMissingPermissions`
+    that is inherited from :exc:`.ApplicationCheckFailure`.
+
+    Parameters
+    ------------
+    perms
+        An argument list of permissions to check for.
+
+    Example
+    ---------
+
+    .. code-block:: python3
+
+        @bot.command()
+        @commands.has_permissions(manage_messages=True)
+        async def test(ctx):
+            await ctx.send('You can manage messages.')
+
+    """
+
+    invalid = set(perms) - set(discord.Permissions.VALID_FLAGS)
+    if invalid:
+        raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        ch = ctx.channel
+        permissions = ch.permissions_for(ctx.author)  # type: ignore
+
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise ApplicationMissingPermissions(missing)
+
+    return check(predicate)
+
+def bot_has_permissions(**perms: bool) -> Callable[[T], T]:
+    """Similar to :func:`.has_permissions` except checks if the bot itself has
+    the permissions listed.
+
+    This check raises a special exception, :exc:`.ApplicationBotMissingPermissions`
+    that is inherited from :exc:`.ApplicationCheckFailure`.
+    """
+
+    invalid = set(perms) - set(discord.Permissions.VALID_FLAGS)
+    if invalid:
+        raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        guild = ctx.guild
+        me = guild.me if guild is not None else ctx.bot.user
+        permissions = ctx.channel.permissions_for(me)  # type: ignore
+
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise ApplicationBotMissingPermissions(missing)
+
+    return check(predicate)
+
+def has_guild_permissions(**perms: bool) -> Callable[[T], T]:
+    """Similar to :func:`.has_permissions`, but operates on guild wide
+    permissions instead of the current channel permissions.
+
+    If this check is called in a DM context, it will raise an
+    exception, :exc:`.ApplicationNoPrivateMessage`.
+    """
+
+    invalid = set(perms) - set(discord.Permissions.VALID_FLAGS)
+    if invalid:
+        raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        if not ctx.guild:
+            raise ApplicationNoPrivateMessage
+
+        permissions = ctx.author.guild_permissions  # type: ignore
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise ApplicationMissingPermissions(missing)
+
+    return check(predicate)
+
+def bot_has_guild_permissions(**perms: bool) -> Callable[[T], T]:
+    """Similar to :func:`.has_guild_permissions`, but checks the bot
+    members guild permissions.
+    """
+
+    invalid = set(perms) - set(discord.Permissions.VALID_FLAGS)
+    if invalid:
+        raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        if not ctx.guild:
+            raise ApplicationNoPrivateMessage
+
+        permissions = ctx.me.guild_permissions  # type: ignore
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise ApplicationBotMissingPermissions(missing)
+
+    return check(predicate)
+
+def dm_only() -> Callable[[T], T]:
+    """A :func:`.check` that indicates this command must only be used in a
+    DM context. Only private messages are allowed when
+    using the command.
+
+    This check raises a special exception, :exc:`.ApplicationPrivateMessageOnly`
+    that is inherited from :exc:`.ApplicationCheckFailure`.
+
+    .. versionadded:: 2.0
+    """
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        if ctx.guild is not None:
+            raise ApplicationPrivateMessageOnly
+        return True
+
+    return check(predicate)
+
+def guild_only() -> Callable[[T], T]:
+    """A :func:`.check` that indicates this command must only be used in a
+    guild context only. Basically, no private messages are allowed when
+    using the command.
+
+    This check raises a special exception, :exc:`.ApplicationNoPrivateMessage`
+    that is inherited from :exc:`.ApplicationCheckFailure`.
+    """
+
+    def predicate(ctx: ApplicationContext) -> bool:
+        if ctx.guild is None:
+            raise ApplicationNoPrivateMessage
+        return True
+
+    return check(predicate)
+
+def is_owner() -> Callable[[T], T]:
+    """A :func:`.check` that checks if the person invoking this command is the
+    owner of the bot.
+
+    This is powered by :meth:`.Bot.is_owner`.
+
+    This check raises a special exception, :exc:`.ApplicationNotOwner` that is derived
+    from :exc:`.ApplicationCheckFailure`.
+    """
+
+    async def predicate(ctx: ApplicationContext) -> bool:
+        if not await ctx.bot.is_owner(ctx.author):
+            raise ApplicationNotOwner('You do not own this bot.')
+        return True
+
+    return check(predicate)
+
+def is_nsfw() -> Callable[[T], T]:
+    """A :func:`.check` that checks if the channel is a NSFW channel.
+
+    This check raises a special exception, :exc:`.ApplicationNSFWChannelRequired`
+    that is derived from :exc:`.ApplicationCheckFailure`.
+
+    .. versionchanged:: 2.0
+
+        Raise :exc:`.ApplicationNSFWChannelRequired` instead of generic :exc:`.ApplicationCheckFailure`.
+        DM channels will also now pass this check.
+    """
+    def pred(ctx: ApplicationContext) -> bool:
+        ch = ctx.channel
+        if ctx.guild is None or (isinstance(ch, (discord.TextChannel, discord.Thread)) and ch.is_nsfw()):
+            return True
+        raise ApplicationNSFWChannelRequired(ch)  # type: ignore
+    return check(pred)
+
+def before_invoke(coro) -> Callable[[T], T]:
+    """A decorator that registers a coroutine as a pre-invoke hook.
+
+    This allows you to refer to one before invoke hook for several commands that
+    do not have to be within the same cog.
+
+    .. versionadded:: 2.0
+
+    Example
+    ---------
+
+    .. code-block:: python3
+
+        async def record_usage(ctx):
+            print(ctx.author, 'used', ctx.command, 'at', ctx.message.created_at)
+
+        @bot.command()
+        @commands.before_invoke(record_usage)
+        async def who(ctx): # Output: <User> used who at <Time>
+            await ctx.send('i am a bot')
+
+        class What(commands.Cog):
+
+            @commands.before_invoke(record_usage)
+            @commands.command()
+            async def when(self, ctx): # Output: <User> used when at <Time>
+                await ctx.send(f'and i have existed since {ctx.bot.user.created_at}')
+
+            @commands.command()
+            async def where(self, ctx): # Output: <Nothing>
+                await ctx.send('on Discord')
+
+            @commands.command()
+            async def why(self, ctx): # Output: <Nothing>
+                await ctx.send('because someone made me')
+
+        bot.add_cog(What())
+    """
+    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+        if isinstance(func, ApplicationCommand):
+            func.before_invoke(coro)
+        else:
+            func.__before_invoke__ = coro
+        return func
+    return decorator  # type: ignore
+
+def after_invoke(coro) -> Callable[[T], T]:
+    """A decorator that registers a coroutine as a post-invoke hook.
+
+    This allows you to refer to one after invoke hook for several commands that
+    do not have to be within the same cog.
+
+    .. versionadded:: 2.0
+    """
+    def decorator(func: Union[ApplicationCommand, CoroFunc]) -> Union[ApplicationCommand, CoroFunc]:
+        if isinstance(func, ApplicationCommand):
+            func.after_invoke(coro)
+        else:
+            func.__after_invoke__ = coro
+        return func
+    return decorator  # type: ignore

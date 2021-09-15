@@ -53,6 +53,7 @@ MISSING: Any = discord.utils.MISSING
 BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client]")
 CogT = TypeVar('CogT', bound="Cog")
 AppCommandT = TypeVar('AppCommandT', bound="Union[SlashCommand, UserCommand, MessageCommand]")
+SlashT = TypeVar('SlashT', bound="SlashCommand")
 
 
 class ApplicationContext(discord.abc.Messageable):
@@ -82,10 +83,15 @@ class ApplicationContext(discord.abc.Messageable):
         The command or application command that are being executed.
         If it's not passed yet, it will be None.
     deferred: :class:`bool`
-        Is the command already deferred or no?
+        Is the command already deferred or no
     command_failed: :class:`bool`
         A boolean that indicates if this command failed to be parsed, checked,
         or invoked.
+    invoked_with: Optional[:class:`str`]
+        The original string that the user used to invoke the command.
+        Might be none if the command is context menu.
+    invoked_subcommand: Optional[:class:`.SlashCommand`]
+        The subcommand that was invoked, if any.
     """
 
     def __init__(
@@ -106,10 +112,7 @@ class ApplicationContext(discord.abc.Messageable):
         self.command: AppCommandT = command
 
         # Subcommand stuff for /slash command
-        self.invoked_with = self.interaction.data.get('name')
-        self.invoked_subcommand: Optional[Any] = None
-        self.invoked_subcommand_group: Optional[Any] = None
-        self.prefix: str = "/"
+        self.invoked_subcommand: Optional[SlashT] = None
 
         self.deferred: bool = False
         self._state: ConnectionState = self.interaction._state
@@ -120,6 +123,10 @@ class ApplicationContext(discord.abc.Messageable):
         if self.command is None:
             return None
         return self.command.cog
+
+    @property
+    def invoked_with(self) -> Optional[str]:
+        return self.interaction.data.get('name')
 
     @discord.utils.cached_property
     def guild(self) -> Optional[Guild]:
