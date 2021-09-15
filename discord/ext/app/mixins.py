@@ -36,13 +36,23 @@ from discord.errors import DiscordException
 T = TypeVar('T')
 DecoApp = Callable[..., T]
 
+__all__ = (
+    'ApplicationCommandMixin',
+)
+
 MISSING: Any = discord.utils.MISSING
 
 
 class ApplicationCommandMixin(Generic[CogT]):
-    def __init__(self, *args, **kwargs: Any) -> None:
+    _debug_guilds: List[int]
+    all_applications: Dict[str, ApplicationCommand]
+    _pending_registration: List[ApplicationCommand] = []
+
+    def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin":
         debug_guild = kwargs.pop("debug_guild", None)
         debug_guilds = kwargs.pop("debug_guilds", None)
+
+        self = super().__new__(cls)
 
         _debug_guild = []
         if isinstance(debug_guild, int):
@@ -53,9 +63,10 @@ class ApplicationCommandMixin(Generic[CogT]):
                     _debug_guild.append(guild)
 
         self._debug_guilds = _debug_guild
-        self.all_applications: Dict[str, ApplicationCommand] = {}
-        self._pending_registration: List[ApplicationCommand] = []
-        super().__init__(*args, **kwargs)
+        self.all_applications = {}
+        self._pending_registration = []
+
+        return self
 
     @property
     def debug_guilds(self):
