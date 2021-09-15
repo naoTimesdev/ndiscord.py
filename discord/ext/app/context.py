@@ -26,14 +26,15 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
 import discord.abc
 import discord.utils
-from discord import Guild, Member, User
+from discord.guild import Guild
 from discord.interactions import (
     Interaction,
     InteractionChannel,
     InteractionResponse
 )
+from discord.member import Member
 from discord.state import ConnectionState
-from discord.user import ClientUser
+from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
 
 if TYPE_CHECKING:
