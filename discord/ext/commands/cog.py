@@ -25,15 +25,20 @@ from __future__ import annotations
 
 import inspect
 import discord.utils
+from discord.enums import ApplicationCommandType
 
-from typing import Any, Callable, ClassVar, Dict, Generator, List, Optional, TYPE_CHECKING, Tuple, TypeVar, Type
+from typing import Any, Callable, ClassVar, Dict, Generator, List, Optional, TYPE_CHECKING, Tuple, TypeVar, Type, Union
 
 from ._types import _BaseCommand
+
+from ..app import ApplicationCommand
 
 if TYPE_CHECKING:
     from .bot import BotBase
     from .context import Context
     from .core import Command
+
+    from discord import Client
 
 __all__ = (
     'CogMeta',
@@ -107,6 +112,7 @@ class CogMeta(type):
     __cog_name__: str
     __cog_settings__: Dict[str, Any]
     __cog_commands__: List[Command]
+    __cog_applications__: List[ApplicationCommand]
     __cog_listeners__: List[Tuple[str, str]]
 
     def __new__(cls: Type[CogMeta], *args: Any, **kwargs: Any) -> CogMeta:
@@ -120,6 +126,7 @@ class CogMeta(type):
         attrs['__cog_description__'] = description
 
         commands = {}
+        applications = {}
         listeners = {}
         no_bot_cog = 'Commands or listeners must not start with cog_ or bot_ (in method {0.__name__}.{1})'
 
@@ -134,6 +141,12 @@ class CogMeta(type):
                 is_static_method = isinstance(value, staticmethod)
                 if is_static_method:
                     value = value.__func__
+                if isinstance(value, ApplicationCommand):
+                    if is_static_method:
+                        raise TypeError(f'Command in method {base}.{elem!r} must not be staticmethod.')
+                    if elem.startswith(('cog_', 'bot_')):
+                        raise TypeError(no_bot_cog.format(base, elem))
+                    applications[elem] = value
                 if isinstance(value, _BaseCommand):
                     if is_static_method:
                         raise TypeError(f'Command in method {base}.{elem!r} must not be staticmethod.')
@@ -151,6 +164,7 @@ class CogMeta(type):
                         listeners[elem] = value
 
         new_cls.__cog_commands__ = list(commands.values()) # this will be copied in Cog.__new__
+        new_cls.__cog_applications__ = list(applications.values())
 
         listeners_as_list = []
         for listener in listeners.values():
@@ -186,6 +200,7 @@ class Cog(metaclass=CogMeta):
     __cog_name__: ClassVar[str]
     __cog_settings__: ClassVar[Dict[str, Any]]
     __cog_commands__: ClassVar[List[Command]]
+    __cog_applications__: ClassVar[List[ApplicationCommand]]
     __cog_listeners__: ClassVar[List[Tuple[str, str]]]
 
     def __new__(cls: Type[CogT], *args: Any, **kwargs: Any) -> CogT:
@@ -232,6 +247,16 @@ class Cog(metaclass=CogMeta):
         """
         return [c for c in self.__cog_commands__ if c.parent is None]
 
+    def get_applications(self) -> List[ApplicationCommand]:
+        r"""
+        Returns
+        --------
+        List[:class:`.ApplicationCommand`]
+            A :class:`list` of :class:`.ApplicationCommand`\s that are
+            defined inside this cog.
+        """
+        return self.__cog_applications__
+
     @property
     def qualified_name(self) -> str:
         """:class:`str`: Returns the cog's specified name, not the class name."""
@@ -260,6 +285,19 @@ class Cog(metaclass=CogMeta):
                 yield command
                 if isinstance(command, GroupMixin):
                     yield from command.walk_commands()
+
+    def walk_applications(self) -> Generator[ApplicationCommand, None, None]:
+        """An iterator that recursively walks through this cog's applications and subcommands.
+
+        Yields
+        ------
+        Union[:class:`.ApplicationCommand`, :class:`.SlashCommandGroup`]
+            A command or group from the cog.
+        """
+        for app in self.__cog_applications__:
+            yield app
+            if app.type == ApplicationCommandType.slash_group:
+                yield app.walk_commands()
 
     def get_listeners(self) -> List[Tuple[str, Callable[..., Any]]]:
         """Returns a :class:`list` of (name, function) listener pairs that are defined in this cog.
@@ -414,7 +452,7 @@ class Cog(metaclass=CogMeta):
         """
         pass
 
-    def _inject(self: CogT, bot: BotBase) -> CogT:
+    def _inject(self: CogT, bot: Union[BotBase, Client]) -> CogT:
         cls = self.__class__
 
         # realistically, the only thing that can cause loading errors
@@ -432,6 +470,9 @@ class Cog(metaclass=CogMeta):
                         if to_undo.parent is None:
                             bot.remove_command(to_undo.name)
                     raise e
+        for application in self.__cog_applications__:
+            application.cog = self
+            bot.add_application(application)
 
         # check if we're overriding the default
         if cls.bot_check is not Cog.bot_check:
@@ -449,7 +490,7 @@ class Cog(metaclass=CogMeta):
 
         return self
 
-    def _eject(self, bot: BotBase) -> None:
+    def _eject(self, bot: Union[BotBase, Client]) -> None:
         cls = self.__class__
 
         try:
@@ -459,6 +500,9 @@ class Cog(metaclass=CogMeta):
 
             for _, method_name in self.__cog_listeners__:
                 bot.remove_listener(getattr(self, method_name))
+
+            for application in self.__cog_applications__:
+                bot.remove_application(application)
 
             if cls.bot_check is not Cog.bot_check:
                 bot.remove_check(self.bot_check)
