@@ -683,6 +683,19 @@ class ApplicationCommand(_BaseApplication):
 
         return decorator
 
+    def to_dict(self):
+        options: Optional[List[Option]] = getattr(self, 'options', None)
+        base_return = {
+            'name': self.name,
+            'type': self.type,
+        }
+        if options:
+            base_return['options'] = [o.to_dict() for o in options]
+        description = getattr(self, "description", "")
+        base_return['description'] = description
+        return base_return
+
+
 class Option:
     def __init__(
         self, input_type: Type[Any], /, description: str = None, **kwargs,
@@ -953,7 +966,7 @@ class ContextMenuApplication(ApplicationCommand):
             )
 
     def to_dict(self) -> Dict[str, Union[str, int]]:
-        return {"name": self.name, "type": self.type.value}
+        return {"name": self.name, "description": "", "type": self.type.value}
 
 
 class UserCommand(ContextMenuApplication):
