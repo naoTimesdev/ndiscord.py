@@ -100,6 +100,12 @@ class ApplicationContext(discord.abc.Messageable):
         self.command_failed: bool = command_failed
         self.command: Any = command
 
+        # Subcommand stuff for /slash command
+        self.invoked_with = self.interaction.data.get('name')
+        self.invoked_subcommand: Optional[Any] = None
+        self.invoked_subcommand_group: Optional[Any] = None
+        self.prefix: str = "/"
+
         self.deferred: bool = False
         self._state: ConnectionState = self.interaction._state
 
