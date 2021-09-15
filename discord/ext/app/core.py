@@ -724,7 +724,7 @@ class Option:
         return {
             'name': self.name,
             'description': self.description,
-            'input_type': self.input_type.value,
+            'type': self.input_type.value,
             'required': self.required,
             'choices': [c.to_dict() for c in self.choices],
             'default': self.default,
