@@ -564,6 +564,8 @@ class ApplicationCommand(_BaseApplication):
             ctx.command = original
 
     def to_dict(self):
+        """:class:`dict`: A discord API friendly dictionary that can be submitted to the API.
+        """
         _DEFAULT = "No description provided"
         options: Optional[List[Option]] = getattr(self, 'options', None)
         base_return = {
@@ -875,7 +877,7 @@ class SlashCommand(ApplicationCommand):
     def to_dict(self):
         dict_res = super().to_dict()
         if self._children:
-            child_res = self._children.to_dict()
+            child_res = [child.to_dict() for child in self._children.values()]
             if 'options' not in dict_res:
                 dict_res['options'] = []
             dict_res['options'].extend(child_res)
