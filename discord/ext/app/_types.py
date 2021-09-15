@@ -22,6 +22,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol, Type, TypeVar, Union
+from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from .core import Option
@@ -48,7 +49,7 @@ PythonInputType = Type[Union[str, int, float, bool]]
 Mentionable = TypeVar('Mentionable', bound="Union[Snowflake, GuildChannel, Member, Role]")
 AcceptedInputType = Union[PythonInputType, int, Mentionable]
 
-class ApplicationCallback(Protocol):
+class ApplicationCallback(Protocol[T]):
     """A callback that can be used by an :class:`ApplicationCommand`."""
 
     __commands_checks__: List[Check]
@@ -56,7 +57,7 @@ class ApplicationCallback(Protocol):
     __after_invoke__: Hook
     __slash_options__: Dict[str, "Option"]
 
-    def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Coro[T]:
         ...
 
 # Same thing as what ext.commands._types do
