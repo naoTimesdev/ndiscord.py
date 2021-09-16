@@ -249,6 +249,7 @@ class ApplicationCommand(_BaseApplication):
         This method bypasses all checks that a command has and does not
         convert the arguments beforehand, so take care to pass the correct
         arguments in.
+
         Parameters
         ----------
         ctx: :class:`.ApplicationContext`
@@ -1503,20 +1504,17 @@ def check(predicate: Check) -> Callable[[T], T]:
     .. code-block:: python3
 
         def owner_or_permissions(**perms):
-            original = commands.has_permissions(**perms).predicate
+            original = app.has_permissions(**perms).predicate
             async def extended_check(ctx):
                 if ctx.guild is None:
                     return False
                 return ctx.guild.owner_id == ctx.author.id or await original(ctx)
-            return commands.check(extended_check)
+            return app.check(extended_check)
 
     .. note::
 
         The function returned by ``predicate`` is **always** a coroutine,
         even if the original function was not a coroutine.
-
-    .. versionchanged:: 1.3
-        The ``predicate`` attribute was added.
 
     Examples
     ---------
@@ -1526,10 +1524,10 @@ def check(predicate: Check) -> Callable[[T], T]:
     .. code-block:: python3
 
         def check_if_it_is_me(ctx):
-            return ctx.message.author.id == 85309593344815104
+            return ctx.message.author.id == 466469077444067372
 
-        @bot.command()
-        @commands.check(check_if_it_is_me)
+        @app.slash_command()
+        @app.check(check_if_it_is_me)
         async def only_for_me(ctx):
             await ctx.send('I know you!')
 
@@ -1539,10 +1537,10 @@ def check(predicate: Check) -> Callable[[T], T]:
 
         def is_me():
             def predicate(ctx):
-                return ctx.message.author.id == 85309593344815104
-            return commands.check(predicate)
+                return ctx.message.author.id == 466469077444067372
+            return app.check(predicate)
 
-        @bot.command()
+        @bot.slash_command()
         @is_me()
         async def only_me(ctx):
             await ctx.send('Only you!')
@@ -1553,7 +1551,9 @@ def check(predicate: Check) -> Callable[[T], T]:
         The predicate to check if the command should be invoked.
     """
 
-    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.checks.append(predicate)
         else:
@@ -1609,10 +1609,10 @@ def check_any(*checks: Check) -> Callable[[T], T]:
         def is_guild_owner():
             def predicate(ctx):
                 return ctx.guild is not None and ctx.guild.owner_id == ctx.author.id
-            return commands.check(predicate)
+            return app.check(predicate)
 
-        @bot.command()
-        @commands.check_any(commands.is_owner(), is_guild_owner())
+        @app.slash_command()
+        @app.check_any(app.is_owner(), is_guild_owner())
         async def only_for_owners(ctx):
             await ctx.send('Hello mister owner!')
     """
@@ -1725,8 +1725,8 @@ def has_any_role(*items: Union[int, str]) -> Callable[[T], T]:
 
     .. code-block:: python3
 
-        @bot.command()
-        @commands.has_any_role('Library Devs', 'Moderators', 492212595072434186)
+        @app.slash_command()
+        @app.has_any_role('Library Devs', 'Moderators', 466469077444067372)
         async def cool(ctx):
             await ctx.send('You are cool indeed')
     """
@@ -1784,8 +1784,8 @@ def has_permissions(**perms: bool) -> Callable[[T], T]:
 
     .. code-block:: python3
 
-        @bot.command()
-        @commands.has_permissions(manage_messages=True)
+        @app.slash_command()
+        @app.has_permissions(manage_messages=True)
         async def test(ctx):
             await ctx.send('You can manage messages.')
 
@@ -1952,7 +1952,7 @@ def is_nsfw() -> Callable[[T], T]:
         raise ApplicationNSFWChannelRequired(ch)  # type: ignore
     return check(pred)
 
-def before_invoke(coro) -> Callable[[T], T]:
+def before_invoke(coro: Hook) -> Callable[[T], T]:
     """A decorator that registers a coroutine as a pre-invoke hook.
 
     This allows you to refer to one before invoke hook for several commands that
@@ -1968,29 +1968,31 @@ def before_invoke(coro) -> Callable[[T], T]:
         async def record_usage(ctx):
             print(ctx.author, 'used', ctx.command, 'at', ctx.message.created_at)
 
-        @bot.command()
-        @commands.before_invoke(record_usage)
+        @app.slash_command()
+        @app.before_invoke(record_usage)
         async def who(ctx): # Output: <User> used who at <Time>
             await ctx.send('i am a bot')
 
         class What(commands.Cog):
 
-            @commands.before_invoke(record_usage)
-            @commands.command()
+            @app.before_invoke(record_usage)
+            @app.slash_command()
             async def when(self, ctx): # Output: <User> used when at <Time>
                 await ctx.send(f'and i have existed since {ctx.bot.user.created_at}')
 
-            @commands.command()
+            @app.slash_command()
             async def where(self, ctx): # Output: <Nothing>
                 await ctx.send('on Discord')
 
-            @commands.command()
+            @app.slash_command()
             async def why(self, ctx): # Output: <Nothing>
                 await ctx.send('because someone made me')
 
         bot.add_cog(What())
     """
-    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.before_invoke(coro)
         else:
@@ -1998,7 +2000,7 @@ def before_invoke(coro) -> Callable[[T], T]:
         return func
     return decorator  # type: ignore
 
-def after_invoke(coro) -> Callable[[T], T]:
+def after_invoke(coro: Hook) -> Callable[[T], T]:
     """A decorator that registers a coroutine as a post-invoke hook.
 
     This allows you to refer to one after invoke hook for several commands that
@@ -2006,7 +2008,9 @@ def after_invoke(coro) -> Callable[[T], T]:
 
     .. versionadded:: 2.0
     """
-    def decorator(func: Union[ApplicationCommand, ApplicationCallback]) -> Union[ApplicationCommand, ApplicationCallback]:
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
         if isinstance(func, ApplicationCommand):
             func.after_invoke(coro)
         else:
