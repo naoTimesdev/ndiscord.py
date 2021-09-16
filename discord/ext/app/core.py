@@ -78,6 +78,22 @@ __all__ = (
     'user_command',
     'message_command',
     'command',
+    'check',  # Checks
+    'check_any',
+    'has_role',
+    'bot_has_role',
+    'has_any_role',
+    'bot_has_any_role',
+    'has_permissions',
+    'bot_has_permissions',
+    'has_guild_permissions',
+    'bot_has_guild_permissions',
+    'dm_only',
+    'guild_only',
+    'is_owner',
+    'is_nsfw',
+    'before_invoke',
+    'after_invoke',
 )
 
 T = TypeVar('T')
@@ -168,7 +184,7 @@ class ApplicationCommand(_BaseApplication):
         event.
     type: :class:`ApplicationCommandType`
         The type of application command.
-    cog: Optional[:class:`Cog`]
+    cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     """
     type: ClassVar[ApplicationCommandType]
@@ -205,14 +221,6 @@ class ApplicationCommand(_BaseApplication):
         )
 
     @property
-    def id(self) -> Optional[str]:
-        return getattr(self, '_id', None)
-
-    @id.setter
-    def id(self, value: str):
-        self._id = value
-
-    @property
     def callback(self) -> ApplicationCallback:
         return self._callback
 
@@ -223,7 +231,6 @@ class ApplicationCommand(_BaseApplication):
 
     @property
     def id(self) -> Optional[str]:
-        """:class:`Optional[str]`: The application ID."""
         return getattr(self, '_id', None)
 
     @id.setter
@@ -276,8 +283,8 @@ class ApplicationCommand(_BaseApplication):
     def error(self, coro: ErrorT) -> ErrorT:
         """A decorator that registers a coroutine as a local error handler.
 
-        A local error handler is an :func:`.on_application_command_error` event limited to
-        a single command. However, the :func:`.on_application_command_error` is still
+        A local error handler is an :func:`.on_application_error` event limited to
+        a single command. However, the :func:`.on_application_error` is still
         invoked afterwards as the catch-all.
 
         Parameters
@@ -340,8 +347,6 @@ class ApplicationCommand(_BaseApplication):
 
         This pre-invoke hook takes a sole parameter, a :class:`.ApplicationContext`.
 
-        See :meth:`.Bot.before_invoke` for more info.
-
         Parameters
         -----------
         coro: :ref:`coroutine <coroutine>`
@@ -366,8 +371,6 @@ class ApplicationCommand(_BaseApplication):
         connections or any type of clean up required.
 
         This post-invoke hook takes a sole parameter, a :class:`.ApplicationContext`.
-
-        See :meth:`.Bot.after_invoke` for more info.
 
         Parameters
         -----------
@@ -711,7 +714,7 @@ class SlashCommand(ApplicationCommand):
     sub_type: :class:`SlashCommandOptionType`
         The type of the slash command, can only be :attr:`SlashCommandOptionType.sub_command`
         or :attr:`SlashCommandOptionType.sub_command_group`.
-    cog: Optional[:class:`Cog`]
+    cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
         A ordered dictionary of parameters that the command callback takes.
@@ -1095,7 +1098,7 @@ class ContextMenuApplication(ApplicationCommand):
         event.
     type: :class:`ApplicationCommandType`
         The type of application command.
-    cog: Optional[:class:`Cog`]
+    cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
         A ordered dictionary of parameters that the command callback takes.
@@ -1233,7 +1236,7 @@ class UserCommand(ContextMenuApplication):
         event.
     type: :class:`ApplicationCommandType`
         The type of application command.
-    cog: Optional[:class:`Cog`]
+    cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
         A ordered dictionary of parameters that the command callback takes.
@@ -1279,7 +1282,7 @@ class MessageCommand(ContextMenuApplication):
         event.
     type: :class:`ApplicationCommandType`
         The type of application command.
-    cog: Optional[:class:`Cog`]
+    cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
         A ordered dictionary of parameters that the command callback takes.
@@ -1484,14 +1487,14 @@ def check(predicate: Check) -> Callable[[T], T]:
     subclasses. These checks could be accessed via :attr:`.ApplicationCommand.checks`.
 
     These checks should be predicates that take in a single parameter taking
-    a :class:`.Context`. If the check returns a ``False``\-like value then
+    a :class:`.ApplicationContext`. If the check returns a ``False``\-like value then
     during invocation a :exc:`.ApplicationCheckFailure` exception is raised and sent to
-    the :func:`.on_command_error` event.
+    the :func:`.on_application_error` event.
 
     If an exception should be thrown in the predicate then it should be a
     subclass of :exc:`.ApplicationCommandError`. Any exception not subclassed from it
     will be propagated while those subclassed will be sent to
-    :func:`.on_command_error`.
+    :func:`.on_application_error`.
 
     A special attribute named ``predicate`` is bound to the value
     returned by this decorator to retrieve the predicate passed to the
@@ -1574,7 +1577,7 @@ def check_any(*checks: Check) -> Callable[[T], T]:
     r"""A :func:`check` that is added that checks if any of the checks passed
     will pass, i.e. using logical OR.
 
-    If all checks fail then :exc:`.CheckAnyFailure` is raised to signal the failure.
+    If all checks fail then :exc:`.ApplicationCheckAnyFailure` is raised to signal the failure.
     It inherits from :exc:`.ApplicationCheckFailure`.
 
     .. note::
@@ -1639,7 +1642,7 @@ def check_any(*checks: Check) -> Callable[[T], T]:
     return check(predicate)
 
 def has_role(item: Union[int, str]) -> Callable[[T], T]:
-    """A :func:`.check` that is added that checks if the member invoking the
+    r"""A :func:`.check` that is added that checks if the member invoking the
     command has the role specified via the name or ID specified.
 
     If a string is specified, you must give the exact name of the role, including
@@ -1681,7 +1684,7 @@ def bot_has_role(item: int) -> Callable[[T], T]:
 
     This check raises one of two special exceptions, :exc:`.ApplicationBotMissingRole` if the bot
     is missing the role, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
-    Both inherit from :exc:`.CheckFailure`.
+    Both inherit from :exc:`.ApplicationCheckFailure`.
     """
 
     def predicate(ctx: ApplicationContext):

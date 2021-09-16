@@ -46,6 +46,20 @@ AppCommand = Union[SlashCommand, UserCommand, MessageCommand]
 
 
 class ApplicationCommandFactory:
+    """A "factory" or collector of application commands.
+
+    These factory should not be created manually, it will be called from
+    :class:`.ApplicationCommandMixin`.
+
+    Attributes
+    -----------
+    slash_commands: Dict[:class:`str`, :class:`.SlashCommand`]
+        All slash commands registered with this factory.
+    user_commands: Dict[:class:`str`, :class:`.UserCommand`]
+        All user commands registered with this factory.
+    message_commands: Dict[:class:`str`, :class:`.MessageCommand`]
+        All message commands registered with this factory.
+    """
     def __init__(self):
         self._slash_commands: Dict[str, SlashCommand] = {}
         self._user_commands: Dict[str, UserCommand] = {}
@@ -63,11 +77,9 @@ class ApplicationCommandFactory:
     def message_commands(self):
         return self._message_commands
 
-    slash = slash_commands
-    user = user_commands
-    message = message_commands
-
     def all_commands(self) -> List[ApplicationCommand]:
+        """List[:class:`.ApplicationCommand`]: Get all commands from this factory.
+        """
         slash_commands = list(self._slash_commands.values())
         user_commands = list(self._user_commands.values())
         message_commands = list(self._message_commands.values())
@@ -76,6 +88,21 @@ class ApplicationCommandFactory:
     values = all_commands
 
     def add_command(self, command: AppCommandT):
+        """Add a new command to the factories.
+
+        If the command already exist, it will raise an :exc:`.ApplicationRegistrationError`.
+
+        Parameters
+        -----------
+        command: :class:`.ApplicationCommand` derived
+            The command to register.
+
+        Raises
+        ---------
+        ApplicationRegistrationError
+            Raised when you're trying to register a command with the same name
+            as other command that already been registered.
+        """
         if command.type is None:
             return
         if command.type == ApplicationCommandType.slash:
@@ -92,21 +119,26 @@ class ApplicationCommandFactory:
             self._user_commands[command.name] = command
 
     def get_command(self, name: str, type: ApplicationCommandType) -> Optional[AppCommand]:
+        """Get a command from the factory.
+
+        Parameters
+        -----------
+        name: :class:`str`
+            The command name to search
+        type: :class:`.ApplicationCommandType`
+            The type of command to search for.
+
+        Returns
+        ---------
+        Optional[:class:`.ApplicationCommand`] derived
+            The command that was requested, or ``None`` if not found.
+        """
         location_enum = {
             ApplicationCommandType.slash: self._slash_commands,
             ApplicationCommandType.message: self._message_commands,
             ApplicationCommandType.user: self._user_commands,
         }
         return location_enum[type].get(name, None)
-
-    def find_command(self, name: str) -> Optional[AppCommand]:
-        if name in self._slash_commands:
-            return self._slash_commands[name]
-        elif name in self._message_commands:
-            return self._message_commands[name]
-        elif name in self._user_commands:
-            return self._user_commands[name]
-        return None
 
     def _remove_by_name(self, name: str, location: ApplicationCommandType = None):
         location_enum = {
@@ -135,6 +167,19 @@ class ApplicationCommandFactory:
         return
 
     def remove_command(self, command: Union[str, AppCommandT]) -> Optional[AppCommand]:
+        """Remove a command from the factory.
+
+        Parameters
+        -----------
+        command: Union[:class:`str`, :class:`.ApplicationCommand` derived]
+            The command to search for, it will try to match by name.
+            If you provide a string, it will try to guess where the command is.
+
+        Returns
+        --------
+        Optional[:class:`.ApplicationCommand`]
+            The command that was removed, if ``None`` it means the command doesn't exist.
+        """
         if isinstance(command, str):
             return self._remove_by_name(command)
         elif isinstance(command, ApplicationCommand):
@@ -142,6 +187,22 @@ class ApplicationCommandFactory:
         return None
 
 class ApplicationCommandMixin(Generic[CogT]):
+    """A mixin that provides application commands to the bot.
+
+    These mixin should not be created manually, this will be used by :class:`.Client`
+    or by :class:`~discord.ext.commands.Bot`.
+
+    .. versionadded:: 2.0
+
+    Attributes
+    ------------
+
+    all_applications: :class:`.ApplicationCommandFactory`
+        A collection of registered commands that the bot knows.
+    debug_guilds: List[:class:`int`]
+        Get the list of guilds that are being used for debugging purpose.
+    """
+
     _debug_guilds: List[int]
     _app_factories: ApplicationCommandFactory
     _pending_registration: List[ApplicationCommand] = []
@@ -172,9 +233,6 @@ class ApplicationCommandMixin(Generic[CogT]):
 
     @property
     def debug_guilds(self):
-        """List[:class:`int`]:
-        Get the list of guilds that are being used for debugging purpose.
-        """
         return self._debug_guilds
 
     def add_application(self, command: AppCommandT) -> None:
@@ -228,6 +286,7 @@ class ApplicationCommandMixin(Generic[CogT]):
 
     async def process_application_commands(self, interaction: Interaction):
         """|coro|
+
         This function processes the commands that have been registered
         to the bot and other groups. Without this coroutine, none of the
         commands will be triggered.
@@ -237,8 +296,8 @@ class ApplicationCommandMixin(Generic[CogT]):
         you should invoke this coroutine as well.
 
         This function finds a registered command matching the interaction id from
-        :attr:`.ApplicationCommandMixin.application_commands` and runs :meth:`ApplicationCommand.invoke` on it. If no matching
-        command was found, it replies to the interaction with a default message.
+        :meth:`ApplicationCommandMixin.application_command` and runs :meth:`ApplicationCommand.invoke` on it.
+        If no matching command was found, it replies to the interaction with a default message.
 
         .. versionadded:: 2.0
 
@@ -287,7 +346,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         Returns
         --------
         :class:`.ApplicationContext`
-            The invocation context. Tye type of this can change via the
+            The invocation context. The type of this can change via the
             ``cls`` parameter.
         """
         if cls is None:
@@ -421,5 +480,3 @@ class ApplicationCommandMixin(Generic[CogT]):
             A decorator that converts the provided method into a :class:`.MessageCommand`.
         """
         return self.application_command(cls=MessageCommand, **kwargs)
-
-    command = application_command
