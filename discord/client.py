@@ -61,7 +61,8 @@ from .ui.view import View
 from .stage_instance import StageInstance
 from .threads import Thread
 from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
-from .ext.app import ApplicationCommandMixin, ApplicationCommand
+from .ext.app import ApplicationCommandMixin, ApplicationCommand, ApplicationRegistrationError
+
 
 if TYPE_CHECKING:
     from .abc import SnowflakeTime, PrivateChannel, GuildChannel, Snowflake
@@ -69,12 +70,16 @@ if TYPE_CHECKING:
     from .message import Message
     from .member import Member
     from .voice_client import VoiceProtocol
+    from .types.interactions import ApplicationCommand as RawApplicationCommand
 
 __all__ = (
     'Client',
 )
 
+T = TypeVar('T')
 Coro = TypeVar('Coro', bound=Callable[..., Coroutine[Any, Any, Any]])
+CoroShort = Coroutine[Any, Any, T]
+ApplicationCmdT = TypeVar('ApplicationCmdT', bound="Union[ApplicationCommand, RawApplicationCommand]")
 
 
 _log = logging.getLogger(__name__)
@@ -834,7 +839,7 @@ class Client(ApplicationCommandMixin):
 
         This is useful if you have a channel_id but don't want to do an API call
         to send messages to it.
-        
+
         .. versionadded:: 2.0
 
         Parameters
@@ -1769,10 +1774,93 @@ class Client(ApplicationCommandMixin):
         non_pending_guild = self.get_guild_applications(id)
         return utils.find(lambda app: isinstance(app.id, int) and app.id == app_id, non_pending_guild)
 
-    async def fetch_global_applications(self):
+    async def fetch_global_applications(self) -> CoroShort[List[ApplicationCmdT]]:
         """|coro|
 
         Get all registered global commands on Discord.
 
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        :exc:`.HTTPException`
+            Retrieving the global application commands failed.
+
+        Returns
+        -------
+        List[Union[:class:`.ApplicationCommand`, :class:'.RawApplicationCommand']]
+            The collection of global command that registred on Discord.
         """
         registered_commands = await self.http.get_global_commands(self.user.id)
+
+        registered_command_sets = []
+        unknown_registed_commands = []
+        for command_set in registered_commands:
+            _get_factory = self._app_factories.get_command(
+                command_set['name'], ApplicationCommandType(command_set['type'])
+            )
+            if _get_factory is not None:
+                registered_command_sets.append(command_set)
+            else:
+                # Find from need to be registered commands.
+                _unregistred_cmd = utils.get(
+                    self._pending_registration,
+                    name=command_set['name'],
+                    type=ApplicationCommandType(command_set['type']),
+                )
+                if _unregistred_cmd is not None:
+                    _unregistred_cmd.id = command_set['id']
+                    try:
+                        self._app_factories.add_command(_unregistred_cmd)
+                    except ApplicationRegistrationError:
+                        pass
+                else:
+                    unknown_registed_commands.append(command_set)
+
+        return [*registered_command_sets, *unknown_registed_commands]
+
+    async def fetch_guild_applications(self, guild_id: int) -> CoroShort[List[ApplicationCmdT]]:
+        """|coro|
+
+        Get all registered guild commands on Discord.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        :exc:`.HTTPException`
+            Retrieving the guild application commands failed.
+
+        Returns
+        -------
+        List[Union[:class:`.ApplicationCommand`, :class:'.RawApplicationCommand']]
+            The collection of guild command that registred on Discord.
+        """
+
+        registered_commands = await self.http.get_guild_commands(self.user.id, guild_id)
+
+        registered_command_sets = []
+        unknown_registed_commands = []
+        for command_set in registered_commands:
+            _get_factory = self._app_factories.get_command(
+                command_set['name'], ApplicationCommandType(command_set['type'])
+            )
+            if _get_factory is not None:
+                registered_command_sets.append(command_set)
+            else:
+                # Find from need to be registered commands.
+                _unregistred_cmd = utils.get(
+                    self._pending_registration,
+                    name=command_set['name'],
+                    type=ApplicationCommandType(command_set['type']),
+                )
+                if _unregistred_cmd is not None:
+                    _unregistred_cmd.id = command_set['id']
+                    try:
+                        self._app_factories.add_command(_unregistred_cmd)
+                    except ApplicationRegistrationError:
+                        pass
+                else:
+                    unknown_registed_commands.append(command_set)
+
+        return [*registered_command_sets, *unknown_registed_commands]
