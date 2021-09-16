@@ -143,6 +143,34 @@ def hooked_wrapped_callback(command: AppCommandT, ctx: ApplicationContext, coro:
 
 
 class ApplicationCommand(_BaseApplication):
+    r"""A class that implements the protocol for bot application command.
+
+    These should not be created manually, instead please use the provided decorator
+    or function interface.
+
+    Attributes
+    -----------
+    id: Optional[:class:`int`]
+        The ID of the command, can be None if the command has not been
+        registered yet.
+    name: :class:`str`
+        The name of the command.
+    callback: :ref:`coroutine <coroutine>`
+        The coroutine that is executed when the command is called.
+    guild_ids: List[:class:`int`]
+        A list of guild IDs where the command can only be run at.
+    checks: List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]
+        A list of predicates that verifies if the command could be executed
+        with the given :class:`.ApplicationContext` as the sole parameter. If an exception
+        is necessary to be thrown to signal failure, then one inherited from
+        :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then
+        :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error`
+        event.
+    type: :class:`ApplicationCommandType`
+        The type of application command.
+    cog: Optional[:class:`Cog`]
+        The cog that this command belongs to. ``None`` if there isn't one.
+    """
     type: ClassVar[ApplicationCommandType]
     __original_kwargs__: Dict[str, Any]
     cog: ClassVar[Optional[CogT]] = None
@@ -581,6 +609,25 @@ class ApplicationCommand(_BaseApplication):
 
 
 class Option:
+    r"""A class that implement a single option for an :class:`.SlashCommand`.
+
+    These can be used as type-hints for your arguments or created by decorator.
+
+    Attributes
+    -----------
+    name: :class:`str`
+        The name of the argument.
+    description: :class:`str`
+        The description of the argument.
+    input_type: :class:`.SlashCommandOptionType`
+        The type of the argument.
+    required: :class:`bool`
+        Indicates if the argument is required.
+    default: Optional[:class:`Any`]
+        The default value of the argument.
+    choices: List[:class:`.OptionChoice`]
+        A list of valid options for the argument.
+    """
     def __init__(
         self, input_type: Type[Any], /, description: str = None, **kwargs,
     ):
@@ -608,6 +655,17 @@ class Option:
         return f'<discord.ext.app.Option name={self.name}>'
 
 class OptionChoice:
+    r"""A class that implement an option choice for :class`.Option`.
+
+    You can pass this directly to the `choices` arguments in :class:`.Option`.
+
+    Attributes
+    -----------
+    name: :class:`str`
+        The name of the argument that will be passed to the command.
+    value: :class:`str`
+        The value that will be showed to the user.
+    """
     def __init__(self, name: str, value: Optional[Union[str, int, float]] = None):
         self.name = name
         self.value = value or name
@@ -617,6 +675,50 @@ class OptionChoice:
 
 
 class SlashCommand(ApplicationCommand):
+    r"""A class that implements an application command that can be invoked through a
+    via Discord /slash command.
+
+    These should not be created manually, instead please use the provided decorator
+    or function interface.
+
+    Attributes
+    -----------
+    id: Optional[:class:`int`]
+        The ID of the command, can be None if the command has not been
+        registered yet.
+    name: :class:`str`
+        The name of the command.
+    description: :class:`str`
+        The description of the command.
+    guild_ids: List[:class:`int`]
+        A list of guild IDs where the command can only be run at.
+    options: List[:class:`.Option`]
+        A list of options that the user can set for the command.
+    callback: :ref:`coroutine <coroutine>`
+        The coroutine that is executed when the command is called.
+    checks: List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]
+        A list of predicates that verifies if the command could be executed
+        with the given :class:`.ApplicationContext` as the sole parameter. If an exception
+        is necessary to be thrown to signal failure, then one inherited from
+        :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then
+        :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error`
+        event.
+    parent: Optional[:class:`.SlashCommand`]
+        The parent command of this one if there is one. Usually used for the child
+        of a subcommand or subcommand group.
+    type: :class:`ApplicationCommandType`
+        The type of application command.
+    sub_type: :class:`SlashCommandOptionType`
+        The type of the slash command, can only be :attr:`SlashCommandOptionType.sub_command`
+        or :attr:`SlashCommandOptionType.sub_command_group`.
+    cog: Optional[:class:`Cog`]
+        The cog that this command belongs to. ``None`` if there isn't one.
+    params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
+        A ordered dictionary of parameters that the command callback takes.
+        This also includes the ``self`` parameter, which is the first parameter
+        if you have cogs attached. And ``ctx`` which can be the first/second argument.
+    """
+
     type = ApplicationCommandType.slash
     sub_type = SlashCommandOptionType.sub_command
     parent: SlashCommand = None
@@ -965,6 +1067,42 @@ class SlashCommand(ApplicationCommand):
 
 
 class ContextMenuApplication(ApplicationCommand):
+    r"""A class that implements an application command that can be invoked
+    by opening Discord context menu.
+
+    Currently implement message context and user context.
+
+    These should not be created manually, instead please use the provided decorator
+    or function interface.
+
+    Attributes
+    -----------
+    id: Optional[:class:`int`]
+        The ID of the command, can be None if the command has not been
+        registered yet.
+    name: :class:`str`
+        The name of the command.
+    guild_ids: List[:class:`int`]
+        A list of guild IDs where the command can only be run at.
+    callback: :ref:`coroutine <coroutine>`
+        The coroutine that is executed when the command is called.
+    checks: List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]
+        A list of predicates that verifies if the command could be executed
+        with the given :class:`.ApplicationContext` as the sole parameter. If an exception
+        is necessary to be thrown to signal failure, then one inherited from
+        :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then
+        :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error`
+        event.
+    type: :class:`ApplicationCommandType`
+        The type of application command.
+    cog: Optional[:class:`Cog`]
+        The cog that this command belongs to. ``None`` if there isn't one.
+    params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
+        A ordered dictionary of parameters that the command callback takes.
+        This also includes the ``self`` parameter, which is the first parameter
+        if you have cogs attached. And ``ctx`` which can be the first/second argument.
+    """
+
     def __new__(cls: Type[ContextMenuApplication], *args, **kwargs) -> ContextMenuApplication:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs.copy()
@@ -1065,6 +1203,44 @@ class ContextMenuApplication(ApplicationCommand):
 
 
 class UserCommand(ContextMenuApplication):
+    r"""A class that implements the context menu application.
+    This will be used to implement user command where someone can right click
+    someone username to execute an application command.
+
+    This class will pass Union[:class:`~discord.User`, :class:`~discord.Member`]
+    to the callback.
+
+    These should not be created manually, instead please use the provided decorator
+    or function interface.
+
+    Attributes
+    -----------
+    id: Optional[:class:`int`]
+        The ID of the command, can be None if the command has not been
+        registered yet.
+    name: :class:`str`
+        The name of the command.
+    guild_ids: List[:class:`int`]
+        A list of guild IDs where the command can only be run at.
+    callback: :ref:`coroutine <coroutine>`
+        The coroutine that is executed when the command is called.
+    checks: List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]
+        A list of predicates that verifies if the command could be executed
+        with the given :class:`.ApplicationContext` as the sole parameter. If an exception
+        is necessary to be thrown to signal failure, then one inherited from
+        :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then
+        :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error`
+        event.
+    type: :class:`ApplicationCommandType`
+        The type of application command.
+    cog: Optional[:class:`Cog`]
+        The cog that this command belongs to. ``None`` if there isn't one.
+    params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
+        A ordered dictionary of parameters that the command callback takes.
+        This also includes the ``self`` parameter, which is the first parameter
+        if you have cogs attached. And ``ctx`` which can be the first/second argument.
+    """
+
     type = ApplicationCommandType.user
 
     def __new__(cls: Type[UserCommand], *args, **kwargs) -> UserCommand:
@@ -1074,6 +1250,43 @@ class UserCommand(ContextMenuApplication):
 
 
 class MessageCommand(ContextMenuApplication):
+    r"""A class that implements the context menu application.
+    This will be used to implement message command where someone can
+    right click someone message to execute an application command.
+
+    This class will pass :class:`~discord.Message` to the callback.
+
+    These should not be created manually, instead please use the provided decorator
+    or function interface.
+
+    Attributes
+    -----------
+    id: Optional[:class:`int`]
+        The ID of the command, can be None if the command has not been
+        registered yet.
+    name: :class:`str`
+        The name of the command.
+    guild_ids: List[:class:`int`]
+        A list of guild IDs where the command can only be run at.
+    callback: :ref:`coroutine <coroutine>`
+        The coroutine that is executed when the command is called.
+    checks: List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]
+        A list of predicates that verifies if the command could be executed
+        with the given :class:`.ApplicationContext` as the sole parameter. If an exception
+        is necessary to be thrown to signal failure, then one inherited from
+        :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then
+        :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error`
+        event.
+    type: :class:`ApplicationCommandType`
+        The type of application command.
+    cog: Optional[:class:`Cog`]
+        The cog that this command belongs to. ``None`` if there isn't one.
+    params: OrderedDict[:class:`str`, :class:`~inspect.Parameter`]
+        A ordered dictionary of parameters that the command callback takes.
+        This also includes the ``self`` parameter, which is the first parameter
+        if you have cogs attached. And ``ctx`` which can be the first/second argument.
+    """
+
     type = ApplicationCommandType.message
 
     def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand:

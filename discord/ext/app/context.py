@@ -22,7 +22,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union, overload
 
 import discord.abc
 import discord.utils
@@ -83,7 +83,9 @@ class ApplicationContext(discord.abc.Messageable):
         The command or application command that are being executed.
         If it's not passed yet, it will be None.
     deferred: :class:`bool`
-        Is the command already deferred or no
+        Is the command already deferred or not.
+    responded: :class:`bool`
+        Has the command already been responded or not.
     command_failed: :class:`bool`
         A boolean that indicates if this command failed to be parsed, checked,
         or invoked.
@@ -114,7 +116,7 @@ class ApplicationContext(discord.abc.Messageable):
         # Subcommand stuff for /slash command
         self.invoked_subcommand: Optional[SlashT] = None
 
-        self.deferred: bool = False
+        self._deferred: bool = False
         self._state: ConnectionState = self.interaction._state
 
     @property
@@ -127,6 +129,23 @@ class ApplicationContext(discord.abc.Messageable):
     @property
     def invoked_with(self) -> Optional[str]:
         return self.interaction.data.get('name')
+
+    @property
+    def responded(self) -> bool:
+        """:class:`bool`: Indicates whether an interaction response has been done before.
+
+        An interaction can only be responded to once.
+        """
+        return self.response.is_done()
+
+    @property
+    def deferred(self) -> bool:
+        """:class:`bool`: Indicates if the interaction already been deferred.
+
+        If it's already deferred, when user use :meth`.respond` or :meth:`.send`
+        it will use :meth:`.edit` to edit the response instead.
+        """
+        return self._deferred
 
     @discord.utils.cached_property
     def guild(self) -> Optional[Guild]:
@@ -167,10 +186,25 @@ class ApplicationContext(discord.abc.Messageable):
 
     @property
     def followup(self):
+        """:class:`Webhook`: Returns the follow up webhook for follow up interactions."""
         return self.interaction.followup
 
     @property
     def respond(self):
+        """|coro|
+
+        Respond to the interaction.
+
+        This property is a shortcut for :meth:`~Interactionfollowup.send`,
+        :meth:`~InteractionRespond.send`, or :meth:`~Interaction.edit_original_message`.
+
+        It will automatically selected the appropriate method based on the
+        current state of the interaction.
+
+        If the interaction already deferred, it will use :meth:`.edit` to edit the response instead.
+        If the interaction is already responded, it will use :meth:`.followup.send` to respond
+        while if it haven't it will use :meth:`.response.send` to respond.
+        """
         if self.deferred:
             return self.edit
         return self.followup.send if self.response.is_done() else self.interaction.response.send_message
@@ -179,12 +213,45 @@ class ApplicationContext(discord.abc.Messageable):
     def edit(self):
         return self.interaction.edit_original_message
 
-    @property
-    def defer(self):
-        return self.interaction.response.defer
+    async def defer(self, *, ephemeral: bool = False):
+        """|coro|
+
+        Defers the interaction response.
+
+        This is typically used when the interaction is acknowledged
+        and a secondary action will be done later.
+
+        Parameters
+        -----------
+        ephemeral: :class:`bool`
+            Indicates whether the deferred message will eventually be ephemeral.
+            This only applies for interactions of type :attr:`InteractionType.application_command`.
+
+        Raises
+        -------
+        HTTPException
+            Deferring the interaction failed.
+        InteractionResponded
+            This interaction has already been responded to before.
+        """
+        await self.interaction.defer(ephemeral=ephemeral)
+        self._deferred = True
 
     @property
     def pong(self):
+        """|coro|
+
+        Pongs the ping interaction.
+
+        This should rarely be used.
+
+        Raises
+        -------
+        HTTPException
+            Ponging the interaction failed.
+        InteractionResponded
+            This interaction has already been responded to before.
+        """
         return self.interaction.response.pong
 
     send = respond
