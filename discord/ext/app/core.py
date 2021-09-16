@@ -849,8 +849,13 @@ class SlashCommand(ApplicationCommand):
         if command.name in self._children:
             raise ApplicationRegistrationError(command.name)
 
-        if self.has_parent() and self.sub_type != SlashCommandOptionType.sub_command_group:
-            raise ApplicationRegistrationMaxDepthError(command.name)
+        if self.has_parent():
+            if self.sub_type != SlashCommandOptionType.sub_command_group:
+                raise ApplicationRegistrationMaxDepthError(command.name)
+            for opts in self.parent.options:
+                # Check if the option contains anything beside sub_command or sub_command_group
+                if opts.input_type != (SlashCommandOptionType.sub_command or SlashCommandOptionType.sub_command_group):
+                    raise ApplicationRegistrationExistingParentOptions(command.name, opts)
 
         self._children[command.name] = command
 

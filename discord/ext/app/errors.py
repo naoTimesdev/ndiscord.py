@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any, Callable, List, Optional, Union
 from discord.errors import ClientException, DiscordException
 
 if TYPE_CHECKING:
-    from . import ApplicationContext
+    from . import ApplicationContext, Option
 
     from discord.abc import GuildChannel
     from discord.threads import Thread
@@ -38,6 +38,7 @@ __all__ = (
     'ApplicationCommandInvokeError',
     'ApplicationRegistrationError',
     'ApplicationRegistrationMaxDepthError',
+    'ApplicationRegistrationExistingParentOptions',
 
     'ApplicationCheckAnyFailure',
     'ApplicationPrivateMessageOnly',
@@ -116,6 +117,29 @@ class ApplicationRegistrationMaxDepthError(ClientException):
     def __init__(self, name: str) -> None:
         self.name: str = name
         super().__init__(f'The command {name} cannot be registered since the parent reach maximum depth')
+
+
+class ApplicationRegistrationExistingParentOptions(ClientException):
+    """An exception raise when the command can't be added
+    because the parent command contains and options that cannot be used
+    if the child is a subcommand or group.
+
+    This inherits from :exc:`discord.ClientException`
+
+    Attributes
+    -----------
+    name: :class:`str`
+        The command name that had the error.
+    option: :class:`Option`
+        The option that is not allowed.
+    """
+    def __init__(self, name: str, option: "Option") -> None:
+        self.name: str = name
+        self.option: str = option
+        super().__init__(
+            f'The command {name} cannot be registered since the parent command contains {option.name}'
+            f' which is a type {option.input_type.name} (need to be subcommand or group)'
+        )
 
 
 # Check failure inherits
