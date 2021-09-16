@@ -1,6 +1,6 @@
 .. _discord_ext_app:
 
-``discord.ext.app`` -- A native slash and more support for discord.py
+``discord.ext.app`` -- An application command extension
 ===========================================================================
 
 .. versionadded:: 2.0.0
