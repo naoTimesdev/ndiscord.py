@@ -259,13 +259,13 @@ class ApplicationCommandMixin(Generic[CogT]):
         else:
             ctx = await self.get_application_context(interaction)
             ctx.command = command
-            self.dispatch('application_before_invoke', ctx)
+            self.dispatch('application', ctx)
             try:
                 await ctx.command.invoke(ctx)
             except DiscordException as exc:
                 await ctx.command.dispatch_error(ctx, exc)
             else:
-                self.dispatch('application_after_invoke', ctx)
+                self.dispatch('application_completion', ctx)
 
     async def get_application_context(self, interaction: Interaction, cls = None) -> ApplicationContext:
         r"""|coro|
