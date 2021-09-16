@@ -739,6 +739,7 @@ class Client(ApplicationCommandMixin):
             )
             parsed_cmd.id = int(glb_payload['id'])
             self.register_application(parsed_cmd)
+        self.dispatch('application_registered')
 
     # properties
 
