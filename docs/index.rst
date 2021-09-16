@@ -62,7 +62,7 @@ These pages go into great detail about everything the API can do.
   api
   discord.ext.commands API Reference <ext/commands/api.rst>
   discord.ext.tasks API Reference <ext/tasks/index.rst>
-  discord.ext.api API Reference <ext/app/index.rst>
+  discord.ext.api API Reference <ext/app/api.rst>
 
 Meta
 ------
