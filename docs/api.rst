@@ -1507,8 +1507,9 @@ of :class:`enum.Enum`.
         Represents that the option is a mentionable type.
 
         Should be one of:
-        - :class:`Snowflake`
-        - :class:`GuildChannel`
+
+        - :class:`abc.Snowflake`
+        - :class:`abc.GuildChannel`
         - :class:`Role`
         - :class:`Member`
 
