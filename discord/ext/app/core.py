@@ -841,10 +841,14 @@ class SlashCommand(ApplicationCommand):
 
         Raises
         -------
-        :exc:`.CommandRegistrationError`
+        :exc:`.ApplicationRegistrationError`
             If the command or its alias is already registered by different command.
+        :exc:`.ApplicationRegistrationMaxDepthError`
+            If the command parent already reach the maximum depth of 2 nested child.
+        :exc:`.ApplicationRegistrationExistingParentOptions`
+            If the parent command contains options other than `sub_command` or `sub_command_group`.
         TypeError
-            If the command passed is not a subclass of :class:`.Command`.
+            If the command passed is not a subclass of :class:`.SlashCommand`.
         """
 
         if command.type != (ApplicationCommandType.slash or ApplicationCommandType.slash_group):
