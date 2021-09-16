@@ -937,9 +937,6 @@ class SlashCommand(ApplicationCommand):
         This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
         :meth:`~.ApplicationCommand.group` shortcut decorators are used instead.
 
-        .. versionchanged:: 1.4
-             Raise :exc:`.CommandRegistrationError` instead of generic :exc:`.ClientException`
-
         Parameters
         -----------
         command: :class:`Command`
@@ -952,10 +949,15 @@ class SlashCommand(ApplicationCommand):
         :exc:`.ApplicationRegistrationMaxDepthError`
             If the command parent already reach the maximum depth of 2 nested child.
         :exc:`.ApplicationRegistrationExistingParentOptions`
-            If the parent command contains options other than `sub_command` or `sub_command_group`.
+            If the parent command contains options other than :attr:`~.SlashCommandOptionType.sub_command`
+            or :attr:`~.SlashCommandOptionType.sub_command_group`.
         TypeError
             If the command passed is not a subclass of :class:`.SlashCommand`.
         """
+        _CROSS_CHECK = [
+            SlashCommandOptionType.sub_command,
+            SlashCommandOptionType.sub_command_group
+        ]
 
         if command.type != ApplicationCommandType.slash:
             raise TypeError('The command passed must be a subclass of SlashCommand')
@@ -963,11 +965,11 @@ class SlashCommand(ApplicationCommand):
         if command.name in self._children:
             raise ApplicationRegistrationError(command.name)
 
-        if self.has_parent() and self.sub_type != SlashCommandOptionType.sub_command_group:
+        if self.has_parent() and self.sub_type != _CROSS_CHECK[1]:
                 raise ApplicationRegistrationMaxDepthError(command.name)
         for opts in self.options:
             # Check if the option contains anything beside sub_command or sub_command_group
-            if opts.input_type != (SlashCommandOptionType.sub_command or SlashCommandOptionType.sub_command_group):
+            if opts.input_type not in _CROSS_CHECK:
                 raise ApplicationRegistrationExistingParentOptions(command.name, opts)
 
         self._children[command.name] = command
@@ -1584,8 +1586,6 @@ def check_any(*checks: Check) -> Callable[[T], T]:
 
         The ``predicate`` attribute for this function **is** a coroutine.
 
-    .. versionadded:: 2.0
-
     Parameters
     ------------
     \*checks: Callable[[:class:`ApplicationContext`], :class:`bool`]
@@ -1890,8 +1890,6 @@ def dm_only() -> Callable[[T], T]:
 
     This check raises a special exception, :exc:`.ApplicationPrivateMessageOnly`
     that is inherited from :exc:`.ApplicationCheckFailure`.
-
-    .. versionadded:: 2.0
     """
 
     def predicate(ctx: ApplicationContext) -> bool:
@@ -1958,8 +1956,6 @@ def before_invoke(coro: Hook) -> Callable[[T], T]:
     This allows you to refer to one before invoke hook for several commands that
     do not have to be within the same cog.
 
-    .. versionadded:: 2.0
-
     Example
     ---------
 
@@ -2005,8 +2001,6 @@ def after_invoke(coro: Hook) -> Callable[[T], T]:
 
     This allows you to refer to one after invoke hook for several commands that
     do not have to be within the same cog.
-
-    .. versionadded:: 2.0
     """
     def decorator(
         func: Union[ApplicationCommand, ApplicationCallback]
