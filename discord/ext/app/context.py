@@ -22,7 +22,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
 import discord.abc
 import discord.utils
@@ -73,25 +73,18 @@ class ApplicationContext(discord.abc.Messageable):
         The interaction object which is used to interact with the user.
     args: :class:`list`
         The list of transformed arguments that were passed into the command.
-        If this is accessed during the :func:`.on_application_command_error` event
+        If this is accessed during the :func:`.on_application_error` event
         then this list could be incomplete.
     kwargs: :class:`dict`
         A dictionary of transformed arguments that were passed into the command.
         Similar to :attr:`args`, if this is accessed in the
-        :func:`.on_application_command_error` event then this dict could be incomplete.
-    command: :class:`.ApplicationCommand`
+        :func:`.on_application_error` event then this dict could be incomplete.
+    command: Union[:class:`.SlashCommand`, :class:`.UserCommand`, :class:`.MessageCommand`]
         The command or application command that are being executed.
         If it's not passed yet, it will be None.
-    deferred: :class:`bool`
-        Is the command already deferred or not.
-    responded: :class:`bool`
-        Has the command already been responded or not.
     command_failed: :class:`bool`
         A boolean that indicates if this command failed to be parsed, checked,
         or invoked.
-    invoked_with: Optional[:class:`str`]
-        The original string that the user used to invoke the command.
-        Might be none if the command is context menu.
     invoked_subcommand: Optional[:class:`.SlashCommand`]
         The subcommand that was invoked, if any.
     """
@@ -128,6 +121,9 @@ class ApplicationContext(discord.abc.Messageable):
 
     @property
     def invoked_with(self) -> Optional[str]:
+        """invoked_with: Optional[:class:`str`]: The original string that the user used to invoke the command.
+        Might be none if the command is context menu.
+        """
         return self.interaction.data.get('name')
 
     @property
@@ -142,32 +138,36 @@ class ApplicationContext(discord.abc.Messageable):
     def deferred(self) -> bool:
         """:class:`bool`: Indicates if the interaction already been deferred.
 
-        If it's already deferred, when user use :meth`.respond` or :meth:`.send`
+        If it's already deferred, when user use :meth:`.respond` or :meth:`.send`
         it will use :meth:`.edit` to edit the response instead.
         """
         return self._deferred
 
     @discord.utils.cached_property
     def guild(self) -> Optional[Guild]:
-        """Optional[:class:`.Guild`]: Returns the guild associated with this context's command. None if not available."""
+        """Optional[:class:`.Guild`]: Returns the guild associated with this context's command.
+        None if not available.
+        """
         return self.interaction.guild
 
     @discord.utils.cached_property
     def channel(self) -> Optional["InteractionChannel"]:
-        """Optional[:class:`.abc.MessageableChannel`]: Returns the channel associated with this context's command. None if not available."""
+        """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns the channel associated with
+        this context's command. None if not available.
+        """
         return self.interaction.channel
 
     @discord.utils.cached_property
     def author(self) -> Optional[Union[User, Member]]:
-        """Optional[Union[:class:`~discord.User`, :class:`.Member`]]:
-        Returns the author associated with this context's command. Shorthand for :attr:`.Message.author`
+        """Optional[Union[:class:`~discord.User`, :class:`.Member`]]: Returns the author associated with this
+        context's command. Shorthand for :attr:`.Message.author`
         """
         return self.interaction.user
 
     @discord.utils.cached_property
     def me(self) -> Union[Member, ClientUser]:
-        """Union[:class:`.Member`, :class:`.ClientUser`]:
-        Similar to :attr:`.Guild.me` except it may return the :class:`.ClientUser` in private message contexts.
+        """Union[:class:`.Member`, :class:`.ClientUser`]: Similar to :attr:`.Guild.me` except it may return
+        the :class:`.ClientUser` in private message contexts.
         """
         # bot.user will never be None at this point.
         return self.guild.me if self.guild is not None else self.bot.user  # type: ignore
@@ -180,78 +180,49 @@ class ApplicationContext(discord.abc.Messageable):
 
     @discord.utils.cached_property
     def response(self) -> InteractionResponse:
-        """:class:`InteractionResponse`: Shortcut for `.Interaction.response`
+        """:class:`.InteractionResponse`: Shortcut for :attr:`.Interaction.response`
         """
         return self.interaction.response
 
     @property
     def followup(self):
-        """:class:`Webhook`: Returns the follow up webhook for follow up interactions."""
+        """:class:`.Webhook`: Returns the follow up webhook for follow up interactions."""
         return self.interaction.followup
 
-    @property
     def respond(self):
         """|coro|
 
         Respond to the interaction.
 
-        This property is a shortcut for :meth:`~Interactionfollowup.send`,
-        :meth:`~InteractionRespond.send`, or :meth:`~Interaction.edit_original_message`.
+        This property is a shortcut for :attr:`.Webhook.send`, :meth:`~.InteractionResponse.send_message`,
+        or :attr:`~.Interaction.edit_original_message`.
 
         It will automatically selected the appropriate method based on the
         current state of the interaction.
 
         If the interaction already deferred, it will use :meth:`.edit` to edit the response instead.
-        If the interaction is already responded, it will use :meth:`.followup.send` to respond
-        while if it haven't it will use :meth:`.response.send` to respond.
+        If the interaction is already responded, it will use :meth:`~.Webhook.send` to respond
+        while if it haven't it will use :attr:`.InteractionResponse.send_message` to respond.
         """
         if self.deferred:
             return self.edit
         return self.followup.send if self.response.is_done() else self.interaction.response.send_message
 
-    @property
+    @discord.utils.copy_doc(Interaction.edit_original_message)
     def edit(self):
         return self.interaction.edit_original_message
 
+    @discord.utils.copy_doc(InteractionResponse.defer)
     async def defer(self, *, ephemeral: bool = False):
-        """|coro|
-
-        Defers the interaction response.
-
-        This is typically used when the interaction is acknowledged
-        and a secondary action will be done later.
-
-        Parameters
-        -----------
-        ephemeral: :class:`bool`
-            Indicates whether the deferred message will eventually be ephemeral.
-            This only applies for interactions of type :attr:`InteractionType.application_command`.
-
-        Raises
-        -------
-        HTTPException
-            Deferring the interaction failed.
-        InteractionResponded
-            This interaction has already been responded to before.
-        """
-        await self.interaction.defer(ephemeral=ephemeral)
+        await self.interaction.response.defer(ephemeral=ephemeral)
         self._deferred = True
 
-    @property
+    @discord.utils.copy_doc(Interaction.delete_original_message)
+    def delete(self):
+        return self.interaction.delete_original_message
+
+    @discord.utils.copy_doc(InteractionResponse.pong)
     def pong(self):
-        """|coro|
-
-        Pongs the ping interaction.
-
-        This should rarely be used.
-
-        Raises
-        -------
-        HTTPException
-            Ponging the interaction failed.
-        InteractionResponded
-            This interaction has already been responded to before.
-        """
         return self.interaction.response.pong
 
     send = respond

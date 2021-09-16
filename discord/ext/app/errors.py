@@ -60,7 +60,7 @@ class ApplicationCommandError(DiscordException):
 
     This exception and exceptions inherited from it are handled
     in a special way as they are caught and passed into a special event
-    from :class:`.Bot`\, :func:`.on_command_error`.
+    from :class:`.Bot`\, :func:`.on_application_error`.
     """
     pass
 
@@ -273,6 +273,7 @@ class ApplicationBotMissingAnyRole(ApplicationCheckFailure):
 
         message = f"Bot is missing at least one of the required roles: {fmt}"
         super().__init__(message)
+
 class ApplicationMissingPermissions(ApplicationCheckFailure):
     """Exception raised when the command invoker lacks permissions to run a
     command.
