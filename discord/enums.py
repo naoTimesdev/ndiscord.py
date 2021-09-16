@@ -546,7 +546,6 @@ class ApplicationCommandType(Enum):
     slash = 1
     user = 2
     message = 3
-    slash_group = 4
 
 
 class SlashCommandOptionType(Enum):

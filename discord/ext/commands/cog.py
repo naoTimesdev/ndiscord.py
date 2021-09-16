@@ -296,7 +296,7 @@ class Cog(metaclass=CogMeta):
         """
         for app in self.__cog_applications__:
             yield app
-            if app.type == ApplicationCommandType.slash_group:
+            if app.type == ApplicationCommandType.slash:
                 yield app.walk_commands()
 
     def get_listeners(self) -> List[Tuple[str, Callable[..., Any]]]:

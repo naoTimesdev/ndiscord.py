@@ -953,7 +953,7 @@ class SlashCommand(ApplicationCommand):
             If the command passed is not a subclass of :class:`.SlashCommand`.
         """
 
-        if command.type != (ApplicationCommandType.slash or ApplicationCommandType.slash_group):
+        if command.type != ApplicationCommandType.slash:
             raise TypeError('The command passed must be a subclass of SlashCommand')
 
         if command.name in self._children:
