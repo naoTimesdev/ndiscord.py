@@ -32,6 +32,7 @@ Key Features
 - Modern Pythonic API using ``async`` and ``await``.
 - Proper rate limit handling.
 - Optimised in both speed and memory.
+- Slash command, user context command, and message context command support.
 
 Installing
 ----------
