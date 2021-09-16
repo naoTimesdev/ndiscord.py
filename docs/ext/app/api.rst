@@ -293,7 +293,7 @@ Context
     .. automethod:: discord.ext.commands.Context.typing
         :async-with:
 
-.. _ext_app_api_exceptions:
+.. _ext_app_api_errors:
 
 Exceptions
 -----------

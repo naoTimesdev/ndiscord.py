@@ -1511,7 +1511,7 @@ def command(
     ...
 
 def command(**kwargs):
-    """This is an alias for :meth:`.application_command`.
+    """This is an alias for :func:`.application_command`.
 
     .. versionadded:: 2.0
 

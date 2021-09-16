@@ -1,5 +1,7 @@
 .. currentmodule:: discord
 
+.. TODO: Restructure this docs.
+
 .. _ext_app_usage:
 
 Usage
@@ -117,6 +119,8 @@ is the type. You can also use the :class:`~enums.SlashCommandOptionType` for the
 
 Everything else are optional.
 
+.. _ext_app_usage_error_handler:
+
 Error Handling
 ----------------
 
@@ -126,6 +130,8 @@ that an error has happened and has been silently ignored.
 In order to handle our errors, we must use something called an error handler. There is a global error handler, called
 :func:`.on_application_error` which works like any other event in the :ref:`discord-api-events`. This global error handler is
 called for every error reached.
+
+App extension also includes their own :ref:`ext_app_api_event` that you can check out.
 
 Most of the time however, we want to handle an error local to the command itself. Luckily, commands come with local error
 handlers that allow us to do just that. First we decorate an error handler function with :meth:`.ApplicationCommand.error`:
@@ -152,8 +158,8 @@ Checks
 The application command can also use checks to make sure some stuff is working as intended.
 It follow closely how ext.commands works.
 
-You just need to use the :func:`~ext.commands.check` decorator to define a check.
-You can also invoke :meth:`.before_invoke` and :meth:`.after_invoke` decorator.
+You just need to use the :func:`~ext.app.check` decorator to define a check.
+You can also invoke :func:`~ext.app.before_invoke` and :func:`~ext.app.after_invoke` decorator.
 
 A check is a basic predicate that can take in a :class:`.ApplicationContext` as its sole parameter. Within it, you have the following
 options:
@@ -163,7 +169,7 @@ options:
 - Raise a :exc:`~ext.app.ApplicationCommandError` derived exception to signal the person cannot run the command.
 
     - This allows you to have custom error messages for you to handle in the
-      :ref:`error handlers <extapp_error_handler>`.
+      :ref:`error handlers <ext_app_usage_error_handler>`.
 
 To register a check for a command, we would have two ways of doing so. The first is using the :meth:`~ext.commands.check`
 decorator. For example:
@@ -223,8 +229,8 @@ When multiple checks are specified, **all** of them must be ``True``:
 
 If any of those checks fail in the example above, then the command will not be run.
 
-When an error happens, the error is propagated to the :ref:`error handlers <ext_app_error_handler>`. If you do not
-raise a custom :exc:`~ext.commands.CommandError` derived exception, then it will get wrapped up into a
+When an error happens, the error is propagated to the :ref:`error handlers <ext_app_usage_error_handler>`. If you do not
+raise a custom :exc:`~ext.app.ApplicationCommandError` derived exception, then it will get wrapped up into a
 :exc:`~ext.app.ApplicationCheckFailure` exception as so:
 
 .. code-block:: python3
