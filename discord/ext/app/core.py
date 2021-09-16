@@ -1408,6 +1408,18 @@ def slash_command(**kwargs):
 
     .. versionadded:: 2.0
 
+    Parameters
+    ------------
+    name: Optional[:class:`str`]
+        The name of the command. Defaults to the name of the method.
+    description: Optional[:class:`str`]
+        A short description of the command.
+    guild_ids: Optional[List[:class:`int`]]
+        Guild IDs where the command can be run on. Setting this will make the command
+        only usable from this guild.
+    checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+        A list of predicates that must be true for the command to be invoked.
+
     Returns
     --------
     Callable[..., :class:`SlashCommand`]
@@ -1429,6 +1441,16 @@ def user_command(**kwargs):
 
     .. versionadded:: 2.0
 
+    Parameters
+    ------------
+    name: Optional[:class:`str`]
+        The name of the command. Defaults to the name of the method.
+    guild_ids: Optional[List[:class:`int`]]
+        Guild IDs where the command can be run on. Setting this will make the command
+        only usable from this guild.
+    checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+        A list of predicates that must be true for the command to be invoked.
+
     Returns
     --------
     Callable[..., :class:`UserCommand`]
@@ -1449,6 +1471,16 @@ def message_command(**kwargs):
     """Decorator for message commands that invokes :func:`application_command`.
 
     .. versionadded:: 2.0
+
+    Parameters
+    ------------
+    name: Optional[:class:`str`]
+        The name of the command. Defaults to the name of the method.
+    guild_ids: Optional[List[:class:`int`]]
+        Guild IDs where the command can be run on. Setting this will make the command
+        only usable from this guild.
+    checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+        A list of predicates that must be true for the command to be invoked.
 
     Returns
     --------
@@ -1479,7 +1511,7 @@ def command(
     ...
 
 def command(**kwargs):
-    """This is an alias for :meth:`application_command`.
+    """This is an alias for :meth:`.application_command`.
 
     .. versionadded:: 2.0
 

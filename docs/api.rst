@@ -40,13 +40,26 @@ Client
 
 .. autoclass:: Client
     :members:
-    :exclude-members: fetch_guilds, event
+    :inherited-members:
+    :exclude-members: fetch_guilds, event, application_command, slash_command, user_command, message_command
 
     .. automethod:: Client.event()
         :decorator:
 
     .. automethod:: Client.fetch_guilds
         :async-for:
+
+    .. automethod:: Client.application_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.slash_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.user_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.message_command(*args, **kwargs)
+        :decorator:
 
 AutoShardedClient
 ~~~~~~~~~~~~~~~~~~

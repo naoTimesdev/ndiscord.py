@@ -48,6 +48,9 @@ autodoc_typehints = 'none'
 # maybe consider this?
 # napoleon_attr_annotations = False
 
+# enable overloaded function gen
+autodoc_docstring_signature = True
+
 extlinks = {
     'issue': ('https://github.com/naoTimesdev/ndiscord.py/issues/%s', 'GH-'),
 }

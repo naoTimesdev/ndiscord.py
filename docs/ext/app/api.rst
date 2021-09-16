@@ -152,16 +152,16 @@ ApplicationCommandMixin
     :members:
     :exclude-members: application_command, slash_command, user_command, message_command
 
-    .. automethod:: ApplicationCommandMixin.application_command()
+    .. automethod:: ApplicationCommandMixin.application_command(*args, **kwargs)
         :decorator:
 
-    .. automethod:: ApplicationCommandMixin.slash_command()
+    .. automethod:: ApplicationCommandMixin.slash_command(*args, **kwargs)
         :decorator:
 
-    .. automethod:: ApplicationCommandMixin.user_command()
+    .. automethod:: ApplicationCommandMixin.user_command(*args, **kwargs)
         :decorator:
 
-    .. automethod:: ApplicationCommandMixin.message_command()
+    .. automethod:: ApplicationCommandMixin.message_command(*args, **kwargs)
         :decorator:
 
 ApplicationCommandFactory

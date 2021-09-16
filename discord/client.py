@@ -675,7 +675,11 @@ class Client(ApplicationCommandMixin):
     async def on_connect(self):
         """|coro|
 
-        Initialize application registration
+        Initialize application registration.
+        If you decide to override this, you need to make sure that you call
+        :meth:`.register_application_commands` at some point to make sure application commands works.
+
+        Or you can do ``super().on_connect()`` too.
         """
         await self.register_application_commands()
 
@@ -1725,16 +1729,21 @@ class Client(ApplicationCommandMixin):
     # application related
 
     def get_applications(self):
-        """List[:class:`.ApplicationCommand`]: A list of application that are registered.
+        """A list of application that are registered.
 
         .. versionadded:: 2.0
+
+        Returns
+        ---------
+        List[:class:`.ApplicationCommand`]
+            List of registered global applications.
         """
         all_apps = self.all_applications.all_commands()
         pending = self._pending_registration
         return [app for app in all_apps if app not in pending]
 
     def get_application(self, id: int) -> Optional[ApplicationCommand]:
-        """:class:`.ApplicationCommand`: Get an application by its ID.
+        """Get an application by its ID.
 
         .. versionadded:: 2.0
 
@@ -1742,25 +1751,35 @@ class Client(ApplicationCommandMixin):
         ------------
         id: :class:`int`
             The application ID.
+
+        Returns
+        --------
+        Optional[:class:`.ApplicationCommand`]
+            The application command or ``None`` if not found.
         """
         all_apps = self.get_applications()
         return utils.find(lambda app: isinstance(app.id, int) and app.id == id, all_apps)
 
-    def get_guild_applications(self, id: int) -> List[ApplicationCommand]:
-        """List[:class:`.ApplicationCommand`]: A list of application that are registered for a guild.
+    def get_guild_applications(self, guild_id: int) -> List[ApplicationCommand]:
+        """A list of application that are registered for a guild.
 
         .. versionadded:: 2.0
 
         Parameters
         ------------
-        id: :class:`int`
+        guild_id: :class:`int`
             The guild ID.
+
+        Returns
+        ---------
+        List[:class:`.ApplicationCommand`]
+            List of registered applications for a guild.
         """
         non_pending = self.get_applications()
-        return [app for app in non_pending if id in app.guild_ids]
+        return [app for app in non_pending if guild_id in app.guild_ids]
 
-    def get_guild_application(self, id: int, app_id: int):
-        """List[:class:`.ApplicationCommand`]: A list of application that are registered for a guild.
+    def get_guild_application(self, id: int, app_id: int) -> Optional[ApplicationCommand]:
+        """A list of application that are registered for a guild.
 
         .. versionadded:: 2.0
 
@@ -1770,6 +1789,11 @@ class Client(ApplicationCommandMixin):
             The guild ID.
         app_id: class:`int`
             The application ID.
+
+        Returns
+        ---------
+        Optional[:class:`.ApplicationCommand`]
+            The application command or ``None`` if not found.
         """
         non_pending_guild = self.get_guild_applications(id)
         return utils.find(lambda app: isinstance(app.id, int) and app.id == app_id, non_pending_guild)
@@ -1788,7 +1812,7 @@ class Client(ApplicationCommandMixin):
 
         Returns
         -------
-        List[Union[:class:`.ApplicationCommand`, :class:'.RawApplicationCommand']]
+        List[Union[:class:`.ApplicationCommand`, :class:`.RawApplicationCommand`]]
             The collection of global command that registred on Discord.
         """
         registered_commands = await self.http.get_global_commands(self.user.id)
@@ -1826,6 +1850,11 @@ class Client(ApplicationCommandMixin):
 
         .. versionadded:: 2.0
 
+        Parameters
+        ------------
+        guild_id: :class:`int`
+            The guild ID to be fetched.
+
         Raises
         -------
         :exc:`.HTTPException`
@@ -1833,7 +1862,7 @@ class Client(ApplicationCommandMixin):
 
         Returns
         -------
-        List[Union[:class:`.ApplicationCommand`, :class:'.RawApplicationCommand']]
+        List[Union[:class:`.ApplicationCommand`, :class:`.RawApplicationCommand`]]
             The collection of guild command that registred on Discord.
         """
 

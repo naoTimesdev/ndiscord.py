@@ -393,7 +393,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         ...
 
     def application_command(self, **kwargs) -> DecoApp[AppCommandT]:
-        """A shortcut decorator that invokes :func:`.command` and adds it to
+        """A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to
         the internal command list via :meth:`~.ApplicationCommandMixin.add_application`.
 
         .. versionadded:: 2.0
@@ -424,16 +424,29 @@ class ApplicationCommandMixin(Generic[CogT]):
         ...
 
     def slash_command(self, **kwargs):
-        """A shortcut decorator that invokes :func:`.ApplicationCommandMixin.command` and adds it to
-        the internal command list via :meth:`~.ApplicationCommandMixin.add_application_command`.
+        """A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to
+        the internal command list via :meth:`~.ApplicationCommandMixin.add_application`.
         This shortcut is made specifically for :class:`.SlashCommand`.
+
         .. versionadded:: 2.0
+
+        Parameters
+        ------------
+        name: Optional[:class:`str`]
+            The name of the command. Defaults to the name of the method.
+        description: Optional[:class:`str`]
+            A short description of the command.
+        guild_ids: Optional[List[:class:`int`]]
+            Guild IDs where the command can be run on. Setting this will make the command
+            only usable from this guild.
+        checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+            A list of predicates that must be true for the command to be invoked.
 
         Returns
         --------
-        Callable[..., :class:`SlashCommand`]
-            A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot,
-            then returns it.
+        Callable[..., :class:`.SlashCommand`]
+            A decorator that converts the provided method into a :class:`.SlashCommand`,
+            adds it to the bot, then returns it.
         """
         return self.application_command(cls=SlashCommand, **kwargs)
 
@@ -448,14 +461,27 @@ class ApplicationCommandMixin(Generic[CogT]):
         ...
 
     def user_command(self, **kwargs):
-        """Decorator for user commands that invokes :func:`application_command`.
+        """A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to
+        the internal command list via :meth:`~.ApplicationCommandMixin.add_application`.
+        This shortcut is made specifically for :class:`.UserCommand`.
 
         .. versionadded:: 2.0
 
+        Parameters
+        ------------
+        name: Optional[:class:`str`]
+            The name of the command. Defaults to the name of the method.
+        guild_ids: Optional[List[:class:`int`]]
+            Guild IDs where the command can be run on. Setting this will make the command
+            only usable from this guild.
+        checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+            A list of predicates that must be true for the command to be invoked.
+
         Returns
         --------
-        Callable[..., :class:`UserCommand`]
-            A decorator that converts the provided method into a :class:`.UserCommand`.
+        Callable[..., :class:`.UserCommand`]
+            A decorator that converts the provided method into a :class:`.UserCommand`,
+            adds it to the bot, then returns it.
         """
         return self.application_command(cls=UserCommand, **kwargs)
 
@@ -470,13 +496,26 @@ class ApplicationCommandMixin(Generic[CogT]):
         ...
 
     def message_command(self, **kwargs):
-        """Decorator for message commands that invokes :func:`application_command`.
+        """A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to
+        the internal command list via :meth:`~.ApplicationCommandMixin.add_application`.
+        This shortcut is made specifically for :class:`.MessageCommand`.
 
         .. versionadded:: 2.0
 
+        Parameters
+        ------------
+        name: Optional[:class:`str`]
+            The name of the command. Defaults to the name of the method.
+        guild_ids: Optional[List[:class:`int`]]
+            Guild IDs where the command can be run on. Setting this will make the command
+            only usable from this guild.
+        checks: Optional[List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]]
+            A list of predicates that must be true for the command to be invoked.
+
         Returns
         --------
-        Callable[..., :class:`MessageCommand`]
-            A decorator that converts the provided method into a :class:`.MessageCommand`.
+        Callable[..., :class:`.MessageCommand`]
+            A decorator that converts the provided method into a :class:`.MessageCommand`,
+            adds it to the bot, then returns it.
         """
         return self.application_command(cls=MessageCommand, **kwargs)
