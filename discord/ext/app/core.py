@@ -733,10 +733,14 @@ class SlashCommand(ApplicationCommand):
         )
 
     async def _parse_arguments(self, ctx: ApplicationContext):
+        _INVALID_TYPE = [SlashCommandOptionType.sub_command.value, SlashCommandOptionType.sub_command_group.value]
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
 
         for arg in ctx.interaction.data.get('options', []):
+            # Skip if type is sub_command or sub_command_group
+            if arg['type'] in _INVALID_TYPE:
+                continue
             op = discord.utils.find(lambda o: o.name == arg['name'], self.options)
             arg = arg['value']
 
@@ -796,17 +800,17 @@ class SlashCommand(ApplicationCommand):
         if not first_children:
             return
         sub_command: Optional[SlashCommand] = None
-        if first_children.type == 2:
-            sub_command = self._children.get(first_children.name)
+        if first_children.get('type') == 2:
+            sub_command = self._children.get(first_children.get('name'))
             first_child_opts = first_children.get('options', [])
             try:
                 ff_opt = first_child_opts[0]
-                if ff_opt and ff_opt.type == 1 and sub_command is not None:
-                    sub_command = sub_command.children.get(ff_opt.name)
+                if ff_opt and ff_opt.get('type') == 1 and sub_command is not None:
+                    sub_command = sub_command.children.get(ff_opt.get('name'))
             except IndexError:
                 pass
         else:
-            sub_command = self._children.get(first_children.name)
+            sub_command = self._children.get(first_children.get('name'))
 
         if sub_command is not None:
             ctx.invoked_subcommand = sub_command
