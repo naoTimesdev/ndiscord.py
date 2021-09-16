@@ -113,10 +113,15 @@ class ApplicationRegistrationMaxDepthError(ClientException):
     ----------
     name: :class:`str`
         The command name that had the error.
+    parent_name: :class:`str`
+        The parent command name.
     """
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, parent_name: str) -> None:
         self.name: str = name
-        super().__init__(f'The command \'{name}\' cannot be registered since the parent reach maximum depth')
+        super().__init__(
+            f'The command \'{name}\' cannot be registered to \'{parent_name}\' because '
+            'it reach the maximum depth.'
+        )
 
 
 class ApplicationRegistrationExistingParentOptions(ClientException):

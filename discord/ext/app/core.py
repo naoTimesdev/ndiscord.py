@@ -965,8 +965,16 @@ class SlashCommand(ApplicationCommand):
         if command.name in self._children:
             raise ApplicationRegistrationError(command.name)
 
-        if self.has_parent() and self.sub_type != _CROSS_CHECK[1]:
-                raise ApplicationRegistrationMaxDepthError(command.name)
+        parent: Optional[SlashCommand] = getattr(self, 'parent', None)
+        if parent is not None:
+            parent_parent: Optional[SlashCommand] = getattr(parent, 'parent', None)
+            if parent_parent is not None:
+                raise ApplicationRegistrationMaxDepthError(command.name, self.name)
+            if self.sub_type != _CROSS_CHECK[1]:
+                raise ApplicationRegistrationMaxDepthError(command.name, self.name)
+            if command.sub_type == _CROSS_CHECK[1] and self.sub_type == _CROSS_CHECK[1]:
+                raise ApplicationRegistrationMaxDepthError(command.name, self.name)
+
         for opts in self.options:
             # Check if the option contains anything beside sub_command or sub_command_group
             if opts.input_type not in _CROSS_CHECK:
