@@ -100,7 +100,7 @@ class ApplicationRegistrationError(ClientException):
     """
     def __init__(self, name: str) -> None:
         self.name: str = name
-        super().__init__(f'The command {name} is already an existing command.')
+        super().__init__(f'The command \'{name}\' is already an existing command.')
 
 
 class ApplicationRegistrationMaxDepthError(ClientException):
@@ -116,7 +116,7 @@ class ApplicationRegistrationMaxDepthError(ClientException):
     """
     def __init__(self, name: str) -> None:
         self.name: str = name
-        super().__init__(f'The command {name} cannot be registered since the parent reach maximum depth')
+        super().__init__(f'The command \'{name}\' cannot be registered since the parent reach maximum depth')
 
 
 class ApplicationRegistrationExistingParentOptions(ClientException):
@@ -137,8 +137,8 @@ class ApplicationRegistrationExistingParentOptions(ClientException):
         self.name: str = name
         self.option: str = option
         super().__init__(
-            f'The command {name} cannot be registered since the parent command contains {option.name}'
-            f' which is a type {option.input_type.name} (need to be subcommand or group)'
+            f'The command \'{name}\' cannot be registered since the parent command contains option \'{option.name}\''
+            f' which is a type \'{option.input_type.name}\' (need to be subcommand or group)'
         )
 
 
