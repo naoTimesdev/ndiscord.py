@@ -28,6 +28,7 @@ from discord.errors import ClientException, DiscordException
 
 if TYPE_CHECKING:
     from . import ApplicationContext, Option
+    from .cooldowns import ApplicationBucketType, ApplicationCooldown
 
     from discord.abc import GuildChannel
     from discord.threads import Thread
@@ -61,6 +62,9 @@ __all__ = (
     'ApplicationBotMissingPermissions',
     'ApplicationNSFWChannelRequired',
     'ApplicationNotOwner',
+
+    'ApplicationCommandOnCooldown',
+    'ApplicationMaxConcurrencyReached',
 )
 
 class ApplicationCommandError(DiscordException):
@@ -241,27 +245,6 @@ class ApplicationUserNotFound(ApplicationBadArgument):
     def __init__(self, argument: str) -> None:
         self.argument: str = argument
         super().__init__(f'User "{argument}" not found.')
-
-class ApplicationCommandOnCooldown(ApplicationCommandError):
-    """Exception raised when the command being invoked is on cooldown.
-
-    This inherits from :exc:`ApplicationCommandError`
-
-    Attributes
-    -----------
-    cooldown: :class:`.ApplicationCooldown`
-        A class with attributes ``rate`` and ``per`` similar to the
-        :func:`.cooldown` decorator.
-    type: :class:`BucketType`
-        The type associated with the cooldown.
-    retry_after: :class:`float`
-        The amount of seconds to wait before you can retry again.
-    """
-    def __init__(self, cooldown: Cooldown, retry_after: float, type: BucketType) -> None:
-        self.cooldown: Cooldown = cooldown
-        self.retry_after: float = retry_after
-        self.type: AppBucketType = type
-        super().__init__(f'You are on cooldown. Try again in {retry_after:.2f}s')
 
 
 # Check failure inherits
@@ -464,3 +447,49 @@ class ApplicationNotOwner(ApplicationCheckFailure):
     This inherits from :exc:`ApplicationCheckFailure`
     """
     pass
+
+# cooldowns
+
+class ApplicationCommandOnCooldown(ApplicationCommandError):
+    """Exception raised when the command being invoked is on cooldown.
+
+    This inherits from :exc:`ApplicationCommandError`
+
+    Attributes
+    -----------
+    cooldown: :class:`.ApplicationCooldown`
+        A class with attributes ``rate`` and ``per`` similar to the
+        :func:`.cooldown` decorator.
+    type: :class:`ApplicationBucketType`
+        The type associated with the cooldown.
+    retry_after: :class:`float`
+        The amount of seconds to wait before you can retry again.
+    """
+    def __init__(self, cooldown: "ApplicationCooldown", retry_after: float, type: "ApplicationBucketType") -> None:
+        self.cooldown: "ApplicationCooldown" = cooldown
+        self.retry_after: float = retry_after
+        self.type: "ApplicationBucketType" = type
+        super().__init__(f'You are on cooldown. Try again in {retry_after:.2f}s')
+
+
+class ApplicationMaxConcurrencyReached(ApplicationCommandError):
+    """Exception raised when the command being invoked has reached its maximum concurrency.
+
+    This inherits from :exc:`ApplicationCommandError`.
+
+    Attributes
+    ------------
+    number: :class:`int`
+        The maximum number of concurrent invokers allowed.
+    per: :class:`.ApplicationBucketType`
+        The bucket type passed to the :func:`.max_concurrency` decorator.
+    """
+
+    def __init__(self, number: int, per: "ApplicationBucketType"):
+        self.number: int = number
+        self.per: "ApplicationBucketType" = per
+        name = per.name
+        suffix = 'per %s' % name if per.name != 'default' else 'globally'
+        plural = '%s times %s' if number > 1 else '%s time %s'
+        fmt = plural % (number, suffix)
+        super().__init__(f'Too many people are using this command. It can only be used {fmt} concurrently.')

@@ -65,6 +65,14 @@ from ._types import (
     Hook,
     _BaseApplication
 )
+
+from .cooldowns import (
+    ApplicationBucketType,
+    ApplicationCooldown,
+    ApplicationCooldownMapping,
+    ApplicationDynamicCooldownMapping,
+    ApplicationMaxConcurrency,
+)
 from .context import ApplicationContext
 from .errors import *
 
@@ -82,7 +90,7 @@ __all__ = (
     'user_command',
     'message_command',
     'command',
-    'check',  # Checks
+    'check',  # Checks related
     'check_any',
     'has_role',
     'bot_has_role',
@@ -98,6 +106,9 @@ __all__ = (
     'is_nsfw',
     'before_invoke',
     'after_invoke',
+    'cooldown',  # Cooldowns related
+    'dynamic_cooldown',
+    'max_concurrency',
 )
 
 T = TypeVar('T')
@@ -202,6 +213,9 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
     checks: ClassVar[List[Check]]
     _callback: ClassVar[ApplicationCallback]
 
+    _buckets: ClassVar[ApplicationCooldownMapping]
+    _max_concurrency: ClassVar[ApplicationMaxConcurrency]
+
     # Error/checks handler, etc.
     on_error: Error
 
@@ -269,19 +283,44 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         """
         raise NotImplementedError
 
+    def _prepare_cooldowns(self, ctx: ApplicationContext[CogT]):
+        if self._buckets.valid:
+            current = discord.utils.snowflake_time(ctx.interaction.id)
+            bucket = self._buckets.get_bucket(ctx.interaction, current)
+            if bucket is not None:
+                retry_after = bucket.update_rate_limit(current)
+                if retry_after:
+                    raise ApplicationCommandOnCooldown(
+                        bucket, retry_after, self._buckets.type
+                    )
+
     async def prepare(self, ctx: ApplicationContext[CogT]):
         # Bind
         ctx.command = self
+        is_subcommand = ctx.invoked_subcommand is not None
 
         # Handle checks
         if not await self.can_run(ctx):
             raise ApplicationCheckFailure(f'The check functions for command {self.qualified_name} failed.')
 
-        # TODO: Check cooldowns
-        # -- Probably reimplement how discord.ext.commands.cooldown works
+        # Only run at parent command and not subcommand?
+        # I think it might be better to just check if it's running the subcommand or not tbh.
+        # Need to rewrite the cooldown system for application.
+        # For now, this works just fine.
+        if self._max_concurrency is not None and not is_subcommand:
+            await self._max_concurrency.acquire(ctx.interaction)
 
-        await self._parse_arguments(ctx)
-        await self.call_before_hooks(ctx)
+        try:
+            await self._parse_arguments(ctx)
+            # Only run on parent command and not subcommand.
+            if not is_subcommand:
+                self._prepare_cooldowns(ctx)
+
+            await self.call_before_hooks(ctx)
+        except:
+            if self._max_concurrency is not None:
+                await self._max_concurrency.release(ctx.interaction)
+            raise
 
     def error(self, coro: ErrorT) -> ErrorT:
         """A decorator that registers a coroutine as a local error handler.
@@ -498,6 +537,10 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             The user data being passed does not exist in cache.
         ApplicationMentionableNotFound
             The mentionable data being passed does not exist in cache.
+        ApplicationCommandOnCooldown
+            The command you're trying to execute is on cooldown.
+        ApplicationMaxConcurrencyReached
+            The maximum concurrency limit for this command has been reached.
         """
 
         await self.prepare(ctx)
@@ -755,6 +798,20 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         self.__original_kwargs__ = kwargs.copy()
         return self
 
+    @overload
+    def __init__(
+        self,
+        callback: ApplicationCallback,
+        *,
+        name: Optional[str] = ...,
+        description: Optional[str] = ...,
+        guild_ids: Optional[List[int]] = ...,
+        checks: Optional[List[Check]] = ...,
+        cooldown: Optional[ApplicationCooldownMapping] = ...,
+        max_concurrency: Optional[ApplicationMaxConcurrency] = ...,
+    ) -> None:
+        ...
+
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
         if not asyncio.iscoroutinefunction(callback):
             raise TypeError('Callback must be a coroutine.')
@@ -782,6 +839,26 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
             checks = kwargs.get('checks', [])
 
         self.checks: List[Check] = checks
+
+        try:
+            cooldown = callback.__commands_cooldown__
+        except AttributeError:
+            cooldown = kwargs.get('cooldown')
+
+        if cooldown is None:
+            buckets = ApplicationCooldownMapping(cooldown, ApplicationBucketType.default)
+        elif isinstance(cooldown, ApplicationCooldownMapping):
+            buckets = cooldown
+        else:
+            raise TypeError("Cooldown must be a an instance of CooldownMapping or None.")
+        self._buckets: ApplicationCooldownMapping = buckets
+
+        try:
+            max_concurrency = callback.__commands_max_concurrency__
+        except AttributeError:
+            max_concurrency = kwargs.get('max_concurrency')
+
+        self._max_concurrency: Optional[ApplicationMaxConcurrency] = max_concurrency
 
         self.cog: Optional[CogT] = None
         self._before_invoke: Optional[Hook] = None
@@ -1179,6 +1256,19 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         self.__original_kwargs__ = kwargs.copy()
         return self
 
+    @overload
+    def __init__(
+        self,
+        callback: ApplicationCallback,
+        *,
+        name: Optional[str] = ...,
+        guild_ids: Optional[List[int]] = ...,
+        checks: Optional[List[Check]] = ...,
+        cooldown: Optional[ApplicationCooldownMapping] = ...,
+        max_concurrency: Optional[ApplicationMaxConcurrency] = ...,
+    ) -> None:
+        ...
+
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
         self._callback = callback
         self.guild_ids: Optional[List[int]] = kwargs.get("guild_ids", None)
@@ -1194,6 +1284,26 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
             checks = kwargs.get('checks', [])
 
         self.checks: List[Check] = checks
+
+        try:
+            cooldown = callback.__commands_cooldown__
+        except AttributeError:
+            cooldown = kwargs.get('cooldown')
+
+        if cooldown is None:
+            buckets = ApplicationCooldownMapping(cooldown, ApplicationBucketType.default)
+        elif isinstance(cooldown, ApplicationCooldownMapping):
+            buckets = cooldown
+        else:
+            raise TypeError("Cooldown must be a an instance of CooldownMapping or None.")
+        self._buckets: ApplicationCooldownMapping = buckets
+
+        try:
+            max_concurrency = callback.__commands_max_concurrency__
+        except AttributeError:
+            max_concurrency = kwargs.get('max_concurrency')
+
+        self._max_concurrency: Optional[ApplicationMaxConcurrency] = max_concurrency
 
         self.cog: Optional[CogT] = None
         self._before_invoke: Optional[Hook] = None
@@ -2134,3 +2244,123 @@ def after_invoke(coro: Hook) -> Callable[[T], T]:
             func.__after_invoke__ = coro
         return func
     return decorator  # type: ignore
+
+def cooldown(
+    rate: int,
+    per: float,
+    type: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]] = ApplicationBucketType.default
+) -> Callable[[T], T]:
+    """A decorator that adds a cooldown to a :class:`.Command`
+
+    A cooldown allows a command to only be used a specific amount
+    of times in a specific time frame. These cooldowns can be based
+    either on a per-guild, per-channel, per-user or global basis.
+    Denoted by the third argument of ``type`` which must be of enum
+    type :class:`.ApplicationBucketType`.
+
+    If a cooldown is triggered, then :exc:`.ApplicationCommandOnCooldown` is triggered in
+    :func:`.on_application_error` and the local error handler.
+
+    A command can only have a single cooldown.
+
+    Parameters
+    ------------
+    rate: :class:`int`
+        The number of times a command can be used before triggering a cooldown.
+    per: :class:`float`
+        The amount of seconds to wait for a cooldown when it's been triggered.
+    type: Union[:class:`.ApplicationBucketType`, Callable[[:class:`.Interaction`], Any]]
+        The type of cooldown to have. If callable, should return a key for the mapping.
+    """
+
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
+        value = ApplicationCooldownMapping(ApplicationCooldown(rate, per), type)
+        if isinstance(func, ApplicationCommand):
+            func._buckets = value
+        else:
+            func.__commands_cooldown__ = value
+        return func
+    return decorator
+
+def dynamic_cooldown(
+    cooldown: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]],
+    type: ApplicationBucketType = ApplicationBucketType.default
+) -> Callable[[T], T]:
+    """A decorator that adds a dynamic cooldown to a :class:`.Command`
+
+    This differs from :func:`.cooldown` in that it takes a function that
+    accepts a single parameter of type :class:`.discord.Interaction` and must
+    return a :class:`.ApplicationCooldown` or ``None``. If ``None`` is returned then
+    that cooldown is effectively bypassed.
+
+    A cooldown allows a command to only be used a specific amount
+    of times in a specific time frame. These cooldowns can be based
+    either on a per-guild, per-channel, per-user or global basis.
+    Denoted by the third argument of ``type`` which must be of enum
+    type :class:`.ApplicationBucketType`.
+
+    If a cooldown is triggered, then :exc:`.ApplicationCommandOnCooldown` is triggered in
+    :func:`.on_application_error` and the local error handler.
+
+    A command can only have a single cooldown.
+
+    Parameters
+    ------------
+    cooldown: Callable[[:class:`.discord.Interaction`], Optional[:class:`.ApplicationCooldown`]]
+        A function that takes a interaction and returns a cooldown that will
+        apply to this invocation or ``None`` if the cooldown should be bypassed.
+    type: :class:`.BucketType`
+        The type of cooldown to have.
+    """
+    if not callable(cooldown):
+        raise TypeError("A callable must be provided")
+
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
+        value = ApplicationDynamicCooldownMapping(cooldown, type)
+        if isinstance(func, ApplicationCommand):
+            func._buckets = value
+        else:
+            func.__commands_cooldown__ = value
+        return func
+    return decorator
+
+def max_concurrency(
+    number: int,
+    per: ApplicationBucketType = ApplicationBucketType.default,
+    *,
+    wait: bool = False) -> Callable[[T], T]:
+    """A decorator that adds a maximum concurrency to a :class:`.ApplicationCommand` or its subclasses.
+
+    This enables you to only allow a certain number of command invocations at the same time,
+    for example if a command takes too long or if only one user can use it at a time. This
+    differs from a cooldown in that there is no set waiting period or token bucket -- only
+    a set number of people can run the command.
+
+    Parameters
+    -------------
+    number: :class:`int`
+        The maximum number of invocations of this command that can be running at the same time.
+    per: :class:`.ApplicationBucketType`
+        The bucket that this concurrency is based on, e.g. ``ApplicationBucketType.guild`` would allow
+        it to be used up to ``number`` times per guild.
+    wait: :class:`bool`
+        Whether the command should wait for the queue to be over. If this is set to ``False``
+        then instead of waiting until the command can run again, the command raises
+        :exc:`.ApplicationMaxConcurrencyReached` to its error handler. If this is set to ``True``
+        then the command waits until it can be executed.
+    """
+
+    def decorator(
+        func: Union[ApplicationCommand, ApplicationCallback]
+    ) -> Union[ApplicationCommand, ApplicationCallback]:
+        value = ApplicationMaxConcurrency(number, per=per, wait=wait)
+        if isinstance(func, ApplicationCommand):
+            func._max_concurrency = value
+        else:
+            func.__commands_max_concurrency__ = value
+        return func
+    return decorator

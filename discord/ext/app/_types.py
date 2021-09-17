@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from .core import Option, SlashCommand, UserCommand, MessageCommand, ApplicationCommand
     from .context import ApplicationContext
     from .errors import ApplicationCommandError
+    from .cooldowns import ApplicationCooldown, ApplicationCooldownMapping, ApplicationMaxConcurrency
     from discord.ext.commands import Cog, Bot, AutoShardedBot
 
     from discord import Client, AutoShardedClient
@@ -73,6 +74,8 @@ class ApplicationCallback(Protocol[T]):
     __before_invoke__: Hook
     __after_invoke__: Hook
     __slash_options__: Dict[str, "Option"]
+    __commands_cooldown__: Union["ApplicationCooldownMapping", "ApplicationCooldown"]
+    __commands_max_concurrency__: "ApplicationMaxConcurrency"
 
     def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Coro[T]:
         ...
