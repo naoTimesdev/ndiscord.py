@@ -222,6 +222,30 @@ are custom to the app extension module.
     :type ctx: :class:`Interaction`
 
 
+Enums
+-------
+
+.. class:: ApplicationBucketType
+    :module: discord.ext.app
+
+    Specifies a type of bucket for, e.g. a cooldown.
+
+    .. attribute:: default
+
+        The default bucket operates on a global basis.
+    .. attribute:: user
+
+        The user bucket operates on a per-user basis.
+    .. attribute:: guild
+
+        The guild bucket operates on a per-guild basis.
+    .. attribute:: channel
+
+        The channel bucket operates on a per-channel basis.
+    .. attribute:: member
+
+        The member bucket operates on a per-member basis.
+
 .. _ext_app_api_checks:
 
 Checks
@@ -243,6 +267,15 @@ Checks
     :decorator:
 
 .. autofunction:: discord.ext.app.bot_has_any_role(*items)
+    :decorator:
+
+.. autofunction:: discord.ext.app.cooldown(rate, per, type=ApplicationBucketType.default)
+    :decorator:
+
+.. autofunction:: discord.ext.app.dynamic_cooldown(cooldown, type=ApplicationBucketType.default)
+    :decorator:
+
+.. autofunction:: discord.ext.app.max_concurrency(number, per=ApplicationBucketType.default, *, wait=False)
     :decorator:
 
 .. autofunction:: discord.ext.app.has_permissions(**perms)
@@ -276,6 +309,14 @@ Checks
     :decorator:
 
 .. _ext_app_api_context:
+
+Cooldown
+---------
+
+.. attributetable:: discord.ext.app.ApplicationCooldown
+
+.. autoclass:: discord.ext.app.ApplicationCooldown
+    :members:
 
 Context
 ---------
@@ -311,6 +352,33 @@ Exceptions
     :members:
 
 .. autoexception:: discord.ext.app.ApplicationRegistrationExistingParentOptions
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationUserInputError
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationMissingRequiredArgument
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationTooManyArguments
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationBadArgument
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationUserNotFound
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationMemberNotFound
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationMentionableNotFound
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationCommandOnCooldown
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationMaxConcurrencyReached
     :members:
 
 .. autoexception:: discord.ext.app.ApplicationCheckFailure
@@ -357,6 +425,13 @@ Exception Hierarchy
     - :exc:`~.DiscordException`
         - :exc:`~.app.ApplicationCommandError`
             - :exc:`~.app.ApplicationCommandInvokeError`
+            - :exc:`~.app.ApplicationUserInputError`
+                - :exc:`~.app.ApplicationMissingRequiredArgument`
+                - :exc:`~.app.ApplicationTooManyArguments`
+                - :exc:`~.app.ApplicationBadArgument`
+                    - :exc:`~.app.ApplicationMemberNotFound`
+                    - :exc:`~.app.ApplicationMentionableNotFound`
+                    - :exc:`~.app.ApplicationUserNotFound`
             - :exc:`~.app.ApplicationCheckFailure`
                 - :exc:`~.app.ApplicationCheckAnyFailure`
                 - :exc:`~.app.ApplicationPrivateMessageOnly`
@@ -369,6 +444,8 @@ Exception Hierarchy
                 - :exc:`~.app.ApplicationBotMissingPermissions`
                 - :exc:`~.app.ApplicationNSFWChannelRequired`
                 - :exc:`~.app.ApplicationNotOwner`
+            - :exc:`~.app.ApplicationCommandOnCooldown`
+            - :exc:`~.app.ApplicationMaxConcurrencyReached`
     - :exc:`~.ClientException`
         - :exc:`~.app.ApplicationRegistrationError`
         - :exc:`~.app.ApplicationRegistrationMaxDepthError`

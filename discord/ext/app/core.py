@@ -2291,7 +2291,7 @@ def dynamic_cooldown(
     """A decorator that adds a dynamic cooldown to a :class:`.ApplicationCommand`
 
     This differs from :func:`.cooldown` in that it takes a function that
-    accepts a single parameter of type :class:`.discord.Interaction` and must
+    accepts a single parameter of type :class:`~discord.Interaction` and must
     return a :class:`.ApplicationCooldown` or ``None``. If ``None`` is returned then
     that cooldown is effectively bypassed.
 
@@ -2308,7 +2308,7 @@ def dynamic_cooldown(
 
     Parameters
     ------------
-    cooldown: Callable[[:class:`.discord.Interaction`], Optional[:class:`.ApplicationCooldown`]]
+    cooldown: Callable[[:class:`~discord.Interaction`], Optional[:class:`.ApplicationCooldown`]]
         A function that takes a interaction and returns a cooldown that will
         apply to this invocation or ``None`` if the cooldown should be bypassed.
     type: :class:`.BucketType`
@@ -2345,7 +2345,7 @@ def max_concurrency(
     number: :class:`int`
         The maximum number of invocations of this command that can be running at the same time.
     per: :class:`.ApplicationBucketType`
-        The bucket that this concurrency is based on, e.g. ``ApplicationBucketType.guild`` would allow
+        The bucket that this concurrency is based on, e.g. :attr:`.ApplicationBucketType.guild` would allow
         it to be used up to ``number`` times per guild.
     wait: :class:`bool`
         Whether the command should wait for the queue to be over. If this is set to ``False``
