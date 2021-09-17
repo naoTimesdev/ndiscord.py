@@ -23,6 +23,7 @@ DEALINGS IN THE SOFTWARE.
 """
 
 from .context import *
+from .cooldowns import *
 from .core import *
 from .errors import *
 from .mixins import *

@@ -2250,7 +2250,7 @@ def cooldown(
     per: float,
     type: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]] = ApplicationBucketType.default
 ) -> Callable[[T], T]:
-    """A decorator that adds a cooldown to a :class:`.Command`
+    """A decorator that adds a cooldown to a :class:`.ApplicationCommand`
 
     A cooldown allows a command to only be used a specific amount
     of times in a specific time frame. These cooldowns can be based
@@ -2288,7 +2288,7 @@ def dynamic_cooldown(
     cooldown: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]],
     type: ApplicationBucketType = ApplicationBucketType.default
 ) -> Callable[[T], T]:
-    """A decorator that adds a dynamic cooldown to a :class:`.Command`
+    """A decorator that adds a dynamic cooldown to a :class:`.ApplicationCommand`
 
     This differs from :func:`.cooldown` in that it takes a function that
     accepts a single parameter of type :class:`.discord.Interaction` and must
