@@ -1,4 +1,11 @@
-discord.py
+🔧 お知らせ
+===========
+このフォークは、特にnaoTimesのために作られたものです。
+
+このフォークでは、アプリケーション(Slash/User/Message)のような機能の開発と、PRにある機能の追加に焦点を当てます。
+このリポジトリを自分のボットに使うことはまだお勧めできません。
+
+ndiscord.py
 ==========
 
 .. image:: https://discord.com/api/guilds/336642139381301249/embed.png
@@ -11,7 +18,7 @@ discord.py
    :target: https://pypi.python.org/pypi/discord.py
    :alt: PyPIのサポートしているPythonのバージョン
 
-discord.py は機能豊富かつモダンで使いやすい、非同期処理にも対応したDiscord用のAPIラッパーです。
+ndiscord.py は機能豊富かつモダンで使いやすい、非同期処理にも対応したDiscord用のAPIラッパーです。
 
 主な特徴
 -------------
@@ -19,21 +26,18 @@ discord.py は機能豊富かつモダンで使いやすい、非同期処理に
 - ``async`` と ``await`` を使ったモダンなPythonらしいAPI。
 - 適切なレート制限処理
 - メモリと速度の両方を最適化。
+- スラッシュコマンド、ユーザーコマンド、メッセージコマンドに対応。
 
 インストール
 -------------
 
 **Python 3.8 以降のバージョンが必須です**
 
-完全な音声サポートなしでライブラリをインストールする場合は次のコマンドを実行してください:
+このライブラリは、開発バージョンを使用してのみインストールできます:
 
 .. code:: sh
 
-    # Linux/OS X
-    python3 -m pip install -U discord.py
-
-    # Windows
-    py -3 -m pip install -U discord.py
+    $ pip install -U git+https://github.com/naoTimesdev/ndiscord.py
 
 音声サポートが必要なら、次のコマンドを実行しましょう:
 
@@ -46,11 +50,11 @@ discord.py は機能豊富かつモダンで使いやすい、非同期処理に
     py -3 -m pip install -U discord.py[voice]
 
 
-開発版をインストールしたいのならば、次の手順に従ってください:
+自分でリポジトリをクローンする:
 
 .. code:: sh
 
-    $ git clone https://github.com/Rapptz/discord.py
+    $ git clone https://github.com/naoTimesdev/ndiscord.py
     $ cd discord.py
     $ python3 -m pip install -U .[voice]
 
@@ -109,5 +113,4 @@ examplesディレクトリに更に多くのサンプルがあります。
 ------
 
 - `ドキュメント <https://discordpy.readthedocs.io/ja/latest/index.html>`_
-- `公式Discordサーバー <https://discord.gg/nXzj3dg>`_
 - `Discord API <https://discord.gg/discord-api>`_

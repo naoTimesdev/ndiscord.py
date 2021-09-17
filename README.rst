@@ -5,7 +5,7 @@ This fork is specifically made for naoTimes!
 This fork will focus on developing some feature like Application (Slash/User/Message) and adding some feature that are in PR.
 This fork shouldn't be used for other bots since I'm not going to take responsibility if something went wrong.
 
-discord.py
+ndiscord.py
 ==========
 
 .. image:: https://discord.com/api/guilds/336642139381301249/embed.png
@@ -32,38 +32,24 @@ Key Features
 - Modern Pythonic API using ``async`` and ``await``.
 - Proper rate limit handling.
 - Optimised in both speed and memory.
+- Slash command, user context command, and message context command support.
 
 Installing
 ----------
 
 **Python 3.8 or higher is required**
 
-To install the library without full voice support, you can just run the following command:
+You can only install this library by using development version:
 
 .. code:: sh
 
-    # Linux/macOS
-    python3 -m pip install -U discord.py
+    $ pip install -U git+https://github.com/naoTimesdev/ndiscord.py
 
-    # Windows
-    py -3 -m pip install -U discord.py
-
-Otherwise to get voice support you should run the following command:
+or clone it manually:
 
 .. code:: sh
 
-    # Linux/macOS
-    python3 -m pip install -U "discord.py[voice]"
-
-    # Windows
-    py -3 -m pip install -U discord.py[voice]
-
-
-To install the development version, do the following:
-
-.. code:: sh
-
-    $ git clone https://github.com/Rapptz/discord.py
+    $ git clone https://github.com/naoTimesdev/ndiscord.py
     $ cd discord.py
     $ python3 -m pip install -U .[voice]
 
@@ -122,5 +108,4 @@ Links
 ------
 
 - `Documentation <https://discordpy.readthedocs.io/en/latest/index.html>`_
-- `Official Discord Server <https://discord.gg/r3sSKJJ>`_
 - `Discord API <https://discord.gg/discord-api>`_

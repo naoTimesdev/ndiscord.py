@@ -56,7 +56,7 @@ msgstr "メモリと速度の両方を最適化"
 msgid "Documentation Contents"
 msgstr "ドキュメントの目次"
 
-#: ../../index.rst:36
+#: ../../index.rst:42
 msgid "Extensions"
 msgstr "拡張機能"
 
@@ -64,7 +64,7 @@ msgstr "拡張機能"
 msgid "Additional Information"
 msgstr "追加情報"
 
-#: ../../index.rst:57
+#: ../../index.rst:70
 msgid ""
 "If you still can't find what you're looking for, try in one of the "
 "following pages:"

@@ -54,6 +54,8 @@ __all__ = (
     'StagePrivacyLevel',
     'InteractionType',
     'InteractionResponseType',
+    'ApplicationCommandType',
+    'SlashCommandOptionType',
     'NSFWLevel',
 )
 
@@ -539,6 +541,55 @@ class InteractionResponseType(Enum):
     deferred_message_update = 6  # for components
     message_update = 7  # for components
 
+
+class ApplicationCommandType(Enum):
+    slash = 1
+    user = 2
+    message = 3
+
+
+class SlashCommandOptionType(Enum):
+    sub_command = 1
+    sub_command_group = 2
+    string = 3
+    integer = 4
+    boolean = 5
+    user = 6
+    channel = 7
+    role = 8
+    mentionable = 9
+    number = 10
+    custom = 11
+
+    @classmethod
+    def from_datatype(cls, datatype):
+        if isinstance(datatype, cls):
+            return datatype
+        if isinstance(datatype, int):
+            enum_list = list(map(int, cls))
+            if datatype in enum_list:
+                return cls(datatype)
+            return cls.integer
+        if issubclass(datatype, str):
+            return cls.string
+        if issubclass(datatype, bool):
+            return cls.boolean
+        if issubclass(datatype, int):
+            return cls.integer
+        if issubclass(datatype, float):
+            return cls.number
+
+        if datatype.__name__ == "Member":
+            return cls.user
+        if datatype.__name__ == "GuildChannel":
+            return cls.channel
+        if datatype.__name__ == "Role":
+            return cls.role
+        if datatype.__name__ == "Mentionable":
+            return cls.mentionable
+
+        # TODO: Improve the error message
+        raise TypeError('Invalid class-type used as input type for Option')
 
 class VideoQualityMode(Enum):
     auto = 1

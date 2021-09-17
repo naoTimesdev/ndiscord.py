@@ -1,6 +1,7 @@
 .. currentmodule:: discord
 
 .. |commands| replace:: [:ref:`ext.commands <discord_ext_commands>`]
+.. |app| replace:: [:ref:`ext.app <discord_ext_app>`]
 .. |tasks| replace:: [:ref:`ext.tasks <discord_ext_tasks>`]
 
 .. _whats_new:

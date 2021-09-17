@@ -61,7 +61,7 @@ import sys
 import types
 import warnings
 
-from .errors import InvalidArgument
+from .errors import HTTPException, InvalidArgument
 
 try:
     import orjson
@@ -77,6 +77,7 @@ __all__ = (
     'time_snowflake',
     'find',
     'get',
+    'get_or_fetch',
     'sleep_until',
     'utcnow',
     'remove_markdown',
@@ -447,6 +448,41 @@ def get(iterable: Iterable[T], **attrs: Any) -> Optional[T]:
         if _all(pred(elem) == value for pred, value in converted):
             return elem
     return None
+
+
+async def get_or_fetch(obj, attr: str, id: int, *, default: Any = None):
+    """|coro|
+
+    A helper that will try to get a data from attribute.
+    If the attribute is empty, try to fetch it, if that also empty
+    return default.
+
+    This function is adapted from `pycord` :func:`get_or_fetch()`
+
+    Parameters
+    -----------
+    obj
+        The object to get the attribute from.
+    attr
+        The attribute to get.
+    id
+        The id to use for the fetch.
+    default
+        The default value to return if the attribute is empty.
+    """
+    if obj is None:
+        return default
+
+    getter = getattr(obj, f'get_{attr}', None)
+    if getter is None:
+        return default
+    execute_get = getter(id)
+    if execute_get is None:
+        fgetter = getattr(obj, f'fetch_{attr}', None)
+        if fgetter is None:
+            return default
+        return await fgetter(id)
+    return execute_get
 
 
 def _unique(iterable: Iterable[T]) -> List[T]:

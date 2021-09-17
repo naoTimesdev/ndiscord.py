@@ -40,13 +40,26 @@ Client
 
 .. autoclass:: Client
     :members:
-    :exclude-members: fetch_guilds, event
+    :inherited-members:
+    :exclude-members: fetch_guilds, event, application_command, slash_command, user_command, message_command
 
     .. automethod:: Client.event()
         :decorator:
 
     .. automethod:: Client.fetch_guilds
         :async-for:
+
+    .. automethod:: Client.application_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.slash_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.user_command(*args, **kwargs)
+        :decorator:
+
+    .. automethod:: Client.message_command(*args, **kwargs)
+        :decorator:
 
 AutoShardedClient
 ~~~~~~~~~~~~~~~~~~
@@ -627,6 +640,12 @@ to handle it, which defaults to print a traceback and ignoring the exception.
 
     :param interaction: The interaction data.
     :type interaction: :class:`Interaction`
+
+.. function:: on_application_registered()
+
+    Called after the bot has registered every application commands with Discord.
+
+    .. versionadded:: 2.0
 
 .. function:: on_private_channel_update(before, after)
 
@@ -1441,6 +1460,83 @@ of :class:`enum.Enum`.
         Responds to the interaction by editing the message.
 
         See also :meth:`InteractionResponse.edit_message`
+
+.. class:: ApplicationCommandType
+
+    Represents the application type that Discord have.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: slash
+
+        Represents a slash command.
+    .. attribute:: user
+
+        Represents a user context command.
+    .. attribute:: message
+
+        Represents a message context command.
+
+.. class:: SlashCommandOptionType
+
+    Represents the slash command option type.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: sub_command
+
+        Represents a slash subcommand.
+    
+    .. attribute:: sub_command_group
+
+        Represents a slash subcommand group.
+
+    .. attribute:: string
+
+        Represents that the option is a string.
+
+    .. attribute:: integer
+
+        Represents that the option is a integer.
+
+    .. attribute:: boolean
+
+        Represents that the option is a boolean (true/false).
+
+    .. attribute:: user
+
+        Represents that the option is a :class:`User` or :class:`Member`.
+
+    .. attribute:: channel
+
+        Represents that the option is a :class:`GuildChannel`.
+
+    .. attribute:: role
+
+        Represents that the option is a :class:`Role`.
+
+    .. attribute:: mentionable
+
+        Represents that the option is a mentionable type.
+
+        Should be one of:
+
+        - :class:`abc.Snowflake`
+        - :class:`abc.GuildChannel`
+        - :class:`Role`
+        - :class:`Member`
+
+    .. attribute:: number
+
+        Represents that the option is a number.
+
+        It support both ``float`` and ``int``.
+
+    .. attribute:: custom
+
+        Represents a custom type.
+
+        You should provide a way to parse this custom format later.
 
 .. class:: ComponentType
 

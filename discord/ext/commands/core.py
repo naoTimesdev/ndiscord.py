@@ -270,7 +270,7 @@ class Command(_BaseCommand, Generic[CogT, P, T]):
         first and then the converters are called second. Defaults to ``False``.
     extras: :class:`dict`
         A dict of user provided extras to attach to the Command. 
-        
+
         .. note::
             This object may be copied by the library.
 
