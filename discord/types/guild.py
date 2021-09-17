@@ -81,6 +81,7 @@ GuildFeature = Literal[
     "COMMERCE",
     "COMMUNITY",
     "DISCOVERABLE",
+    "HUB",
     "FEATURABLE",
     "INVITE_SPLASH",
     "MEMBER_VERIFICATION_GATE_ENABLED",
