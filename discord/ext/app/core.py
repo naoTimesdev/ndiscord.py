@@ -59,6 +59,7 @@ from ._types import (
     BotT,
     Check,
     CogT,
+    ContextT,
     Coro,
     Error,
     Hook,
@@ -100,7 +101,6 @@ __all__ = (
 )
 
 T = TypeVar('T')
-ContextT = TypeVar('ContextT', bound="ApplicationContext")
 ErrorT = TypeVar('ErrorT', bound="Error")
 HookT = TypeVar('HookT', bound="Hook")
 SubAppCommandT = TypeVar('SubAppCommandT')
