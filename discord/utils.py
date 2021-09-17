@@ -478,13 +478,10 @@ async def get_or_fetch(obj, attr: str, id: int, *, default: Any = None):
         return default
     execute_get = getter(id)
     if execute_get is None:
-        try:
-            fgetter = getattr(obj, f'fetch_{attr}', None)
-            if fgetter is None:
-                return default
-            return await fgetter(id)
-        except HTTPException:
+        fgetter = getattr(obj, f'fetch_{attr}', None)
+        if fgetter is None:
             return default
+        return await fgetter(id)
     return execute_get
 
 
