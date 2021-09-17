@@ -8,6 +8,8 @@ An extension module to facilitate creation of bot commands.
 :license: MIT, see LICENSE for more details.
 """
 
+# flake8: noqa
+
 from .bot import *
 from .context import *
 from .core import *

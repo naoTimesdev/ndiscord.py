@@ -29,10 +29,7 @@ from ._types import CogT, BotT, AppCommandT
 import discord.abc
 import discord.utils
 from discord.guild import Guild
-from discord.interactions import (
-    Interaction,
-    InteractionResponse
-)
+from discord.interactions import Interaction, InteractionResponse
 from discord.member import Member
 from discord.state import ConnectionState
 from discord.user import ClientUser, User
@@ -41,9 +38,7 @@ from discord.voice_client import VoiceProtocol
 if TYPE_CHECKING:
     from discord.interactions import InteractionChannel
 
-__all__ = (
-    'ApplicationContext',
-)
+__all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
 
@@ -89,7 +84,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         args: List[Any] = MISSING,
         kwargs: Dict[str, Any] = MISSING,
         command: AppCommandT = MISSING,
-        command_failed: bool = False
+        command_failed: bool = False,
     ) -> None:
         self.bot: BotT = bot
         self.interaction: Interaction = interaction
@@ -106,7 +101,9 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
 
     @property
     def cog(self) -> Optional[CogT]:
-        """Optional[:class:`.Cog`]: Returns the cog associated with this context's command. None if it does not exist."""
+        """Optional[:class:`.Cog`]: Returns the cog associated with this context's command.
+        None if it does not exist.
+        """
         if self.command is None:
             return None
         return self.command.cog
@@ -116,7 +113,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         """invoked_with: Optional[:class:`str`]: The original string that the user used to invoke the command.
         Might be none if the command is context menu.
         """
-        return self.interaction.data.get('name')
+        return self.interaction.data.get("name")
 
     @property
     def responded(self) -> bool:
@@ -144,8 +141,8 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
 
     @discord.utils.cached_property
     def channel(self) -> Optional["InteractionChannel"]:
-        """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns the channel associated with
-        this context's command. None if not available.
+        """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns
+        the channel associated with this context's command. None if not available.
         """
         return self.interaction.channel
 
@@ -172,8 +169,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
 
     @discord.utils.cached_property
     def response(self) -> InteractionResponse:
-        """:class:`.InteractionResponse`: Shortcut for :attr:`.Interaction.response`
-        """
+        """:class:`.InteractionResponse`: Shortcut for :attr:`.Interaction.response`"""
         return self.interaction.response
 
     @property

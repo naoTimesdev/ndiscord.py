@@ -28,21 +28,19 @@ from typing import Any, Callable, Coroutine, Dict, Generic, Optional, TYPE_CHECK
 
 from ..interactions import Interaction
 
-__all__ = (
-    'Item',
-)
+__all__ = ("Item",)
 
 if TYPE_CHECKING:
     from ..enums import ComponentType
     from .view import View
     from ..components import Component
 
-I = TypeVar('I', bound='Item')
-V = TypeVar('V', bound='View', covariant=True)
-ItemCallbackType = Callable[[Any, I, Interaction], Coroutine[Any, Any, Any]]
+ItemT = TypeVar("ItemT", bound="Item")
+ViewT = TypeVar("ViewT", bound="View", covariant=True)
+ItemCallbackType = Callable[[Any, ItemT, Interaction], Coroutine[Any, Any, Any]]
 
 
-class Item(Generic[V]):
+class Item(Generic[ViewT]):
     """Represents the base UI item that all UI components inherit from.
 
     The current UI items supported are:
@@ -53,10 +51,10 @@ class Item(Generic[V]):
     .. versionadded:: 2.0
     """
 
-    __item_repr_attributes__: Tuple[str, ...] = ('row',)
+    __item_repr_attributes__: Tuple[str, ...] = ("row",)
 
     def __init__(self):
-        self._view: Optional[V] = None
+        self._view: Optional[ViewT] = None
         self._row: Optional[int] = None
         self._rendered_row: Optional[int] = None
         # This works mostly well but there is a gotcha with
@@ -77,7 +75,7 @@ class Item(Generic[V]):
         return None
 
     @classmethod
-    def from_component(cls: Type[I], component: Component) -> I:
+    def from_component(cls: Type[ItemT], component: Component) -> ItemT:
         return cls()
 
     @property
@@ -91,8 +89,8 @@ class Item(Generic[V]):
         return self._provided_custom_id
 
     def __repr__(self) -> str:
-        attrs = ' '.join(f'{key}={getattr(self, key)!r}' for key in self.__item_repr_attributes__)
-        return f'<{self.__class__.__name__} {attrs}>'
+        attrs = " ".join(f"{key}={getattr(self, key)!r}" for key in self.__item_repr_attributes__)
+        return f"<{self.__class__.__name__} {attrs}>"
 
     @property
     def row(self) -> Optional[int]:
@@ -105,14 +103,14 @@ class Item(Generic[V]):
         elif 5 > value >= 0:
             self._row = value
         else:
-            raise ValueError('row cannot be negative or greater than or equal to 5')
+            raise ValueError("row cannot be negative or greater than or equal to 5")
 
     @property
     def width(self) -> int:
         return 1
 
     @property
-    def view(self) -> Optional[V]:
+    def view(self) -> Optional[ViewT]:
         """Optional[:class:`View`]: The underlying view for this item."""
         return self._view
 

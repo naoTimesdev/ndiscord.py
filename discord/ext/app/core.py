@@ -41,7 +41,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    overload
+    overload,
 )
 
 import discord
@@ -63,7 +63,7 @@ from ._types import (
     Coro,
     Error,
     Hook,
-    _BaseApplication
+    _BaseApplication,
 )
 
 from .cooldowns import (
@@ -77,47 +77,47 @@ from .context import ApplicationContext
 from .errors import *
 
 __all__ = (
-    'ApplicationCommand',
-    'Option',
-    'OptionChoice',
-    'SlashCommand',
-    'ContextMenuApplication',
-    'UserCommand',
-    'MessageCommand',
-    'option',
-    'application_command',
-    'slash_command',
-    'user_command',
-    'message_command',
-    'command',
-    'check',  # Checks related
-    'check_any',
-    'has_role',
-    'bot_has_role',
-    'has_any_role',
-    'bot_has_any_role',
-    'has_permissions',
-    'bot_has_permissions',
-    'has_guild_permissions',
-    'bot_has_guild_permissions',
-    'dm_only',
-    'guild_only',
-    'is_owner',
-    'is_nsfw',
-    'before_invoke',
-    'after_invoke',
-    'cooldown',  # Cooldowns related
-    'dynamic_cooldown',
-    'max_concurrency',
+    "ApplicationCommand",
+    "Option",
+    "OptionChoice",
+    "SlashCommand",
+    "ContextMenuApplication",
+    "UserCommand",
+    "MessageCommand",
+    "option",
+    "application_command",
+    "slash_command",
+    "user_command",
+    "message_command",
+    "command",
+    "check",  # Checks related
+    "check_any",
+    "has_role",
+    "bot_has_role",
+    "has_any_role",
+    "bot_has_any_role",
+    "has_permissions",
+    "bot_has_permissions",
+    "has_guild_permissions",
+    "bot_has_guild_permissions",
+    "dm_only",
+    "guild_only",
+    "is_owner",
+    "is_nsfw",
+    "before_invoke",
+    "after_invoke",
+    "cooldown",  # Cooldowns related
+    "dynamic_cooldown",
+    "max_concurrency",
 )
 
-T = TypeVar('T')
-ErrorT = TypeVar('ErrorT', bound="Error")
-HookT = TypeVar('HookT', bound="Hook")
-SubAppCommandT = TypeVar('SubAppCommandT')
+T = TypeVar("T")
+ErrorT = TypeVar("ErrorT", bound="Error")
+HookT = TypeVar("HookT", bound="Hook")
+SubAppCommandT = TypeVar("SubAppCommandT")
 DecoApp = Callable[..., T]
-FuncT = TypeVar('FuncT', bound=Callable[..., Any])
-P = ParamSpec('P')
+FuncT = TypeVar("FuncT", bound=Callable[..., Any])
+P = ParamSpec("P")
 
 AppCommandWrap = Callable[
     [
@@ -126,7 +126,7 @@ AppCommandWrap = Callable[
             Callable[Concatenate[ContextT, P], Coro[T]],
         ]
     ],
-    AppCommandT
+    AppCommandT,
 ]
 
 MISSING: Any = discord.utils.MISSING
@@ -148,6 +148,7 @@ def wrap_callback(coro: Hook):
         except Exception as exc:
             raise ApplicationCommandInvokeError(exc) from exc
         return ret
+
     return wrapped
 
 
@@ -168,6 +169,7 @@ def hooked_wrapped_callback(command: AppCommandT, ctx: ApplicationContext, coro:
         finally:
             await command.call_after_hooks(ctx)
         return ret
+
     return wrapped
 
 
@@ -230,11 +232,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         return f"<discord.ext.app.{self.__class__.__name__} name={self.name}>"
 
     def __eq__(self, other: AppCommandT):
-        return (
-            isinstance(other, ApplicationCommand)
-            and self.name == other.name
-            and self.type == other.type
-        )
+        return isinstance(other, ApplicationCommand) and self.name == other.name and self.type == other.type
 
     @property
     def callback(self) -> ApplicationCallback:
@@ -247,7 +245,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
 
     @property
     def id(self) -> Optional[str]:
-        return getattr(self, '_id', None)
+        return getattr(self, "_id", None)
 
     @id.setter
     def id(self, value: Optional[str]):
@@ -290,9 +288,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             if bucket is not None:
                 retry_after = bucket.update_rate_limit(current)
                 if retry_after:
-                    raise ApplicationCommandOnCooldown(
-                        bucket, retry_after, self._buckets.type
-                    )
+                    raise ApplicationCommandOnCooldown(bucket, retry_after, self._buckets.type)
 
     async def prepare(self, ctx: ApplicationContext[CogT]):
         # Bind
@@ -301,7 +297,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
 
         # Handle checks
         if not await self.can_run(ctx):
-            raise ApplicationCheckFailure(f'The check functions for command {self.qualified_name} failed.')
+            raise ApplicationCheckFailure(f"The check functions for command {self.qualified_name} failed.")
 
         # Only run at parent command and not subcommand?
         # I think it might be better to just check if it's running the subcommand or not tbh.
@@ -317,7 +313,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
                 self._prepare_cooldowns(ctx)
 
             await self.call_before_hooks(ctx)
-        except:
+        except:  # noqa
             if self._max_concurrency is not None:
                 await self._max_concurrency.release(ctx.interaction)
             raise
@@ -340,15 +336,14 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             The coroutine passed is not actually a coroutine.
         """
         if not asyncio.iscoroutinefunction(coro):
-            raise TypeError('The error handler must be a coroutine.')
+            raise TypeError("The error handler must be a coroutine.")
 
         self.on_error = coro
         return coro
 
     def has_error_handler(self) -> bool:
-        """:class:`bool`: Checks whether the command has an error handler registered.
-        """
-        return hasattr(self, 'on_error')
+        """:class:`bool`: Checks whether the command has an error handler registered."""
+        return hasattr(self, "on_error")
 
     def add_check(self, func: Check) -> None:
         """Adds a check to the command.
@@ -400,7 +395,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             The coroutine passed is not actually a coroutine.
         """
         if not asyncio.iscoroutinefunction(coro):
-            raise TypeError('The pre-invoke hook must be a coroutine.')
+            raise TypeError("The pre-invoke hook must be a coroutine.")
 
         self._before_invoke = coro
         return coro
@@ -425,7 +420,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             The coroutine passed is not actually a coroutine.
         """
         if not asyncio.iscoroutinefunction(coro):
-            raise TypeError('The post-invoke hook must be a coroutine.')
+            raise TypeError("The post-invoke hook must be a coroutine.")
 
         self._after_invoke = coro
         return coro
@@ -436,12 +431,12 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         return type(self.cog).__cog_name__ if self.cog is not None else None
 
     def _is_typing_optional(self, annotation: Union[T, Optional[T]]) -> TypeGuard[Optional[T]]:
-        return getattr(annotation, '__origin__', None) is Union and type(None) in annotation.__args__  # type: ignore
+        return getattr(annotation, "__origin__", None) is Union and type(None) in annotation.__args__  # type: ignore
 
     @classmethod
     def _get_overridden_method(cls, method: FuncT) -> Optional[FuncT]:
         """Return None if the method is not overridden. Otherwise returns the overridden method."""
-        return getattr(method.__func__, '__cog_special_method__', method)
+        return getattr(method.__func__, "__cog_special_method__", method)
 
     async def dispatch_error(self, ctx: ApplicationContext, error: Exception) -> None:
         ctx.command_failed = True
@@ -464,7 +459,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
                     wrapped = wrap_callback(local)
                     await wrapped(ctx, error)
         finally:
-            ctx.bot.dispatch('application_error', ctx, error)
+            ctx.bot.dispatch("application_error", ctx, error)
 
     async def call_before_hooks(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
         # now that we're done preparing we can call the pre-command hooks
@@ -472,7 +467,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         cog = self.cog
         if self._before_invoke is not None:
             # should be cog if @commands.before_invoke is used
-            instance = getattr(self._before_invoke, '__self__', cog)
+            instance = getattr(self._before_invoke, "__self__", cog)
             # __self__ only exists for methods, not functions
             # however, if @command.before_invoke is used, it will be a function
             if instance:
@@ -494,7 +489,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
     async def call_after_hooks(self, ctx: ApplicationContext[CogT, T, AppCommandT]) -> None:
         cog = self.cog
         if self._after_invoke is not None:
-            instance = getattr(self._after_invoke, '__self__', cog)
+            instance = getattr(self._after_invoke, "__self__", cog)
             if instance:
                 await self._after_invoke(instance, ctx)  # type: ignore
             else:
@@ -576,7 +571,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
 
         try:
             await self.callback(*ctx.args, **ctx.kwargs)
-        except:
+        except:  # noqa
             ctx.command_failed = True
             raise
         finally:
@@ -635,7 +630,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
 
         try:
             if not await ctx.bot.can_run(ctx):
-                raise ApplicationCheckFailure(f'The global check functions for command {self.qualified_name} failed.')
+                raise ApplicationCheckFailure(f"The global check functions for command {self.qualified_name} failed.")
 
             cog = self.cog
             if cog is not None:
@@ -654,19 +649,18 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
             ctx.command = original
 
     def to_dict(self):
-        """:class:`dict`: A discord API friendly dictionary that can be submitted to the API.
-        """
+        """:class:`dict`: A discord API friendly dictionary that can be submitted to the API."""
         _DEFAULT = "No description provided"
-        options: Optional[List[Option]] = getattr(self, 'options', None)
+        options: Optional[List[Option]] = getattr(self, "options", None)
         base_return = {
-            'name': self.name,
-            'type': self.type.value,
+            "name": self.name,
+            "type": self.type.value,
         }
         if options:
-            base_return['options'] = [o.to_dict() for o in options]
+            base_return["options"] = [o.to_dict() for o in options]
         _desc_fallback = _DEFAULT if self.type == ApplicationCommandType.slash else ""
         description = getattr(self, "description", _desc_fallback)
-        base_return['description'] = description
+        base_return["description"] = description
         return base_return
 
 
@@ -690,36 +684,41 @@ class Option:
     choices: List[:class:`.OptionChoice`]
         A list of valid options for the argument.
     """
+
     def __init__(
-        self, input_type: Type[Any], /, description: str = None, **kwargs,
+        self,
+        input_type: Type[Any],
+        /,
+        description: str = None,
+        **kwargs,
     ):
-        self.name: Optional[str] = kwargs.pop('name', None)
+        self.name: Optional[str] = kwargs.pop("name", None)
         self.description = description or "No description provided"
         self.input_type = SlashCommandOptionType.from_datatype(input_type)
-        self.required: bool = kwargs.pop('required', True)
+        self.required: bool = kwargs.pop("required", True)
         self.choices: List[OptionChoice] = [
-            o if isinstance(o, OptionChoice) else OptionChoice(o)
-            for o in kwargs.pop('choices', [])
+            o if isinstance(o, OptionChoice) else OptionChoice(o) for o in kwargs.pop("choices", [])
         ]
 
         self._is_default_nonetype = False
-        if 'default' in kwargs:
-            if kwargs['default'] is None:
+        if "default" in kwargs:
+            if kwargs["default"] is None:
                 self._is_default_nonetype = True
-        self.default: Optional[Any] = kwargs.pop('default', None)
+        self.default: Optional[Any] = kwargs.pop("default", None)
 
     def to_dict(self):
         return {
-            'name': self.name,
-            'description': self.description,
-            'type': self.input_type.value,
-            'required': self.required,
-            'choices': [c.to_dict() for c in self.choices],
-            'default': self.default,
+            "name": self.name,
+            "description": self.description,
+            "type": self.input_type.value,
+            "required": self.required,
+            "choices": [c.to_dict() for c in self.choices],
+            "default": self.default,
         }
 
     def __repr__(self):
-        return f'<discord.ext.app.Option name={self.name}>'
+        return f"<discord.ext.app.Option name={self.name}>"
+
 
 class OptionChoice:
     r"""A class that implement an option choice for :class`.Option`.
@@ -733,12 +732,13 @@ class OptionChoice:
     value: :class:`str`
         The value that will be showed to the user.
     """
+
     def __init__(self, name: str, value: Optional[Union[str, int, float]] = None):
         self.name = name
         self.value = value or name
 
     def to_dict(self):
-        return {'name': self.name, 'value': self.value}
+        return {"name": self.name, "value": self.value}
 
 
 class SlashCommand(ApplicationCommand[CogT, BotT, T]):
@@ -814,14 +814,14 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
 
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
         if not asyncio.iscoroutinefunction(callback):
-            raise TypeError('Callback must be a coroutine.')
+            raise TypeError("Callback must be a coroutine.")
 
         self._callback = callback
         self.guild_ids: Optional[List[int]] = kwargs.get("guild_ids", None)
         fn_name = kwargs.get("name") or callback.__name__
         self.name = fn_name
 
-        description = kwargs.get('description') or (
+        description = kwargs.get("description") or (
             inspect.cleandoc(callback.__doc__).splitlines()[0]
             if callback.__doc__ is not None
             else "No description provided"
@@ -836,14 +836,14 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         try:
             checks = callback.__commands_checks__
         except AttributeError:
-            checks = kwargs.get('checks', [])
+            checks = kwargs.get("checks", [])
 
         self.checks: List[Check] = checks
 
         try:
             cooldown = callback.__commands_cooldown__
         except AttributeError:
-            cooldown = kwargs.get('cooldown')
+            cooldown = kwargs.get("cooldown")
 
         if cooldown is None:
             buckets = ApplicationCooldownMapping(cooldown, ApplicationBucketType.default)
@@ -856,7 +856,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         try:
             max_concurrency = callback.__commands_max_concurrency__
         except AttributeError:
-            max_concurrency = kwargs.get('max_concurrency')
+            max_concurrency = kwargs.get("max_concurrency")
 
         self._max_concurrency: Optional[ApplicationMaxConcurrency] = max_concurrency
 
@@ -885,7 +885,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         options = []
         params = self.params
 
-        if list(params.items())[0][0] == 'self':
+        if list(params.items())[0][0] == "self":
             temp = list(params.items())
             temp.pop(0)
             params = OrderedDict(temp)
@@ -896,12 +896,12 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         try:
             next(params)
         except StopIteration:
-            raise ClientException(
-                f'Callback for {self.name} command is missing "ctx" parameter.'
-            )
+            raise ClientException(f'Callback for {self.name} command is missing "ctx" parameter.')
 
         # Get the slash option from class, if missing just return dict.
-        slash_options: Dict[str, Option] = getattr(self.callback, '__slash_options__', getattr(self, '__slash_options__', {}))
+        slash_options: Dict[str, Option] = getattr(
+            self.callback, "__slash_options__", getattr(self, "__slash_options__", {})
+        )
 
         for name, param in params:
             option = param.annotation
@@ -909,9 +909,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
                 option = str
 
             if self._is_typing_optional(param):
-                option = Option(
-                    option.__args__[0], description=_NO_DESC, required=False
-                )
+                option = Option(option.__args__[0], description=_NO_DESC, required=False)
 
             option = slash_options.get(name, option)
 
@@ -930,43 +928,36 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         return options
 
     def __eq__(self, other: "SlashCommand") -> bool:
-        return (
-            isinstance(other, SlashCommand)
-            and other.name == self.name
-        )
+        return isinstance(other, SlashCommand) and other.name == self.name
 
     async def _parse_arguments(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
         _INVALID_TYPE = [SlashCommandOptionType.sub_command.value, SlashCommandOptionType.sub_command_group.value]
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
 
-        for arg in ctx.interaction.data.get('options', []):
+        for arg in ctx.interaction.data.get("options", []):
             # Skip if type is sub_command or sub_command_group
-            if arg['type'] in _INVALID_TYPE:
+            if arg["type"] in _INVALID_TYPE:
                 continue
-            op = discord.utils.find(lambda o: o.name == arg['name'], self.options)
+            op = discord.utils.find(lambda o: o.name == arg["name"], self.options)
             # Copy of data
-            _real_val = arg['value']
-            arg = arg['value']
+            _real_val = arg["value"]
+            arg = arg["value"]
 
-            if (
-                SlashCommandOptionType.user.value
-                <= op.input_type.value
-                <= SlashCommandOptionType.role.value
-            ):
-                name = 'member' if op.input_type == 'user' else op.input_type.name
+            if SlashCommandOptionType.user.value <= op.input_type.value <= SlashCommandOptionType.role.value:
+                name = "member" if op.input_type == "user" else op.input_type.name
                 try:
                     arg = await discord.utils.get_or_fetch(ctx.guild, name, int(arg))
                 except HTTPException:
                     pass
                 if arg is None and op.default is None and not op._is_default_nonetype:
-                    if arg == 'member':
+                    if arg == "member":
                         raise ApplicationMemberNotFound(_real_val)
                     else:
                         raise ApplicationUserNotFound(_real_val)
             elif op.input_type == SlashCommandOptionType.mentionable:
                 arg_id = int(arg)
-                arg = await discord.utils.get_or_fetch(ctx.guild, 'member', arg_id)
+                arg = await discord.utils.get_or_fetch(ctx.guild, "member", arg_id)
                 if arg is None:
                     arg = ctx.guild.get_role(arg_id)
                     if arg is None and op.default is None and not op._is_default_nonetype:
@@ -985,16 +976,12 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
             try:
                 next(params)
             except StopIteration:
-                raise ApplicationTooManyArguments(
-                    f'Callback for {self.name} command is missing "self" parameter.'
-                )
+                raise ApplicationTooManyArguments(f'Callback for {self.name} command is missing "self" parameter.')
 
         try:
             next(params)
         except StopIteration:
-            raise ApplicationTooManyArguments(
-                f'Callback for {self.name} command is missing "ctx" parameter.'
-            )
+            raise ApplicationTooManyArguments(f'Callback for {self.name} command is missing "ctx" parameter.')
 
         for name, param in params:
             if name not in kwargs and param.default == inspect.Parameter.empty:
@@ -1009,9 +996,8 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         return self._children
 
     def has_parent(self):
-        """:class:`bool`: Check if the command have parent or not.
-        """
-        return hasattr(self, 'parent') and self.parent is not None
+        """:class:`bool`: Check if the command have parent or not."""
+        return hasattr(self, "parent") and self.parent is not None
 
     async def _invoke_children(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
         """|coro|
@@ -1032,7 +1018,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
             # Exit fast if there's no child
             return
         data = ctx.interaction.data
-        options = data.get('options', [])
+        options = data.get("options", [])
         if not options:
             return
 
@@ -1040,17 +1026,17 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         if not first_children:
             return
         sub_command: Optional[SlashCommand[CogT, BotT, AppCommandT]] = None
-        if first_children.get('type') == 2:
-            sub_command = self._children.get(first_children.get('name'))
-            first_child_opts = first_children.get('options', [])
+        if first_children.get("type") == 2:
+            sub_command = self._children.get(first_children.get("name"))
+            first_child_opts = first_children.get("options", [])
             try:
                 ff_opt = first_child_opts[0]
-                if ff_opt and ff_opt.get('type') == 1 and sub_command is not None:
-                    sub_command = sub_command.children.get(ff_opt.get('name'))
+                if ff_opt and ff_opt.get("type") == 1 and sub_command is not None:
+                    sub_command = sub_command.children.get(ff_opt.get("name"))
             except IndexError:
                 pass
         else:
-            sub_command = self._children.get(first_children.get('name'))
+            sub_command = self._children.get(first_children.get("name"))
 
         if sub_command is not None:
             ctx.invoked_subcommand = sub_command
@@ -1088,20 +1074,17 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         TypeError
             If the command passed is not a subclass of :class:`.SlashCommand`.
         """
-        _CROSS_CHECK = [
-            SlashCommandOptionType.sub_command,
-            SlashCommandOptionType.sub_command_group
-        ]
+        _CROSS_CHECK = [SlashCommandOptionType.sub_command, SlashCommandOptionType.sub_command_group]
 
         if command.type != ApplicationCommandType.slash:
-            raise TypeError('The command passed must be a subclass of SlashCommand')
+            raise TypeError("The command passed must be a subclass of SlashCommand")
 
         if command.name in self._children:
             raise ApplicationRegistrationError(command.name)
 
-        parent: Optional[SlashCommand] = getattr(self, 'parent', None)
+        parent: Optional[SlashCommand] = getattr(self, "parent", None)
         if parent is not None:
-            parent_parent: Optional[SlashCommand[CogT, BotT, T]] = getattr(parent, 'parent', None)
+            parent_parent: Optional[SlashCommand[CogT, BotT, T]] = getattr(parent, "parent", None)
             if parent_parent is not None:
                 raise ApplicationRegistrationMaxDepthError(command.name, self.name)
             if self.sub_type != _CROSS_CHECK[1]:
@@ -1140,13 +1123,13 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         dict_res = super().to_dict()
         if self._children:
             child_res = [child.to_dict() for child in self._children.values()]
-            if 'options' not in dict_res:
-                dict_res['options'] = []
-            dict_res['options'].extend(child_res)
-        if not self.has_parent() and 'type' in dict_res:
-            del dict_res['type']
+            if "options" not in dict_res:
+                dict_res["options"] = []
+            dict_res["options"].extend(child_res)
+        if not self.has_parent() and "type" in dict_res:
+            del dict_res["type"]
         elif self.has_parent():
-            dict_res['type'] = self.sub_type.value
+            dict_res["type"] = self.sub_type.value
         return dict_res
 
     # Decorator
@@ -1166,15 +1149,16 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         Returns
         --------
         Callable[..., :class:`.SlashCommand`]
-            A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot, then returns it.
+            A decorator that converts the provided method into a :class:`.SlashCommand`,
+            adds it to the bot, then returns it.
         """
 
         def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
             # Remove guild_ids
-            kwargs.pop('guild_ids', None)
+            kwargs.pop("guild_ids", None)
             result = SlashCommand(func, *args, **kwargs)
             # Set parent
-            setattr(result, 'parent', self)
+            setattr(result, "parent", self)
             self.add_command(result)
             return result
 
@@ -1196,16 +1180,17 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         Returns
         --------
         Callable[..., :class:`.SlashCommand`]
-            A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot, then returns it.
+            A decorator that converts the provided method into a :class:`.SlashCommand`,
+            adds it to the bot, then returns it.
         """
 
         def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
-            kwargs.setdefault('parent', self)
+            kwargs.setdefault("parent", self)
             # Remove guild_ids
-            kwargs.pop('guild_ids', None)
+            kwargs.pop("guild_ids", None)
             result = SlashCommand(func, *args, **kwargs)
             # Set parent
-            setattr(result, 'parent', self)
+            setattr(result, "parent", self)
             # Override the sub_type
             result.sub_type = SlashCommandOptionType.sub_command_group
             self.add_command(result)
@@ -1281,14 +1266,14 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         try:
             checks = callback.__commands_checks__
         except AttributeError:
-            checks = kwargs.get('checks', [])
+            checks = kwargs.get("checks", [])
 
         self.checks: List[Check] = checks
 
         try:
             cooldown = callback.__commands_cooldown__
         except AttributeError:
-            cooldown = kwargs.get('cooldown')
+            cooldown = kwargs.get("cooldown")
 
         if cooldown is None:
             buckets = ApplicationCooldownMapping(cooldown, ApplicationBucketType.default)
@@ -1301,7 +1286,7 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         try:
             max_concurrency = callback.__commands_max_concurrency__
         except AttributeError:
-            max_concurrency = kwargs.get('max_concurrency')
+            max_concurrency = kwargs.get("max_concurrency")
 
         self._max_concurrency: Optional[ApplicationMaxConcurrency] = max_concurrency
 
@@ -1338,23 +1323,19 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         ctx.args = args
         ctx.kwargs = {}
 
-        resolved = ctx.interaction.data.get('resolved')
+        resolved = ctx.interaction.data.get("resolved")
         if resolved is None:
             params = iter(self.params.items())
             if self.cog is not None:
                 try:
                     next(params)
                 except StopIteration:
-                    raise ApplicationTooManyArguments(
-                        f'Callback for {self.name} command is missing "self" parameter.'
-                    )
+                    raise ApplicationTooManyArguments(f'Callback for {self.name} command is missing "self" parameter.')
 
             try:
                 next(params)
             except StopIteration:
-                raise ApplicationTooManyArguments(
-                    f'Callback for {self.name} command is missing "ctx" parameter.'
-                )
+                raise ApplicationTooManyArguments(f'Callback for {self.name} command is missing "ctx" parameter.')
             else:
                 _default_fallback = inspect.Parameter.empty
                 for _, param in params:
@@ -1370,11 +1351,11 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
 
         if self.type == ApplicationCommandType.user:
             if "members" in resolved:
-                members = resolved['members']
+                members = resolved["members"]
                 for member_id, member_data in members.items():
                     member_data["id"] = int(member_id)
                     member = member_data
-                users = resolved['users']
+                users = resolved["users"]
                 for user_id, user_data in users.items():
                     user_data["id"] = int(user_id)
                     user = user_data
@@ -1393,20 +1374,16 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
                     user = user_data
                 ctx.args.append(User(data=user, state=ctx.interaction._state))
         elif self.type == ApplicationCommandType.message:
-            messages = resolved['messages']
+            messages = resolved["messages"]
             for msg_id, msg_data in messages.items():
                 msg_data["id"] = int(msg_id)
                 msg = msg_data
             channel = ctx.interaction._state.get_channel(int(msg["channel_id"]))
             if channel is None:
-                data = await ctx.interaction._state.http.start_private_message(
-                    int(messages["author"]["id"])
-                )
+                data = await ctx.interaction._state.http.start_private_message(int(messages["author"]["id"]))
                 channel = ctx.interaction._state.add_dm_channel(data)
 
-            ctx.args.append(
-                Message(state=ctx.interaction._state, channel=channel, data=msg)
-            )
+            ctx.args.append(Message(state=ctx.interaction._state, channel=channel, data=msg))
 
 
 class UserCommand(ContextMenuApplication[CogT, BotT, T]):
@@ -1514,16 +1491,20 @@ def option(
 ) -> Option:
     ...
 
+
 def option(name, type=None, **kwargs):
     """A decorator that can be used instead of typehinting Option"""
+
     def decor(func: ApplicationCallback):
         nonlocal type
         type = type or func.__annotations__.get(name, str)
-        if not hasattr(func, '__slash_options__'):
+        if not hasattr(func, "__slash_options__"):
             func.__slash_options__ = {}
         func.__slash_options__[name] = Option(type, **kwargs)
         return func
+
     return decor
+
 
 @overload
 def application_command(
@@ -1534,6 +1515,7 @@ def application_command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[AppCommandT]:
     ...
+
 
 @overload
 def application_command(
@@ -1545,6 +1527,7 @@ def application_command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[AppCommandT]:
     ...
+
 
 def application_command(cls=SlashCommand, **attrs):
     """A decorator that transforms a function into an :class:`.ApplicationCommand`. More specifically,
@@ -1579,12 +1562,11 @@ def application_command(cls=SlashCommand, **attrs):
         if isinstance(func, ApplicationCommand):
             func = func.callback
         elif not callable(func):
-            raise TypeError(
-                "func needs to be a callable or a subclass of ApplicationCommand."
-            )
+            raise TypeError("func needs to be a callable or a subclass of ApplicationCommand.")
         return cls(func, **attrs)
 
     return decorator
+
 
 @overload
 def slash_command(
@@ -1595,6 +1577,7 @@ def slash_command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[SlashCommand]:
     ...
+
 
 def slash_command(**kwargs):
     """Decorator for slash commands that invokes :func:`application_command`.
@@ -1620,6 +1603,7 @@ def slash_command(**kwargs):
     """
     return application_command(cls=SlashCommand, **kwargs)
 
+
 @overload
 def user_command(
     *,
@@ -1628,6 +1612,7 @@ def user_command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[UserCommand]:
     ...
+
 
 def user_command(**kwargs):
     """Decorator for user commands that invokes :func:`application_command`.
@@ -1651,6 +1636,7 @@ def user_command(**kwargs):
     """
     return application_command(cls=UserCommand, **kwargs)
 
+
 @overload
 def message_command(
     *,
@@ -1659,6 +1645,7 @@ def message_command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[MessageCommand]:
     ...
+
 
 def message_command(**kwargs):
     """Decorator for message commands that invokes :func:`application_command`.
@@ -1682,6 +1669,7 @@ def message_command(**kwargs):
     """
     return application_command(cls=MessageCommand, **kwargs)
 
+
 @overload
 def command(
     *,
@@ -1691,6 +1679,7 @@ def command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[AppCommandT]:
     ...
+
 
 @overload
 def command(
@@ -1702,6 +1691,7 @@ def command(
     checks: Optional[List[Check]] = MISSING,
 ) -> DecoApp[AppCommandT]:
     ...
+
 
 def command(**kwargs):
     """This is an alias for :func:`.application_command`.
@@ -1717,6 +1707,7 @@ def command(**kwargs):
 
 
 # check decorators
+
 
 def check(predicate: Check) -> Callable[[T], T]:
     r"""A decorator that adds a check to the :class:`.ApplicationCommand` or its
@@ -1792,7 +1783,7 @@ def check(predicate: Check) -> Callable[[T], T]:
         if isinstance(func, ApplicationCommand):
             func.checks.append(predicate)
         else:
-            if not hasattr(func, '__commands_checks__'):
+            if not hasattr(func, "__commands_checks__"):
                 func.__commands_checks__ = []
             func.__commands_checks__.append(predicate)
 
@@ -1801,12 +1792,15 @@ def check(predicate: Check) -> Callable[[T], T]:
     if inspect.iscoroutinefunction(predicate):
         decorator.predicate = predicate
     else:
+
         @functools.wraps(predicate)
         async def wrapper(ctx):
             return predicate(ctx)
+
         decorator.predicate = wrapper
 
     return decorator
+
 
 def check_any(*checks: Check) -> Callable[[T], T]:
     r"""A :func:`check` that is added that checks if any of the checks passed
@@ -1855,7 +1849,7 @@ def check_any(*checks: Check) -> Callable[[T], T]:
         try:
             pred = wrapped.predicate
         except AttributeError:
-            raise TypeError(f'{wrapped!r} must be wrapped by commands.check decorator') from None
+            raise TypeError(f"{wrapped!r} must be wrapped by commands.check decorator") from None
         else:
             unwrapped.append(pred)
 
@@ -1873,6 +1867,7 @@ def check_any(*checks: Check) -> Callable[[T], T]:
         raise ApplicationCheckAnyFailure(unwrapped, errors)
 
     return check(predicate)
+
 
 def has_role(item: Union[int, str]) -> Callable[[T], T]:
     r"""A :func:`.check` that is added that checks if the member invoking the
@@ -1911,6 +1906,7 @@ def has_role(item: Union[int, str]) -> Callable[[T], T]:
 
     return check(predicate)
 
+
 def bot_has_role(item: int) -> Callable[[T], T]:
     """Similar to :func:`.has_role` except checks if the bot itself has the
     role.
@@ -1932,7 +1928,9 @@ def bot_has_role(item: int) -> Callable[[T], T]:
         if role is None:
             raise ApplicationBotMissingRole(item)
         return True
+
     return check(predicate)
+
 
 def has_any_role(*items: Union[int, str]) -> Callable[[T], T]:
     r"""A :func:`.check` that is added that checks if the member invoking the
@@ -1963,17 +1961,21 @@ def has_any_role(*items: Union[int, str]) -> Callable[[T], T]:
         async def cool(ctx):
             await ctx.send('You are cool indeed')
     """
+
     def predicate(ctx: ApplicationContext) -> bool:
         if ctx.guild is None:
             raise ApplicationNoPrivateMessage
 
         # ctx.guild is None doesn't narrow ctx.author to Member
         getter = functools.partial(discord.utils.get, ctx.author.roles)  # type: ignore
-        if any(getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items):
+        if any(
+            getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items
+        ):
             return True
         raise ApplicationMissingAnyRole(list(items))
 
     return check(predicate)
+
 
 def bot_has_any_role(*items: int) -> Callable[[T], T]:
     """Similar to :func:`.has_any_role` except checks if the bot itself has
@@ -1983,16 +1985,21 @@ def bot_has_any_role(*items: int) -> Callable[[T], T]:
     is missing all roles, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message.
     Both inherit from :exc:`.ApplicationCheckFailure`.
     """
+
     def predicate(ctx: ApplicationContext):
         if ctx.guild is None:
             raise ApplicationNoPrivateMessage
 
         me = ctx.me
         getter = functools.partial(discord.utils.get, me.roles)
-        if any(getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items):
+        if any(
+            getter(id=item) is not None if isinstance(item, int) else getter(name=item) is not None for item in items
+        ):
             return True
         raise ApplicationBotMissingAnyRole(list(items))
+
     return check(predicate)
+
 
 def has_permissions(**perms: bool) -> Callable[[T], T]:
     """A :func:`.check` that is added that checks if the member has all of
@@ -2041,6 +2048,7 @@ def has_permissions(**perms: bool) -> Callable[[T], T]:
 
     return check(predicate)
 
+
 def bot_has_permissions(**perms: bool) -> Callable[[T], T]:
     """Similar to :func:`.has_permissions` except checks if the bot itself has
     the permissions listed.
@@ -2066,6 +2074,7 @@ def bot_has_permissions(**perms: bool) -> Callable[[T], T]:
         raise ApplicationBotMissingPermissions(missing)
 
     return check(predicate)
+
 
 def has_guild_permissions(**perms: bool) -> Callable[[T], T]:
     """Similar to :func:`.has_permissions`, but operates on guild wide
@@ -2093,6 +2102,7 @@ def has_guild_permissions(**perms: bool) -> Callable[[T], T]:
 
     return check(predicate)
 
+
 def bot_has_guild_permissions(**perms: bool) -> Callable[[T], T]:
     """Similar to :func:`.has_guild_permissions`, but checks the bot
     members guild permissions.
@@ -2116,6 +2126,7 @@ def bot_has_guild_permissions(**perms: bool) -> Callable[[T], T]:
 
     return check(predicate)
 
+
 def dm_only() -> Callable[[T], T]:
     """A :func:`.check` that indicates this command must only be used in a
     DM context. Only private messages are allowed when
@@ -2131,6 +2142,7 @@ def dm_only() -> Callable[[T], T]:
         return True
 
     return check(predicate)
+
 
 def guild_only() -> Callable[[T], T]:
     """A :func:`.check` that indicates this command must only be used in a
@@ -2148,6 +2160,7 @@ def guild_only() -> Callable[[T], T]:
 
     return check(predicate)
 
+
 def is_owner() -> Callable[[T], T]:
     """A :func:`.check` that checks if the person invoking this command is the
     owner of the bot.
@@ -2160,10 +2173,11 @@ def is_owner() -> Callable[[T], T]:
 
     async def predicate(ctx: ApplicationContext) -> bool:
         if not await ctx.bot.is_owner(ctx.author):
-            raise ApplicationNotOwner('You do not own this bot.')
+            raise ApplicationNotOwner("You do not own this bot.")
         return True
 
     return check(predicate)
+
 
 def is_nsfw() -> Callable[[T], T]:
     """A :func:`.check` that checks if the channel is a NSFW channel.
@@ -2176,12 +2190,15 @@ def is_nsfw() -> Callable[[T], T]:
         Raise :exc:`.ApplicationNSFWChannelRequired` instead of generic :exc:`.ApplicationCheckFailure`.
         DM channels will also now pass this check.
     """
+
     def pred(ctx: ApplicationContext) -> bool:
         ch = ctx.channel
         if ctx.guild is None or (isinstance(ch, (discord.TextChannel, discord.Thread)) and ch.is_nsfw()):
             return True
         raise ApplicationNSFWChannelRequired(ch)  # type: ignore
+
     return check(pred)
+
 
 def before_invoke(coro: Hook) -> Callable[[T], T]:
     """A decorator that registers a coroutine as a pre-invoke hook.
@@ -2219,6 +2236,7 @@ def before_invoke(coro: Hook) -> Callable[[T], T]:
 
         bot.add_cog(What())
     """
+
     def decorator(
         func: Union[ApplicationCommand, ApplicationCallback]
     ) -> Union[ApplicationCommand, ApplicationCallback]:
@@ -2227,7 +2245,9 @@ def before_invoke(coro: Hook) -> Callable[[T], T]:
         else:
             func.__before_invoke__ = coro
         return func
+
     return decorator  # type: ignore
+
 
 def after_invoke(coro: Hook) -> Callable[[T], T]:
     """A decorator that registers a coroutine as a post-invoke hook.
@@ -2235,6 +2255,7 @@ def after_invoke(coro: Hook) -> Callable[[T], T]:
     This allows you to refer to one after invoke hook for several commands that
     do not have to be within the same cog.
     """
+
     def decorator(
         func: Union[ApplicationCommand, ApplicationCallback]
     ) -> Union[ApplicationCommand, ApplicationCallback]:
@@ -2243,12 +2264,14 @@ def after_invoke(coro: Hook) -> Callable[[T], T]:
         else:
             func.__after_invoke__ = coro
         return func
+
     return decorator  # type: ignore
+
 
 def cooldown(
     rate: int,
     per: float,
-    type: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]] = ApplicationBucketType.default
+    type: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]] = ApplicationBucketType.default,
 ) -> Callable[[T], T]:
     """A decorator that adds a cooldown to a :class:`.ApplicationCommand`
 
@@ -2282,11 +2305,13 @@ def cooldown(
         else:
             func.__commands_cooldown__ = value
         return func
+
     return decorator
+
 
 def dynamic_cooldown(
     cooldown: Union[ApplicationBucketType, Callable[[discord.Interaction], Any]],
-    type: ApplicationBucketType = ApplicationBucketType.default
+    type: ApplicationBucketType = ApplicationBucketType.default,
 ) -> Callable[[T], T]:
     """A decorator that adds a dynamic cooldown to a :class:`.ApplicationCommand`
 
@@ -2326,13 +2351,13 @@ def dynamic_cooldown(
         else:
             func.__commands_cooldown__ = value
         return func
+
     return decorator
 
+
 def max_concurrency(
-    number: int,
-    per: ApplicationBucketType = ApplicationBucketType.default,
-    *,
-    wait: bool = False) -> Callable[[T], T]:
+    number: int, per: ApplicationBucketType = ApplicationBucketType.default, *, wait: bool = False
+) -> Callable[[T], T]:
     """A decorator that adds a maximum concurrency to a :class:`.ApplicationCommand` or its subclasses.
 
     This enables you to only allow a certain number of command invocations at the same time,
@@ -2363,4 +2388,5 @@ def max_concurrency(
         else:
             func.__commands_max_concurrency__ = value
         return func
+
     return decorator

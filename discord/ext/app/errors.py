@@ -35,35 +35,34 @@ if TYPE_CHECKING:
     from discord.types.snowflake import Snowflake, SnowflakeList
 
 __all__ = (
-    'ApplicationCommandError',
-    'ApplicationCheckFailure',
-    'ApplicationCommandInvokeError',
-    'ApplicationRegistrationError',
-    'ApplicationRegistrationMaxDepthError',
-    'ApplicationRegistrationExistingParentOptions',
-
-    'ApplicationUserInputError',
-    'ApplicationMissingRequiredArgument',
-    'ApplicationTooManyArguments',
-    'ApplicationBadArgument',
-    'ApplicationMemberNotFound',
-    'ApplicationUserNotFound',
-    'ApplicationMentionableNotFound',
-    'ApplicationCommandOnCooldown',
-    'ApplicationMaxConcurrencyReached',
-
-    'ApplicationCheckAnyFailure',
-    'ApplicationPrivateMessageOnly',
-    'ApplicationNoPrivateMessage',
-    'ApplicationMissingRole',
-    'ApplicationBotMissingRole',
-    'ApplicationMissingAnyRole',
-    'ApplicationBotMissingAnyRole',
-    'ApplicationMissingPermissions',
-    'ApplicationBotMissingPermissions',
-    'ApplicationNSFWChannelRequired',
-    'ApplicationNotOwner',
+    "ApplicationCommandError",
+    "ApplicationCheckFailure",
+    "ApplicationCommandInvokeError",
+    "ApplicationRegistrationError",
+    "ApplicationRegistrationMaxDepthError",
+    "ApplicationRegistrationExistingParentOptions",
+    "ApplicationUserInputError",
+    "ApplicationMissingRequiredArgument",
+    "ApplicationTooManyArguments",
+    "ApplicationBadArgument",
+    "ApplicationMemberNotFound",
+    "ApplicationUserNotFound",
+    "ApplicationMentionableNotFound",
+    "ApplicationCommandOnCooldown",
+    "ApplicationMaxConcurrencyReached",
+    "ApplicationCheckAnyFailure",
+    "ApplicationPrivateMessageOnly",
+    "ApplicationNoPrivateMessage",
+    "ApplicationMissingRole",
+    "ApplicationBotMissingRole",
+    "ApplicationMissingAnyRole",
+    "ApplicationBotMissingAnyRole",
+    "ApplicationMissingPermissions",
+    "ApplicationBotMissingPermissions",
+    "ApplicationNSFWChannelRequired",
+    "ApplicationNotOwner",
 )
+
 
 class ApplicationCommandError(DiscordException):
     r"""The base exception type for all command related errors.
@@ -76,12 +75,14 @@ class ApplicationCommandError(DiscordException):
     """
     pass
 
+
 class ApplicationCheckFailure(ApplicationCommandError):
     r"""Exception raised when a invoked check fails.
 
     This inherits from :exc:`ApplicationCommandError`.
     """
     pass
+
 
 class ApplicationCommandInvokeError(ApplicationCommandError):
     """Exception raised when the application command being invoked
@@ -95,9 +96,10 @@ class ApplicationCommandInvokeError(ApplicationCommandError):
         The original exception that was raised. You can also get this via
         the ``__cause__`` attribute.
     """
+
     def __init__(self, e: Exception) -> None:
         self.original: Exception = e
-        super().__init__(f'Command raised an exception: {e.__class__.__name__}: {e}')
+        super().__init__(f"Command raised an exception: {e.__class__.__name__}: {e}")
 
 
 class ApplicationRegistrationError(ClientException):
@@ -111,9 +113,11 @@ class ApplicationRegistrationError(ClientException):
     name: :class:`str`
         The command name that had the error.
     """
+
     def __init__(self, name: str) -> None:
         self.name: str = name
-        super().__init__(f'The command \'{name}\' is already an existing command.')
+        super().__init__(f"The command '{name}' is already an existing command.")
+
 
 class ApplicationRegistrationMaxDepthError(ClientException):
     """An exception raised when the command can't be added
@@ -128,12 +132,13 @@ class ApplicationRegistrationMaxDepthError(ClientException):
     parent_name: :class:`str`
         The parent command name.
     """
+
     def __init__(self, name: str, parent_name: str) -> None:
         self.name: str = name
         super().__init__(
-            f'The command \'{name}\' cannot be registered to \'{parent_name}\' because '
-            'it reach the maximum depth.'
+            f"The command '{name}' cannot be registered to '{parent_name}' because " "it reach the maximum depth."
         )
+
 
 class ApplicationRegistrationExistingParentOptions(ClientException):
     """An exception raise when the command can't be added
@@ -149,12 +154,13 @@ class ApplicationRegistrationExistingParentOptions(ClientException):
     option: :class:`Option`
         The option that is not allowed.
     """
+
     def __init__(self, name: str, option: "Option") -> None:
         self.name: str = name
         self.option: str = option
         super().__init__(
-            f'The command \'{name}\' cannot be registered since the parent command contains option \'{option.name}\''
-            f' which is a type \'{option.input_type.name}\' (need to be subcommand or group)'
+            f"The command '{name}' cannot be registered since the parent command contains option '{option.name}'"
+            f" which is a type '{option.input_type.name}' (need to be subcommand or group)"
         )
 
 
@@ -164,7 +170,9 @@ class ApplicationUserInputError(ApplicationCommandError):
 
     This inherits from :exc:`ApplicationCommandError`.
     """
+
     pass
+
 
 class ApplicationMissingRequiredArgument(ApplicationUserInputError):
     """Exception raised when parsing a command and a parameter
@@ -177,17 +185,21 @@ class ApplicationMissingRequiredArgument(ApplicationUserInputError):
     param: :class:`inspect.Parameter`
         The argument that is missing.
     """
+
     def __init__(self, command: str, param: Parameter) -> None:
         self.param: Parameter = param
         self.command: str = command
-        super().__init__(f'Command {command} needs {param.name} which is a required argument that is missing.')
+        super().__init__(f"Command {command} needs {param.name} which is a required argument that is missing.")
+
 
 class ApplicationTooManyArguments(ApplicationUserInputError):
     """Exception raised when the command was passed too many arguments.
 
     This inherits from :exc:`ApplicationUserInputError`
     """
+
     pass
+
 
 class ApplicationBadArgument(ApplicationUserInputError):
     """Exception raised when a parsing or conversion failure is encountered
@@ -195,7 +207,9 @@ class ApplicationBadArgument(ApplicationUserInputError):
 
     This inherits from :exc:`ApplicationUserInputError`
     """
+
     pass
+
 
 class ApplicationMemberNotFound(ApplicationBadArgument):
     """Exception raised when the member provided was not found in the bot's
@@ -208,9 +222,11 @@ class ApplicationMemberNotFound(ApplicationBadArgument):
     argument: :class:`str`
         The member supplied by the caller that was not found
     """
+
     def __init__(self, argument: str) -> None:
         self.argument: str = argument
         super().__init__(f'Member "{argument}" not found.')
+
 
 class ApplicationMentionableNotFound(ApplicationBadArgument):
     """Exception raised when the mentionable provided was not found in the bot's
@@ -223,9 +239,11 @@ class ApplicationMentionableNotFound(ApplicationBadArgument):
     argument: :class:`str`
         The member supplied by the caller that was not found
     """
+
     def __init__(self, argument: str) -> None:
         self.argument: str = argument
         super().__init__(f'Mentionable "{argument}" not found.')
+
 
 class ApplicationUserNotFound(ApplicationBadArgument):
     """Exception raised when the user provided was not found in the bot's
@@ -240,12 +258,14 @@ class ApplicationUserNotFound(ApplicationBadArgument):
     argument: :class:`str`
         The user supplied by the caller that was not found
     """
+
     def __init__(self, argument: str) -> None:
         self.argument: str = argument
         super().__init__(f'User "{argument}" not found.')
 
 
 # Check failure inherits
+
 
 class ApplicationCheckAnyFailure(ApplicationCheckFailure):
     """Exception raised when all predicates in :func:`check_any` fail.
@@ -263,13 +283,12 @@ class ApplicationCheckAnyFailure(ApplicationCheckFailure):
     """
 
     def __init__(
-        self,
-        checks: List[ApplicationCheckFailure],
-        errors: List[Callable[["ApplicationContext"], bool]]
+        self, checks: List[ApplicationCheckFailure], errors: List[Callable[["ApplicationContext"], bool]]
     ) -> None:
         self.checks: List[ApplicationCheckFailure] = checks
         self.errors: List[Callable[["ApplicationContext"], bool]] = errors
-        super().__init__('You do not have permission to run this command.')
+        super().__init__("You do not have permission to run this command.")
+
 
 class ApplicationPrivateMessageOnly(ApplicationCheckFailure):
     """Exception raised when an operation does not work outside of private
@@ -277,8 +296,10 @@ class ApplicationPrivateMessageOnly(ApplicationCheckFailure):
 
     This inherits from :exc:`ApplicationCheckFailure`
     """
+
     def __init__(self, message: Optional[str] = None) -> None:
-        super().__init__(message or 'This command can only be used in private messages.')
+        super().__init__(message or "This command can only be used in private messages.")
+
 
 class ApplicationNoPrivateMessage(ApplicationCheckFailure):
     """Exception raised when an operation does not work in private message
@@ -288,7 +309,8 @@ class ApplicationNoPrivateMessage(ApplicationCheckFailure):
     """
 
     def __init__(self, message: Optional[str] = None) -> None:
-        super().__init__(message or 'This command cannot be used in private messages.')
+        super().__init__(message or "This command cannot be used in private messages.")
+
 
 class ApplicationMissingRole(ApplicationCheckFailure):
     """Exception raised when the command invoker lacks a role to run a command.
@@ -301,10 +323,12 @@ class ApplicationMissingRole(ApplicationCheckFailure):
         The required role that is missing.
         This is the parameter passed to :func:`~.app.has_role`.
     """
+
     def __init__(self, missing_role: "Snowflake") -> None:
         self.missing_role: "Snowflake" = missing_role
-        message = f'Role {missing_role!r} is required to run this command.'
+        message = f"Role {missing_role!r} is required to run this command."
         super().__init__(message)
+
 
 class ApplicationBotMissingRole(ApplicationCheckFailure):
     """Exception raised when the bot's member lacks a role to run a command.
@@ -317,10 +341,12 @@ class ApplicationBotMissingRole(ApplicationCheckFailure):
         The required role that is missing.
         This is the parameter passed to :func:`~.app.has_role`.
     """
+
     def __init__(self, missing_role: "Snowflake") -> None:
         self.missing_role: "Snowflake" = missing_role
-        message = f'Bot requires the role {missing_role!r} to run this command'
+        message = f"Bot requires the role {missing_role!r} to run this command"
         super().__init__(message)
+
 
 class ApplicationMissingAnyRole(ApplicationCheckFailure):
     """Exception raised when the command invoker lacks any of
@@ -336,18 +362,20 @@ class ApplicationMissingAnyRole(ApplicationCheckFailure):
         The roles that the invoker is missing.
         These are the parameters passed to :func:`~.app.has_any_role`.
     """
+
     def __init__(self, missing_roles: "SnowflakeList") -> None:
         self.missing_roles: "SnowflakeList" = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
         if len(missing) > 2:
-            fmt = '{}, or {}'.format(", ".join(missing[:-1]), missing[-1])
+            fmt = "{}, or {}".format(", ".join(missing[:-1]), missing[-1])
         else:
-            fmt = ' or '.join(missing)
+            fmt = " or ".join(missing)
 
         message = f"You are missing at least one of the required roles: {fmt}"
         super().__init__(message)
+
 
 class ApplicationBotMissingAnyRole(ApplicationCheckFailure):
     """Exception raised when the bot's member lacks any of
@@ -364,18 +392,20 @@ class ApplicationBotMissingAnyRole(ApplicationCheckFailure):
         These are the parameters passed to :func:`~.app.has_any_role`.
 
     """
+
     def __init__(self, missing_roles: "SnowflakeList") -> None:
         self.missing_roles: "SnowflakeList" = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
         if len(missing) > 2:
-            fmt = '{}, or {}'.format(", ".join(missing[:-1]), missing[-1])
+            fmt = "{}, or {}".format(", ".join(missing[:-1]), missing[-1])
         else:
-            fmt = ' or '.join(missing)
+            fmt = " or ".join(missing)
 
         message = f"Bot is missing at least one of the required roles: {fmt}"
         super().__init__(message)
+
 
 class ApplicationMissingPermissions(ApplicationCheckFailure):
     """Exception raised when the command invoker lacks permissions to run a
@@ -388,17 +418,19 @@ class ApplicationMissingPermissions(ApplicationCheckFailure):
     missing_permissions: List[:class:`str`]
         The required permissions that are missing.
     """
+
     def __init__(self, missing_permissions: List[str], *args: Any) -> None:
         self.missing_permissions: List[str] = missing_permissions
 
-        missing = [perm.replace('_', ' ').replace('guild', 'server').title() for perm in missing_permissions]
+        missing = [perm.replace("_", " ").replace("guild", "server").title() for perm in missing_permissions]
 
         if len(missing) > 2:
-            fmt = '{}, and {}'.format(", ".join(missing[:-1]), missing[-1])
+            fmt = "{}, and {}".format(", ".join(missing[:-1]), missing[-1])
         else:
-            fmt = ' and '.join(missing)
-        message = f'You are missing {fmt} permission(s) to run this command.'
+            fmt = " and ".join(missing)
+        message = f"You are missing {fmt} permission(s) to run this command."
         super().__init__(message, *args)
+
 
 class ApplicationBotMissingPermissions(ApplicationCheckFailure):
     """Exception raised when the bot's member lacks permissions to run a
@@ -411,17 +443,19 @@ class ApplicationBotMissingPermissions(ApplicationCheckFailure):
     missing_permissions: List[:class:`str`]
         The required permissions that are missing.
     """
+
     def __init__(self, missing_permissions: List[str], *args: Any) -> None:
         self.missing_permissions: List[str] = missing_permissions
 
-        missing = [perm.replace('_', ' ').replace('guild', 'server').title() for perm in missing_permissions]
+        missing = [perm.replace("_", " ").replace("guild", "server").title() for perm in missing_permissions]
 
         if len(missing) > 2:
-            fmt = '{}, and {}'.format(", ".join(missing[:-1]), missing[-1])
+            fmt = "{}, and {}".format(", ".join(missing[:-1]), missing[-1])
         else:
-            fmt = ' and '.join(missing)
-        message = f'Bot requires {fmt} permission(s) to run this command.'
+            fmt = " and ".join(missing)
+        message = f"Bot requires {fmt} permission(s) to run this command."
         super().__init__(message, *args)
+
 
 class ApplicationNSFWChannelRequired(ApplicationCheckFailure):
     """Exception raised when a channel does not have the required NSFW setting.
@@ -435,18 +469,23 @@ class ApplicationNSFWChannelRequired(ApplicationCheckFailure):
     channel: Union[:class:`.abc.GuildChannel`, :class:`.Thread`]
         The channel that does not have NSFW enabled.
     """
+
     def __init__(self, channel: Union["GuildChannel", "Thread"]) -> None:
         self.channel: Union["GuildChannel", "Thread"] = channel
         super().__init__(f"Channel '{channel}' needs to be NSFW for this command to work.")
+
 
 class ApplicationNotOwner(ApplicationCheckFailure):
     """Exception raised when the message author is not the owner of the bot.
 
     This inherits from :exc:`ApplicationCheckFailure`
     """
+
     pass
 
+
 # cooldowns
+
 
 class ApplicationCommandOnCooldown(ApplicationCommandError):
     """Exception raised when the command being invoked is on cooldown.
@@ -463,11 +502,12 @@ class ApplicationCommandOnCooldown(ApplicationCommandError):
     retry_after: :class:`float`
         The amount of seconds to wait before you can retry again.
     """
+
     def __init__(self, cooldown: "ApplicationCooldown", retry_after: float, type: "ApplicationBucketType") -> None:
         self.cooldown: "ApplicationCooldown" = cooldown
         self.retry_after: float = retry_after
         self.type: "ApplicationBucketType" = type
-        super().__init__(f'You are on cooldown. Try again in {retry_after:.2f}s')
+        super().__init__(f"You are on cooldown. Try again in {retry_after:.2f}s")
 
 
 class ApplicationMaxConcurrencyReached(ApplicationCommandError):
@@ -487,7 +527,7 @@ class ApplicationMaxConcurrencyReached(ApplicationCommandError):
         self.number: int = number
         self.per: "ApplicationBucketType" = per
         name = per.name
-        suffix = 'per %s' % name if per.name != 'default' else 'globally'
-        plural = '%s times %s' if number > 1 else '%s time %s'
+        suffix = "per %s" % name if per.name != "default" else "globally"
+        plural = "%s times %s" if number > 1 else "%s time %s"
         fmt = plural % (number, suffix)
-        super().__init__(f'Too many people are using this command. It can only be used {fmt} concurrently.')
+        super().__init__(f"Too many people are using this command. It can only be used {fmt} concurrently.")
