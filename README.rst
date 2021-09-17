@@ -1,22 +1,28 @@
 🔧 Fork Notice
 ===============
-This fork is specifically made for naoTimes!
+This fork is made with `naoTimes <https://github.com/naoTimesdev/naoTimes>`_ in mind.
 
-This fork will focus on developing some feature like Application (Slash/User/Message) and adding some feature that are in PR.
-This fork shouldn't be used for other bots since I'm not going to take responsibility if something went wrong.
+This fork will focus on improving and adding feature for the library.
+
+What this fork does:
+
+- Adding new feature like slash command, user command, and message command.
+- Adding new feature that are in Discord canary or beta (as long as it's being documented in the API).
+- PEP8 friendly, you can check the ``flake8`` and ``black`` configuration for more info.
+
+What this fork does not do:
+
+- Removing feature or doing radical changes to the project structure.
 
 ndiscord.py
 ==========
 
-.. image:: https://discord.com/api/guilds/336642139381301249/embed.png
-   :target: https://discord.gg/r3sSKJJ
-   :alt: Discord server invite
-.. image:: https://img.shields.io/pypi/v/discord.py.svg
-   :target: https://pypi.python.org/pypi/discord.py
-   :alt: PyPI version info
-.. image:: https://img.shields.io/pypi/pyversions/discord.py.svg
-   :target: https://pypi.python.org/pypi/discord.py
-   :alt: PyPI supported Python versions
+.. image:: https://img.shields.io/github/last-commit/naoTimesdev/ndiscord.py.svg?color=blue
+   :target: https://github.com/naoTimesdev/ndiscord.py/commits/master
+   :alt: Last Commit
+.. image:: https://img.shields.io/badge/python-3.8%20%7C%203.9-blue.svg
+   :target: #
+   :alt: Supported Python versions
 
 A modern, easy to use, feature-rich, and async ready API wrapper for Discord written in Python.
 
@@ -104,8 +110,29 @@ Bot Example
 
 You can find more examples in the examples directory.
 
+Slash Command Example
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: py
+   
+    import discord
+    from discord.ext import app, commands
+   
+    bot = commands.Bot(command_prefix='n!')
+   
+    @bot.command()
+    async def ping(ctx):
+        await ctx.send('pong')
+      
+    @app.slash_command()
+    @app.option('content', str)
+    async def echo(ctx, content):
+        await ctx.send(content)
+        
+    bot.run('token')
+
 Links
 ------
 
 - `Documentation <https://discordpy.readthedocs.io/en/latest/index.html>`_
-- `Discord API <https://discord.gg/discord-api>`_
+- `Discord API Server <https://discord.gg/discord-api>`_
