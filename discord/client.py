@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+from discord.ext.app.core import UserCommand
 import logging
 import signal
 import sys
@@ -61,7 +62,15 @@ from .ui.view import View
 from .stage_instance import StageInstance
 from .threads import Thread
 from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
-from .ext.app import ApplicationCommandMixin, ApplicationCommand, ApplicationRegistrationError
+from .ext.app import (
+    ApplicationCommand,
+    ApplicationCommandMixin,
+    ApplicationRegistrationError,
+    MessageCommand,
+    SlashCommand,
+    UserCommand
+)
+from .ext.app._types import AppCommandT, BotT, CogT, ContextT
 
 
 if TYPE_CHECKING:
@@ -80,6 +89,12 @@ T = TypeVar('T')
 Coro = TypeVar('Coro', bound=Callable[..., Coroutine[Any, Any, Any]])
 CoroShort = Coroutine[Any, Any, T]
 ApplicationCmdT = TypeVar('ApplicationCmdT', bound="Union[ApplicationCommand, RawApplicationCommand]")
+ApplicationCommandUnion = Union[
+    SlashCommand[CogT, BotT, ContextT],
+    UserCommand[CogT, BotT, ContextT],
+    MessageCommand[CogT, BotT, ContextT],
+    ApplicationCommand[CogT, BotT, ContextT],
+]
 
 
 _log = logging.getLogger(__name__)
@@ -115,7 +130,7 @@ def _cleanup_loop(loop: asyncio.AbstractEventLoop) -> None:
         _log.info('Closing the event loop.')
         loop.close()
 
-class Client(ApplicationCommandMixin):
+class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     r"""Represents a client connection that connects to Discord.
     This class is used to interact with the Discord WebSocket and API.
 
@@ -693,7 +708,7 @@ class Client(ApplicationCommandMixin):
 
         pending_registration = self._pending_registration[:]
 
-        global_payloads: List[ApplicationCommand] = []
+        global_payloads: List[ApplicationCommand[CogT, BotT, AppCommandT]] = []
         global_commands = await self.http.get_global_commands(self._app_cmd_ids)
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is None]:
             if len(global_commands) > 0:
@@ -702,7 +717,7 @@ class Client(ApplicationCommandMixin):
                     command.id = int(match_this['id'])
                     global_payloads.append(command)
 
-        update_guild_commands: Dict[int, List[ApplicationCommand]] = {}
+        update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT, AppCommandT]]] = {}
         async for guild in self.fetch_guilds(limit=None):
             update_guild_commands[guild.id] = []
 
@@ -1728,7 +1743,7 @@ class Client(ApplicationCommandMixin):
 
     # application related
 
-    def get_applications(self):
+    def get_applications(self) -> List[ApplicationCommand[CogT, BotT, T]]:
         """A list of application that are registered.
 
         .. versionadded:: 2.0
@@ -1742,7 +1757,7 @@ class Client(ApplicationCommandMixin):
         pending = self._pending_registration
         return [app for app in all_apps if app not in pending]
 
-    def get_application(self, id: int) -> Optional[ApplicationCommand]:
+    def get_application(self, id: int) -> Optional[ApplicationCommandUnion]:
         """Get an application by its ID.
 
         .. versionadded:: 2.0
@@ -1760,7 +1775,7 @@ class Client(ApplicationCommandMixin):
         all_apps = self.get_applications()
         return utils.find(lambda app: isinstance(app.id, int) and app.id == id, all_apps)
 
-    def get_guild_applications(self, guild_id: int) -> List[ApplicationCommand]:
+    def get_guild_applications(self, guild_id: int) -> List[ApplicationCommandUnion]:
         """A list of application that are registered for a guild.
 
         .. versionadded:: 2.0
@@ -1778,7 +1793,7 @@ class Client(ApplicationCommandMixin):
         non_pending = self.get_applications()
         return [app for app in non_pending if guild_id in app.guild_ids]
 
-    def get_guild_application(self, id: int, app_id: int) -> Optional[ApplicationCommand]:
+    def get_guild_application(self, id: int, app_id: int) -> Optional[ApplicationCommandUnion]:
         """A list of application that are registered for a guild.
 
         .. versionadded:: 2.0

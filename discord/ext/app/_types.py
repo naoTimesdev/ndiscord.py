@@ -22,7 +22,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol, Type, TypeVar, Union
-from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from .core import Option, SlashCommand, UserCommand, MessageCommand, ApplicationCommand
@@ -44,11 +43,24 @@ CoroFunc = Callable[..., Coro[Any]]
 
 CogT = TypeVar('CogT', bound='Cog')
 BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client, AutoShardedClient]")
-AppCommandT = TypeVar('AppCommandT', bound="Union[SlashCommand, UserCommand, MessageCommand, ApplicationCommand]")
+AppCommandT = TypeVar(
+    'AppCommandT',
+    bound="Union[SlashCommand, UserCommand, MessageCommand, ApplicationCommand]"
+)
+ContextT = TypeVar('ContextT', bound='ApplicationContext')
 
-Check = Union[Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]], Callable[["ApplicationContext"], MaybeCoro[bool]]]
-Hook = Union[Callable[["Cog", "ApplicationContext"], Coro[Any]], Callable[["ApplicationContext"], Coro[Any]]]
-Error = Union[Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]], Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]]]
+Check = Union[
+    Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]],
+    Callable[["ApplicationContext"], MaybeCoro[bool]]
+]
+Hook = Union[
+    Callable[["Cog", "ApplicationContext"], Coro[Any]],
+    Callable[["ApplicationContext"], Coro[Any]]
+]
+Error = Union[
+    Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]],
+    Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]]
+]
 
 PythonInputType = Type[Union[str, int, float, bool]]
 Mentionable = TypeVar('Mentionable', bound="Union[Snowflake, GuildChannel, Member, Role]")

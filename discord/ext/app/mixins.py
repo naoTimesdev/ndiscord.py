@@ -26,7 +26,7 @@ import traceback
 import sys
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
 
-from ._types import CogT, BotT, AppCommandT, Check
+from ._types import AppCommandT, BotT, CogT, Check, ContextT
 from .context import ApplicationContext
 from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command, AppCommandT
 from .errors import ApplicationRegistrationError, ApplicationCommandError
@@ -47,7 +47,7 @@ MISSING: Any = discord.utils.MISSING
 AppCommand = Union[SlashCommand[CogT, BotT, T], UserCommand[CogT, BotT, T], MessageCommand[CogT, BotT, T]]
 
 
-class ApplicationCommandFactory(Generic[CogT, BotT, T, AppCommandT]):
+class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
     """A "factory" or collector of application commands.
 
     These factory should not be created manually, it will be called from
@@ -63,9 +63,9 @@ class ApplicationCommandFactory(Generic[CogT, BotT, T, AppCommandT]):
         All message commands registered with this factory.
     """
     def __init__(self):
-        self._slash_commands: Dict[str, SlashCommand[CogT, BotT, T]] = {}
-        self._user_commands: Dict[str, UserCommand[CogT, BotT, T]] = {}
-        self._message_commands: Dict[str, MessageCommand[CogT, BotT, T]] = {}
+        self._slash_commands: Dict[str, SlashCommand[CogT, BotT, ContextT]] = {}
+        self._user_commands: Dict[str, UserCommand[CogT, BotT, ContextT]] = {}
+        self._message_commands: Dict[str, MessageCommand[CogT, BotT, ContextT]] = {}
 
     @property
     def slash_commands(self):
@@ -188,7 +188,7 @@ class ApplicationCommandFactory(Generic[CogT, BotT, T, AppCommandT]):
             return self._remove_by_name(command.name, command.type)
         return None
 
-class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT]):
+class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
     """A mixin that provides application commands to the bot.
 
     These mixin should not be created manually, this will be used by :class:`.Client`
@@ -206,8 +206,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT]):
     """
 
     _debug_guilds: List[int]
-    _app_factories: ApplicationCommandFactory[CogT, BotT, T, AppCommandT]
-    _pending_registration: List[ApplicationCommand[CogT, BotT, T]] = []
+    _app_factories: ApplicationCommandFactory[CogT, BotT, ContextT, AppCommandT]
+    _pending_registration: List[ApplicationCommand[CogT, BotT, ContextT]] = []
 
     def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin[CogT, BotT, AppCommandT]":
         debug_guild = kwargs.pop("debug_guild", None)
@@ -328,7 +328,11 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT]):
             else:
                 self.dispatch('application_completion', ctx)
 
-    async def get_application_context(self, interaction: Interaction, cls = None) -> ApplicationContext[CogT, BotT, AppCommandT]:
+    async def get_application_context(
+        self,
+        interaction: Interaction,
+        cls: Optional[ApplicationContext[CogT, BotT, AppCommandT]] = None
+    ) -> ApplicationContext[CogT, BotT, AppCommandT]:
         r"""|coro|
 
         Returns the invocation context from the interaction.
