@@ -47,7 +47,7 @@ from typing import (
 from typing_extensions import Concatenate, ParamSpec, TypeGuard
 
 import discord
-from discord.enums import ApplicationCommandType, SlashCommandOptionType
+from discord.enums import ApplicationCommandType, ChannelType, SlashCommandOptionType
 from discord.errors import ClientException, HTTPException
 from discord.member import Member
 from discord.message import Message
@@ -683,6 +683,9 @@ class Option:
         The default value of the argument.
     choices: List[:class:`.OptionChoice`]
         A list of valid options for the argument.
+    channel_types: Optional[List[:class:`.ChannelType`]]
+        A list of channel types that the option is valid for.
+        If provided, the user can only use the defined channel type for the option.
     """
 
     def __init__(
@@ -705,9 +708,10 @@ class Option:
             if kwargs["default"] is None:
                 self._is_default_nonetype = True
         self.default: Optional[Any] = kwargs.pop("default", None)
+        self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
 
     def to_dict(self):
-        return {
+        data = {
             "name": self.name,
             "description": self.description,
             "type": self.input_type.value,
@@ -715,6 +719,9 @@ class Option:
             "choices": [c.to_dict() for c in self.choices],
             "default": self.default,
         }
+        if self.channel_types:
+            data["channel_types"] = [c.value for c in self.channel_types]
+        return data
 
     def __repr__(self):
         return f"<discord.ext.app.Option name={self.name}>"
@@ -1484,10 +1491,11 @@ def option(
     name: str,
     type: Optional[AcceptedInputType] = ...,
     *,
-    description: str = None,
+    description: str = ...,
     required: bool = True,
     choices: List[Union[OptionChoice, str]] = [],
-    default: Optional[Any] = None,
+    default: Optional[Any] = ...,
+    channel_types: Optional[List[ChannelType]] = ...,
 ) -> Option:
     ...
 
@@ -1511,6 +1519,9 @@ def option(name, type=None, **kwargs):
         A list of valid choices for the option.
     default: Optional[Any]
         The default value of the option.
+    channel_types: Optional[List[:class:`.ChannelType`]]
+        A list of channel types that the option is valid for.
+        If provided, the user can only use the defined channel type for the option.
     """
 
     def decor(func: ApplicationCallback):
