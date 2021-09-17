@@ -1322,11 +1322,15 @@ of :class:`enum.Enum`.
         The system message denoting that the author is replying to a message.
 
         .. versionadded:: 2.0
-    .. attribute:: application_command
+    .. attribute:: chat_input_command
 
         The system message denoting that an application (or "slash") command was executed.
 
         .. versionadded:: 2.0
+
+        .. note::
+
+            Originally this was ``application_command``, but changed following Discord changes.
     .. attribute:: guild_invite_reminder
 
         The system message sent as a reminder to invite people to the guild.
@@ -1336,6 +1340,11 @@ of :class:`enum.Enum`.
 
         The system message denoting the message in the thread that is the one that started the
         thread's conversation topic.
+
+        .. versionadded:: 2.0
+    .. attribute:: context_menu_command
+
+        The system message denoting that an context menu ("user" or "message") command was executed.
 
         .. versionadded:: 2.0
 
