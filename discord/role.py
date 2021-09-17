@@ -244,7 +244,7 @@ class Role(Hashable):
         self.hoist: bool = data.get("hoist", False)
         self.managed: bool = data.get("managed", False)
         self.mentionable: bool = data.get("mentionable", False)
-        self._icon: str = data.get("icon", "")
+        self._icon: str = data.get("icon", None)
         self.tags: Optional[RoleTags]
 
         try:
