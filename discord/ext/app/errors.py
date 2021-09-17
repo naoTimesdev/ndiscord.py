@@ -24,15 +24,16 @@ DEALINGS IN THE SOFTWARE.
 
 from inspect import Parameter
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Union
+
 from discord.errors import ClientException, DiscordException
 
 if TYPE_CHECKING:
-    from . import ApplicationContext, Option
-    from .cooldowns import ApplicationBucketType, ApplicationCooldown
-
     from discord.abc import GuildChannel
     from discord.threads import Thread
     from discord.types.snowflake import Snowflake, SnowflakeList
+
+    from . import ApplicationContext, Option
+    from .cooldowns import ApplicationBucketType, ApplicationCooldown
 
 __all__ = (
     "ApplicationCommandError",

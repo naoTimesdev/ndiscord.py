@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, Dict, Final, List, Mapping, Protocol, TYPE_CHECKING, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Final, List, Mapping, Protocol, Type, TypeVar, Union
 
 from . import utils
 from .colour import Colour
@@ -65,7 +65,8 @@ class EmbedProxy:
 E = TypeVar("E", bound="Embed")
 
 if TYPE_CHECKING:
-    from discord.types.embed import Embed as EmbedData, EmbedType
+    from discord.types.embed import Embed as EmbedData
+    from discord.types.embed import EmbedType
 
     T = TypeVar("T")
     MaybeEmpty = Union[T, _EmptyEmbed]

@@ -22,19 +22,19 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-import traceback
 import sys
+import traceback
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
 
-from ._types import AppCommandT, BotT, CogT, Check, ContextT
-from .context import ApplicationContext
-from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command
-from .errors import ApplicationRegistrationError, ApplicationCommandError
-
 import discord
-from discord.interactions import Interaction
 from discord.enums import ApplicationCommandType, InteractionType
 from discord.errors import DiscordException
+from discord.interactions import Interaction
+
+from ._types import AppCommandT, BotT, Check, CogT, ContextT
+from .context import ApplicationContext
+from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command
+from .errors import ApplicationCommandError, ApplicationRegistrationError
 
 T = TypeVar("T")
 DecoApp = Callable[..., T]

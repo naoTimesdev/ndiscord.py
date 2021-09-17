@@ -26,25 +26,15 @@ from __future__ import annotations
 
 import asyncio
 import datetime
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    Generic,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-)
-
-import aiohttp
-import discord
 import inspect
 import sys
 import traceback
-
 from collections.abc import Sequence
+from typing import Any, Awaitable, Callable, Generic, List, Optional, Type, TypeVar, Union
+
+import aiohttp
+
+import discord
 from discord.backoff import ExponentialBackoff
 from discord.utils import MISSING
 

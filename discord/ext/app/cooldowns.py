@@ -27,12 +27,12 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-
-from typing import Any, Callable, Deque, Dict, Optional, Type, TypeVar, TYPE_CHECKING
-from discord.enums import Enum
-import time
 import asyncio
+import time
 from collections import deque
+from typing import TYPE_CHECKING, Any, Callable, Deque, Dict, Optional, Type, TypeVar
+
+from discord.enums import Enum
 
 from .errors import ApplicationMaxConcurrencyReached
 

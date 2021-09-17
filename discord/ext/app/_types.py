@@ -22,20 +22,19 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Dict, List, Protocol, Type, TypeVar, Union
 
 if TYPE_CHECKING:
-    from .core import Option, SlashCommand, UserCommand, MessageCommand, ApplicationCommand
-    from .context import ApplicationContext
-    from .errors import ApplicationCommandError
-    from .cooldowns import ApplicationCooldown, ApplicationCooldownMapping, ApplicationMaxConcurrency
-    from discord.ext.commands import Cog, Bot, AutoShardedBot
-
-    from discord import Client, AutoShardedClient
-
-    from discord.abc import Snowflake, GuildChannel
+    from discord import AutoShardedClient, Client
+    from discord.abc import GuildChannel, Snowflake
+    from discord.ext.commands import AutoShardedBot, Bot, Cog
     from discord.member import Member
     from discord.role import Role
+
+    from .context import ApplicationContext
+    from .cooldowns import ApplicationCooldown, ApplicationCooldownMapping, ApplicationMaxConcurrency
+    from .core import ApplicationCommand, MessageCommand, Option, SlashCommand, UserCommand
+    from .errors import ApplicationCommandError
 
 T = TypeVar("T")
 

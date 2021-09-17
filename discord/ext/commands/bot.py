@@ -24,34 +24,31 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-
 import asyncio
 import collections
 import collections.abc
-import inspect
 import importlib.util
+import inspect
 import sys
 import traceback
 import types
-from typing import Any, Callable, Mapping, List, Dict, TYPE_CHECKING, Optional, TypeVar, Type, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Optional, Type, TypeVar, Union
 
 import discord
 
-from .core import GroupMixin
-from .view import StringView
-from .context import Context
 from . import errors
-from .help import HelpCommand, DefaultHelpCommand
 from .cog import Cog
+from .context import Context
+from .core import GroupMixin
+from .help import DefaultHelpCommand, HelpCommand
+from .view import StringView
 
 if TYPE_CHECKING:
     import importlib.machinery
 
     from discord.message import Message
-    from ._types import (
-        Check,
-        CoroFunc,
-    )
+
+    from ._types import Check, CoroFunc
 
 __all__ = (
     "when_mentioned",

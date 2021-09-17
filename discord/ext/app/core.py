@@ -44,18 +44,19 @@ from typing import (
     overload,
 )
 
+from typing_extensions import Concatenate, ParamSpec, TypeGuard
+
 import discord
 from discord.enums import ApplicationCommandType, SlashCommandOptionType
 from discord.errors import ClientException, HTTPException
 from discord.member import Member
 from discord.message import Message
 from discord.user import User
-from typing_extensions import Concatenate, ParamSpec, TypeGuard
 
 from ._types import (
     AcceptedInputType,
-    ApplicationCallback,
     AppCommandT,
+    ApplicationCallback,
     BotT,
     Check,
     CogT,
@@ -65,7 +66,7 @@ from ._types import (
     Hook,
     _BaseApplication,
 )
-
+from .context import ApplicationContext
 from .cooldowns import (
     ApplicationBucketType,
     ApplicationCooldown,
@@ -73,7 +74,6 @@ from .cooldowns import (
     ApplicationDynamicCooldownMapping,
     ApplicationMaxConcurrency,
 )
-from .context import ApplicationContext
 from .errors import *
 
 __all__ = (

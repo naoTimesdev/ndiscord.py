@@ -24,21 +24,20 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import inspect
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, Generator, List, Optional, Tuple, Type, TypeVar, Union
+
 import discord.utils
 from discord.enums import ApplicationCommandType
 
-from typing import Any, Callable, ClassVar, Dict, Generator, List, Optional, TYPE_CHECKING, Tuple, TypeVar, Type, Union
-
+from ..app import ApplicationCommand
 from ._types import _BaseCommand
 
-from ..app import ApplicationCommand
-
 if TYPE_CHECKING:
+    from discord import Client
+
     from .bot import BotBase
     from .context import Context
     from .core import Command
-
-    from discord import Client
 
 __all__ = (
     "CogMeta",

@@ -24,8 +24,6 @@ DEALINGS IN THE SOFTWARE.
 
 from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
-from ._types import CogT, BotT, AppCommandT
-
 import discord.abc
 import discord.utils
 from discord.guild import Guild
@@ -34,6 +32,8 @@ from discord.member import Member
 from discord.state import ConnectionState
 from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
+
+from ._types import AppCommandT, BotT, CogT
 
 if TYPE_CHECKING:
     from discord.interactions import InteractionChannel

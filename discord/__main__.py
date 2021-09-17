@@ -23,13 +23,14 @@ DEALINGS IN THE SOFTWARE.
 """
 
 import argparse
+import platform
 import sys
 from pathlib import Path
 
-import discord
-import pkg_resources
 import aiohttp
-import platform
+import pkg_resources
+
+import discord
 
 
 def show_version():

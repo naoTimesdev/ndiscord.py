@@ -30,6 +30,7 @@ import signal
 import sys
 import traceback
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Coroutine,
@@ -38,7 +39,6 @@ from typing import (
     List,
     Optional,
     Sequence,
-    TYPE_CHECKING,
     Tuple,
     TypeVar,
     Union,
@@ -46,34 +46,14 @@ from typing import (
 
 import aiohttp
 
-from .user import User, ClientUser
-from .invite import Invite
-from .template import Template
-from .widget import Widget
-from .guild import Guild
-from .emoji import Emoji
-from .channel import _threaded_channel_factory, PartialMessageable
-from .enums import ApplicationCommandType, ChannelType
-from .mentions import AllowedMentions
-from .errors import *
-from .enums import Status, VoiceRegion
-from .flags import ApplicationFlags, Intents
-from .gateway import *
-from .activity import ActivityTypes, BaseActivity, create_activity
-from .voice_client import VoiceClient
-from .http import HTTPClient
-from .state import ConnectionState
 from . import utils
-from .utils import MISSING
-from .object import Object
-from .backoff import ExponentialBackoff
-from .webhook import Webhook
-from .iterators import GuildIterator
+from .activity import ActivityTypes, BaseActivity, create_activity
 from .appinfo import AppInfo
-from .ui.view import View
-from .stage_instance import StageInstance
-from .threads import Thread
-from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from .backoff import ExponentialBackoff
+from .channel import PartialMessageable, _threaded_channel_factory
+from .emoji import Emoji
+from .enums import ApplicationCommandType, ChannelType, Status, VoiceRegion
+from .errors import *
 from .ext.app import (
     ApplicationCommand,
     ApplicationCommandMixin,
@@ -83,15 +63,33 @@ from .ext.app import (
     UserCommand,
 )
 from .ext.app._types import AppCommandT, BotT, CogT, ContextT
-
+from .flags import ApplicationFlags, Intents
+from .gateway import *
+from .guild import Guild
+from .http import HTTPClient
+from .invite import Invite
+from .iterators import GuildIterator
+from .mentions import AllowedMentions
+from .object import Object
+from .stage_instance import StageInstance
+from .state import ConnectionState
+from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from .template import Template
+from .threads import Thread
+from .ui.view import View
+from .user import ClientUser, User
+from .utils import MISSING
+from .voice_client import VoiceClient
+from .webhook import Webhook
+from .widget import Widget
 
 if TYPE_CHECKING:
-    from .abc import SnowflakeTime, PrivateChannel, GuildChannel, Snowflake
+    from .abc import GuildChannel, PrivateChannel, Snowflake, SnowflakeTime
     from .channel import DMChannel
-    from .message import Message
     from .member import Member
-    from .voice_client import VoiceProtocol
+    from .message import Message
     from .types.interactions import ApplicationCommand as RawApplicationCommand
+    from .voice_client import VoiceProtocol
 
 __all__ = ("Client",)
 

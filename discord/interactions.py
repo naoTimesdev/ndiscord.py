@@ -25,20 +25,20 @@ DEALINGS IN THE SOFTWARE.
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
+
 import asyncio
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from . import utils
-from .enums import try_enum, InteractionType, InteractionResponseType
-from .errors import InteractionResponded, HTTPException, ClientException
-from .channel import PartialMessageable, ChannelType
-
-from .user import User
+from .channel import ChannelType, PartialMessageable
+from .enums import InteractionResponseType, InteractionType, try_enum
+from .errors import ClientException, HTTPException, InteractionResponded
 from .member import Member
-from .message import Message, Attachment
+from .message import Attachment, Message
 from .object import Object
 from .permissions import Permissions
-from .webhook.async_ import async_context, Webhook, handle_message_parameters
+from .user import User
+from .webhook.async_ import Webhook, async_context, handle_message_parameters
 
 __all__ = (
     "Interaction",
@@ -47,19 +47,25 @@ __all__ = (
 )
 
 if TYPE_CHECKING:
-    from .types.interactions import (
-        Interaction as InteractionPayload,
-        InteractionData,
-    )
-    from .guild import Guild
-    from .state import ConnectionState
-    from .file import File
-    from .mentions import AllowedMentions
     from aiohttp import ClientSession
+
+    from .channel import (  # noqa
+        CategoryChannel,
+        PartialMessageable,
+        StageChannel,
+        StoreChannel,
+        TextChannel,
+        VoiceChannel,
+    )
     from .embeds import Embed
-    from .ui.view import View
-    from .channel import VoiceChannel, StageChannel, TextChannel, CategoryChannel, StoreChannel, PartialMessageable  # noqa
+    from .file import File
+    from .guild import Guild
+    from .mentions import AllowedMentions
+    from .state import ConnectionState
     from .threads import Thread
+    from .types.interactions import Interaction as InteractionPayload
+    from .types.interactions import InteractionData
+    from .ui.view import View
 
     InteractionChannel = Union[
         VoiceChannel, StageChannel, TextChannel, CategoryChannel, StoreChannel, Thread, PartialMessageable
