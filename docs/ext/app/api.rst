@@ -111,6 +111,19 @@ MessageCommand
     .. automethod:: MessageCommand.error()
         :decorator:
 
+Options
+~~~~~~~~
+
+.. attributetable:: discord.ext.app.Option
+
+.. autoclass:: discord.ext.app.Option
+    :members:
+
+.. attributetable:: discord.ext.app.OptionChoice
+
+.. autoclass:: discord.ext.app.OptionChoice
+    :members:
+
 Decorators
 ~~~~~~~~~~~
 
@@ -129,6 +142,9 @@ This is all available decorators that user can use to create application command
     :decorator:
 
 .. autofunction:: discord.ext.app.command
+    :decorator:
+
+.. autofunction:: discord.ext.app.option
     :decorator:
 
 

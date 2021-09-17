@@ -721,9 +721,9 @@ class Option:
 
 
 class OptionChoice:
-    r"""A class that implement an option choice for :class`.Option`.
+    r"""A class that implement an option choice for :class:`.Option`.
 
-    You can pass this directly to the `choices` arguments in :class:`.Option`.
+    You can pass this directly to the ``choices`` arguments in :class:`.Option`.
 
     Attributes
     -----------
@@ -1482,7 +1482,7 @@ class MessageCommand(ContextMenuApplication[CogT, BotT, T]):
 @overload
 def option(
     name: str,
-    type: AcceptedInputType,
+    type: Optional[AcceptedInputType] = ...,
     *,
     description: str = None,
     required: bool = True,
@@ -1493,7 +1493,25 @@ def option(
 
 
 def option(name, type=None, **kwargs):
-    """A decorator that can be used instead of typehinting Option"""
+    """A decorator that can be used instead of typehinting :class:`.Option`
+
+    Parameters
+    -----------
+    name: :class:`str`
+        The name of the option in the arguments.
+    type: Optional[Union[Type[Union[:class:`str`, :class:`int`, :class:`float`, :class:`bool`]], :class:`int`, :class:`.Snowflake`, :class:`.GuildChannel`, :class:`.Member`, :class:`.Role`, :class:`.Mentionable`]]
+        The type of the option, default to string if not defined.
+        You can pass something like :class:`str` and it will automatically converted to proper type.
+        You can also give a number and it will try to find that enum.
+    description: :class:`str`
+        The description of the option.
+    required: :class:`bool`
+        Whether the option is required or not.
+    choices: List[Union[:class:`.OptionChoice`, :class:`str`]]
+        A list of valid choices for the option.
+    default: Optional[Any]
+        The default value of the option.
+    """
 
     def decor(func: ApplicationCallback):
         nonlocal type
