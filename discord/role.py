@@ -31,7 +31,7 @@ from .colour import Colour
 from .errors import InvalidArgument
 from .mixins import Hashable
 from .permissions import Permissions
-from .utils import MISSING, _get_as_snowflake, snowflake_time
+from .utils import MISSING, _bytes_to_base64_data, _get_as_snowflake, snowflake_time
 
 __all__ = (
     "RoleTags",
@@ -364,6 +364,7 @@ class Role(Hashable):
         permissions: Permissions = MISSING,
         colour: Union[Colour, int] = MISSING,
         color: Union[Colour, int] = MISSING,
+        icon: Optional[bytes] = MISSING,
         hoist: bool = MISSING,
         mentionable: bool = MISSING,
         position: int = MISSING,
@@ -383,6 +384,7 @@ class Role(Hashable):
 
         .. versionchanged:: 2.0
             Edits are no longer in-place, the newly edited role is returned instead.
+            Also added a new ``icon`` parameter to change role icons.
 
         Parameters
         -----------
@@ -392,6 +394,8 @@ class Role(Hashable):
             The new permissions to change to.
         colour: Union[:class:`Colour`, :class:`int`]
             The new colour to change to. (aliased to color as well)
+        icon: :class:`bytes`
+            A bytes object representing the role icon.
         hoist: :class:`bool`
             Indicates if the role should be shown separately in the member list.
         mentionable: :class:`bool`
@@ -435,6 +439,12 @@ class Role(Hashable):
 
         if permissions is not MISSING:
             payload["permissions"] = permissions.value
+
+        if icon is not MISSING:
+            if icon is None:
+                payload["icon"] = icon
+            else:
+                payload["icon"] = _bytes_to_base64_data(icon)
 
         if hoist is not MISSING:
             payload["hoist"] = hoist
