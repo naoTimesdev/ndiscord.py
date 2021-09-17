@@ -859,7 +859,10 @@ class ConnectionState:
             return
 
         thread_id = int(data["id"])
+        raw_thread = RawThreadDeleteEvent(data)
         thread = guild.get_thread(thread_id)
+        raw_thread.thread = thread
+        self.dispatch("raw_thread_delete", raw_thread)
         if thread is not None:
             guild._remove_thread(thread)  # type: ignore
             self.dispatch("thread_delete", thread)

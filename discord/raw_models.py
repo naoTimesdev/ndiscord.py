@@ -26,6 +26,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional, Set
 
+from .enums import ChannelType, try_enum
+
 if TYPE_CHECKING:
     from .member import Member
     from .message import Message
@@ -39,6 +41,7 @@ if TYPE_CHECKING:
         ReactionClearEmojiEvent,
         ReactionClearEvent,
     )
+    from .threads import Thread
 
 
 __all__ = (
@@ -48,6 +51,7 @@ __all__ = (
     "RawReactionActionEvent",
     "RawReactionClearEvent",
     "RawReactionClearEmojiEvent",
+    "RawThreadDeleteEvent",
     "RawIntegrationDeleteEvent",
 )
 
@@ -249,6 +253,35 @@ class RawReactionClearEmojiEvent(_RawReprMixin):
             self.guild_id: Optional[int] = int(data["guild_id"])
         except KeyError:
             self.guild_id: Optional[int] = None
+
+
+class RawThreadDeleteEvent(_RawReprMixin):
+    """Represents the payload for a :func:`on_raw_thread_delete` event.
+
+    .. versionadded:: 2.0
+
+    Attributes
+    -----------
+    thread_id: :class:`int`
+        The ID of the thread that got deleted.
+    thread_type: :class:`.ChannelType`
+        The channel type of the deleted thread.
+    guild_id: :class:`int`
+        The ID of the guild the thread was deleted in.
+    parent_id: :class:`int`
+        The ID of the channel the thread belonged to.
+    thread: Optional[:class:`.Thread`]
+        The thread, if it could be found in the internal cache.
+    """
+
+    __slots__ = ('thread_id', 'thread_type', 'parent_id', 'guild_id', 'thread')
+
+    def __init__(self, data):
+        self.thread_id: int = int(data['id'])
+        self.thread_type: ChannelType = try_enum(ChannelType, data['type'])
+        self.guild_id: int = int(data['guild_id'])
+        self.parent_id: int = int(data['parent_id'])
+        self.thread: Optional[Thread] = None
 
 
 class RawIntegrationDeleteEvent(_RawReprMixin):
