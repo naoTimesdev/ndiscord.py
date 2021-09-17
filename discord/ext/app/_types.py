@@ -21,51 +21,47 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
-from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol, Type, TypeVar, Union
+
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Dict, List, Protocol, Type, TypeVar, Union
 
 if TYPE_CHECKING:
-    from .core import Option, SlashCommand, UserCommand, MessageCommand, ApplicationCommand
-    from .context import ApplicationContext
-    from .errors import ApplicationCommandError
-    from .cooldowns import ApplicationCooldown, ApplicationCooldownMapping, ApplicationMaxConcurrency
-    from discord.ext.commands import Cog, Bot, AutoShardedBot
-
-    from discord import Client, AutoShardedClient
-
-    from discord.abc import Snowflake, GuildChannel
+    from discord import AutoShardedClient, Client
+    from discord.abc import GuildChannel, Snowflake
+    from discord.ext.commands import AutoShardedBot, Bot, Cog
     from discord.member import Member
     from discord.role import Role
 
-T = TypeVar('T')
+    from .context import ApplicationContext
+    from .cooldowns import ApplicationCooldown, ApplicationCooldownMapping, ApplicationMaxConcurrency
+    from .core import ApplicationCommand, MessageCommand, Option, SlashCommand, UserCommand
+    from .errors import ApplicationCommandError
+
+T = TypeVar("T")
 
 Coro = Coroutine[Any, Any, T]
 MaybeCoro = Union[T, Coro[T]]
 CoroFunc = Callable[..., Coro[Any]]
 
-CogT = TypeVar('CogT', bound='Cog')
-BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client, AutoShardedClient]")
+CogT = TypeVar("CogT", bound="Cog")
+BotT = TypeVar("BotT", bound="Union[Bot, AutoShardedBot, Client, AutoShardedClient]")
 AppCommandT = TypeVar(
-    'AppCommandT',
-    bound="Union[SlashCommand, UserCommand, MessageCommand, ApplicationCommand]"
+    "AppCommandT", bound="Union[SlashCommand, UserCommand, MessageCommand, ApplicationCommand]"
 )
-ContextT = TypeVar('ContextT', bound='ApplicationContext')
+ContextT = TypeVar("ContextT", bound="ApplicationContext")
 
 Check = Union[
-    Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]],
-    Callable[["ApplicationContext"], MaybeCoro[bool]]
+    Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]], Callable[["ApplicationContext"], MaybeCoro[bool]]
 ]
-Hook = Union[
-    Callable[["Cog", "ApplicationContext"], Coro[Any]],
-    Callable[["ApplicationContext"], Coro[Any]]
-]
+Hook = Union[Callable[["Cog", "ApplicationContext"], Coro[Any]], Callable[["ApplicationContext"], Coro[Any]]]
 Error = Union[
     Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]],
-    Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]]
+    Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]],
 ]
 
 PythonInputType = Type[Union[str, int, float, bool]]
-Mentionable = TypeVar('Mentionable', bound="Union[Snowflake, GuildChannel, Member, Role]")
+Mentionable = TypeVar("Mentionable", bound="Union[Snowflake, GuildChannel, Member, Role]")
 AcceptedInputType = Union[PythonInputType, int, Mentionable]
+
 
 class ApplicationCallback(Protocol[T]):
     """A callback that can be used by an :class:`ApplicationCommand`."""
@@ -79,6 +75,7 @@ class ApplicationCallback(Protocol[T]):
 
     def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Coro[T]:
         ...
+
 
 # Same thing as what ext.commands._types do
 class _BaseApplication:

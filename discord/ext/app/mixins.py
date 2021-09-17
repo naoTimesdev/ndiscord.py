@@ -22,26 +22,24 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-import traceback
 import sys
+import traceback
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
 
-from ._types import AppCommandT, BotT, CogT, Check, ContextT
-from .context import ApplicationContext
-from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command, AppCommandT
-from .errors import ApplicationRegistrationError, ApplicationCommandError
-
 import discord
-from discord.interactions import Interaction
 from discord.enums import ApplicationCommandType, InteractionType
 from discord.errors import DiscordException
+from discord.interactions import Interaction
 
-T = TypeVar('T')
+from ._types import AppCommandT, BotT, Check, CogT, ContextT
+from .context import ApplicationContext
+from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command
+from .errors import ApplicationCommandError, ApplicationRegistrationError
+
+T = TypeVar("T")
 DecoApp = Callable[..., T]
 
-__all__ = (
-    'ApplicationCommandMixin',
-)
+__all__ = ("ApplicationCommandMixin",)
 
 MISSING: Any = discord.utils.MISSING
 AppCommand = Union[SlashCommand[CogT, BotT, T], UserCommand[CogT, BotT, T], MessageCommand[CogT, BotT, T]]
@@ -62,6 +60,7 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
     message_commands: Dict[:class:`str`, :class:`.MessageCommand`]
         All message commands registered with this factory.
     """
+
     def __init__(self):
         self._slash_commands: Dict[str, SlashCommand[CogT, BotT, ContextT]] = {}
         self._user_commands: Dict[str, UserCommand[CogT, BotT, ContextT]] = {}
@@ -80,8 +79,7 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
         return self._message_commands
 
     def all_commands(self) -> List[AppCommandT]:
-        """List[:class:`.ApplicationCommand`]: Get all commands from this factory.
-        """
+        """List[:class:`.ApplicationCommand`]: Get all commands from this factory."""
         slash_commands = list(self._slash_commands.values())
         user_commands = list(self._user_commands.values())
         message_commands = list(self._message_commands.values())
@@ -188,6 +186,7 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
             return self._remove_by_name(command.name, command.type)
         return None
 
+
 class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
     """A mixin that provides application commands to the bot.
 
@@ -209,7 +208,9 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
     _app_factories: ApplicationCommandFactory[CogT, BotT, ContextT, AppCommandT]
     _pending_registration: List[ApplicationCommand[CogT, BotT, ContextT]] = []
 
-    def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin[CogT, BotT, AppCommandT]":
+    def __new__(
+        cls: Type["ApplicationCommandMixin"], *args, **kwargs
+    ) -> "ApplicationCommandMixin[CogT, BotT, AppCommandT]":
         debug_guild = kwargs.pop("debug_guild", None)
         debug_guilds = kwargs.pop("debug_guilds", None)
 
@@ -283,7 +284,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         if command in self._pending_registration:
             self._pending_registration.remove(command)
         if command.id is None:
-            raise TypeError(f'Cannot register {command.name} because missing application ID.')
+            raise TypeError(f"Cannot register {command.name} because missing application ID.")
         self._app_factories.add_command(command)
 
     async def process_application_commands(self, interaction: Interaction):
@@ -311,27 +312,25 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         if interaction.type != InteractionType.application_command:
             return
 
-        interaction_type = interaction.data.get('type', 1)
-        inter_name = interaction.data.get('name')
+        interaction_type = interaction.data.get("type", 1)
+        inter_name = interaction.data.get("name")
 
         command = self._app_factories.get_command(inter_name, ApplicationCommandType(interaction_type))
         if command is None:
-            self.dispatch('unknown_application', interaction)
+            self.dispatch("unknown_application", interaction)
         else:
             ctx = await self.get_application_context(interaction)
             ctx.command = command
-            self.dispatch('application', ctx)
+            self.dispatch("application", ctx)
             try:
                 await ctx.command.invoke(ctx)
             except DiscordException as exc:
                 await ctx.command.dispatch_error(ctx, exc)
             else:
-                self.dispatch('application_completion', ctx)
+                self.dispatch("application_completion", ctx)
 
     async def get_application_context(
-        self,
-        interaction: Interaction,
-        cls: Optional[ApplicationContext[CogT, BotT, AppCommandT]] = None
+        self, interaction: Interaction, cls: Optional[ApplicationContext[CogT, BotT, AppCommandT]] = None
     ) -> ApplicationContext[CogT, BotT, AppCommandT]:
         r"""|coro|
 
@@ -376,9 +375,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         await self.process_application_commands(interaction)
 
     async def on_application_error(
-        self,
-        context: ApplicationContext[CogT, BotT, AppCommandT],
-        exception: ApplicationCommandError
+        self, context: ApplicationContext[CogT, BotT, AppCommandT], exception: ApplicationCommandError
     ) -> None:
         """|coro|
 
@@ -389,8 +386,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
 
         This only fires if you do not specify any listeners for command error.
         """
-        extra_events: dict = getattr(self, 'extra_events', None)
-        if extra_events is not None and extra_events.get('on_application_error', None):
+        extra_events: dict = getattr(self, "extra_events", None)
+        if extra_events is not None and extra_events.get("on_application_error", None):
             return
 
         command = context.command
@@ -401,7 +398,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         if cog and cog.has_error_handler():
             return
 
-        print(f'Ignoring exception in command {context.command}:', file=sys.stderr)
+        print(f"Ignoring exception in command {context.command}:", file=sys.stderr)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     @overload

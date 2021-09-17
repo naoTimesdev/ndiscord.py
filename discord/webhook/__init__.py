@@ -9,5 +9,7 @@ Webhook support
 
 """
 
+# flake8: noqa
+
 from .async_ import *
 from .sync import *

@@ -25,70 +25,78 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import asyncio
-from discord.ext.app.core import UserCommand
 import logging
 import signal
 import sys
 import traceback
-from typing import Any, Callable, Coroutine, Dict, Generator, List, Optional, Sequence, TYPE_CHECKING, Tuple, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Coroutine,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import aiohttp
 
-from .user import User, ClientUser
-from .invite import Invite
-from .template import Template
-from .widget import Widget
-from .guild import Guild
-from .emoji import Emoji
-from .channel import _threaded_channel_factory, PartialMessageable
-from .enums import ApplicationCommandType, ChannelType
-from .mentions import AllowedMentions
-from .errors import *
-from .enums import Status, VoiceRegion
-from .flags import ApplicationFlags, Intents
-from .gateway import *
-from .activity import ActivityTypes, BaseActivity, create_activity
-from .voice_client import VoiceClient
-from .http import HTTPClient
-from .state import ConnectionState
 from . import utils
-from .utils import MISSING
-from .object import Object
-from .backoff import ExponentialBackoff
-from .webhook import Webhook
-from .iterators import GuildIterator
+from .activity import ActivityTypes, BaseActivity, create_activity
 from .appinfo import AppInfo
-from .ui.view import View
-from .stage_instance import StageInstance
-from .threads import Thread
-from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from .backoff import ExponentialBackoff
+from .channel import PartialMessageable, _threaded_channel_factory
+from .emoji import Emoji
+from .enums import ApplicationCommandType, ChannelType, Status, VoiceRegion
+from .errors import *
 from .ext.app import (
     ApplicationCommand,
     ApplicationCommandMixin,
     ApplicationRegistrationError,
     MessageCommand,
     SlashCommand,
-    UserCommand
+    UserCommand,
 )
 from .ext.app._types import AppCommandT, BotT, CogT, ContextT
-
+from .flags import ApplicationFlags, Intents
+from .gateway import *
+from .guild import Guild
+from .http import HTTPClient
+from .invite import Invite
+from .iterators import GuildIterator
+from .mentions import AllowedMentions
+from .object import Object
+from .stage_instance import StageInstance
+from .state import ConnectionState
+from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from .template import Template
+from .threads import Thread
+from .ui.view import View
+from .user import ClientUser, User
+from .utils import MISSING
+from .voice_client import VoiceClient
+from .webhook import Webhook
+from .widget import Widget
 
 if TYPE_CHECKING:
-    from .abc import SnowflakeTime, PrivateChannel, GuildChannel, Snowflake
+    from .abc import GuildChannel, PrivateChannel, Snowflake, SnowflakeTime
     from .channel import DMChannel
-    from .message import Message
     from .member import Member
-    from .voice_client import VoiceProtocol
+    from .message import Message
     from .types.interactions import ApplicationCommand as RawApplicationCommand
+    from .voice_client import VoiceProtocol
 
-__all__ = (
-    'Client',
-)
+__all__ = ("Client",)
 
-T = TypeVar('T')
-Coro = TypeVar('Coro', bound=Callable[..., Coroutine[Any, Any, Any]])
+T = TypeVar("T")
+Coro = TypeVar("Coro", bound=Callable[..., Coroutine[Any, Any, Any]])
 CoroShort = Coroutine[Any, Any, T]
-ApplicationCmdT = TypeVar('ApplicationCmdT', bound="Union[ApplicationCommand, RawApplicationCommand]")
+ApplicationCmdT = TypeVar("ApplicationCmdT", bound="Union[ApplicationCommand, RawApplicationCommand]")
 ApplicationCommandUnion = Union[
     SlashCommand[CogT, BotT, ContextT],
     UserCommand[CogT, BotT, ContextT],
@@ -99,36 +107,41 @@ ApplicationCommandUnion = Union[
 
 _log = logging.getLogger(__name__)
 
+
 def _cancel_tasks(loop: asyncio.AbstractEventLoop) -> None:
     tasks = {t for t in asyncio.all_tasks(loop=loop) if not t.done()}
 
     if not tasks:
         return
 
-    _log.info('Cleaning up after %d tasks.', len(tasks))
+    _log.info("Cleaning up after %d tasks.", len(tasks))
     for task in tasks:
         task.cancel()
 
     loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
-    _log.info('All tasks finished cancelling.')
+    _log.info("All tasks finished cancelling.")
 
     for task in tasks:
         if task.cancelled():
             continue
         if task.exception() is not None:
-            loop.call_exception_handler({
-                'message': 'Unhandled exception during Client.run shutdown.',
-                'exception': task.exception(),
-                'task': task
-            })
+            loop.call_exception_handler(
+                {
+                    "message": "Unhandled exception during Client.run shutdown.",
+                    "exception": task.exception(),
+                    "task": task,
+                }
+            )
+
 
 def _cleanup_loop(loop: asyncio.AbstractEventLoop) -> None:
     try:
         _cancel_tasks(loop)
         loop.run_until_complete(loop.shutdown_asyncgens())
     finally:
-        _log.info('Closing the event loop.')
+        _log.info("Closing the event loop.")
         loop.close()
+
 
 class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     r"""Represents a client connection that connects to Discord.
@@ -221,6 +234,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     loop: :class:`asyncio.AbstractEventLoop`
         The event loop that the client uses for asynchronous operations.
     """
+
     def __init__(
         self,
         *,
@@ -231,25 +245,23 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         self.ws: DiscordWebSocket = None  # type: ignore
         self.loop: asyncio.AbstractEventLoop = asyncio.get_event_loop() if loop is None else loop
         self._listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
-        self.shard_id: Optional[int] = options.get('shard_id')
-        self.shard_count: Optional[int] = options.get('shard_count')
+        self.shard_id: Optional[int] = options.get("shard_id")
+        self.shard_count: Optional[int] = options.get("shard_count")
 
-        connector: Optional[aiohttp.BaseConnector] = options.pop('connector', None)
-        proxy: Optional[str] = options.pop('proxy', None)
-        proxy_auth: Optional[aiohttp.BasicAuth] = options.pop('proxy_auth', None)
-        unsync_clock: bool = options.pop('assume_unsync_clock', True)
-        self.http: HTTPClient = HTTPClient(connector, proxy=proxy, proxy_auth=proxy_auth, unsync_clock=unsync_clock, loop=self.loop)
+        connector: Optional[aiohttp.BaseConnector] = options.pop("connector", None)
+        proxy: Optional[str] = options.pop("proxy", None)
+        proxy_auth: Optional[aiohttp.BasicAuth] = options.pop("proxy_auth", None)
+        unsync_clock: bool = options.pop("assume_unsync_clock", True)
+        self.http: HTTPClient = HTTPClient(
+            connector, proxy=proxy, proxy_auth=proxy_auth, unsync_clock=unsync_clock, loop=self.loop
+        )
         self._app_cmd_ids: Optional[int] = None
 
-        self._handlers: Dict[str, Callable] = {
-            'ready': self._handle_ready
-        }
+        self._handlers: Dict[str, Callable] = {"ready": self._handle_ready}
 
-        self._hooks: Dict[str, Callable] = {
-            'before_identify': self._call_before_identify_hook
-        }
+        self._hooks: Dict[str, Callable] = {"before_identify": self._call_before_identify_hook}
 
-        self._enable_debug_events: bool = options.pop('enable_debug_events', False)
+        self._enable_debug_events: bool = options.pop("enable_debug_events", False)
         self._connection: ConnectionState = self._get_state(**options)
         self._connection.shard_count = self.shard_count
         self._closed: bool = False
@@ -267,8 +279,14 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         return self.ws
 
     def _get_state(self, **options: Any) -> ConnectionState:
-        return ConnectionState(dispatch=self.dispatch, handlers=self._handlers,
-                               hooks=self._hooks, http=self.http, loop=self.loop, **options)
+        return ConnectionState(
+            dispatch=self.dispatch,
+            handlers=self._handlers,
+            hooks=self._hooks,
+            http=self.http,
+            loop=self.loop,
+            **options,
+        )
 
     def _handle_ready(self) -> None:
         self._ready.set()
@@ -280,7 +298,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         This could be referred to as the Discord WebSocket protocol latency.
         """
         ws = self.ws
-        return float('nan') if not ws else ws.latency
+        return float("nan") if not ws else ws.latency
 
     def is_ws_ratelimited(self) -> bool:
         """:class:`bool`: Whether the websocket is currently rate limited.
@@ -368,7 +386,9 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """:class:`bool`: Specifies if the client's internal cache is ready for use."""
         return self._ready.is_set()
 
-    async def _run_event(self, coro: Callable[..., Coroutine[Any, Any, Any]], event_name: str, *args: Any, **kwargs: Any) -> None:
+    async def _run_event(
+        self, coro: Callable[..., Coroutine[Any, Any, Any]], event_name: str, *args: Any, **kwargs: Any
+    ) -> None:
         try:
             await coro(*args, **kwargs)
         except asyncio.CancelledError:
@@ -379,14 +399,16 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             except asyncio.CancelledError:
                 pass
 
-    def _schedule_event(self, coro: Callable[..., Coroutine[Any, Any, Any]], event_name: str, *args: Any, **kwargs: Any) -> asyncio.Task:
+    def _schedule_event(
+        self, coro: Callable[..., Coroutine[Any, Any, Any]], event_name: str, *args: Any, **kwargs: Any
+    ) -> asyncio.Task:
         wrapped = self._run_event(coro, event_name, *args, **kwargs)
         # Schedules the task
-        return asyncio.create_task(wrapped, name=f'discord.py: {event_name}')
+        return asyncio.create_task(wrapped, name=f"discord.py: {event_name}")
 
     def dispatch(self, event: str, *args: Any, **kwargs: Any) -> None:
-        _log.debug('Dispatching event %s', event)
-        method = 'on_' + event
+        _log.debug("Dispatching event %s", event)
+        method = "on_" + event
 
         listeners = self._listeners.get(event)
         if listeners:
@@ -433,7 +455,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         overridden to have a different implementation.
         Check :func:`~discord.on_error` for more details.
         """
-        print(f'Ignoring exception in {event_method}', file=sys.stderr)
+        print(f"Ignoring exception in {event_method}", file=sys.stderr)
         traceback.print_exc()
 
     # hooks
@@ -490,7 +512,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             passing status code.
         """
 
-        _log.info('logging in using static token')
+        _log.info("logging in using static token")
 
         data = await self.http.static_login(token.strip())
         self._connection.user = ClientUser(state=self._connection, data=data)
@@ -522,29 +544,31 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         backoff = ExponentialBackoff()
         ws_params = {
-            'initial': True,
-            'shard_id': self.shard_id,
+            "initial": True,
+            "shard_id": self.shard_id,
         }
         while not self.is_closed():
             try:
                 coro = DiscordWebSocket.from_client(self, **ws_params)
                 self.ws = await asyncio.wait_for(coro, timeout=60.0)
-                ws_params['initial'] = False
+                ws_params["initial"] = False
                 while True:
                     await self.ws.poll_event()
             except ReconnectWebSocket as e:
-                _log.info('Got a request to %s the websocket.', e.op)
-                self.dispatch('disconnect')
+                _log.info("Got a request to %s the websocket.", e.op)
+                self.dispatch("disconnect")
                 ws_params.update(sequence=self.ws.sequence, resume=e.resume, session=self.ws.session_id)
                 continue
-            except (OSError,
-                    HTTPException,
-                    GatewayNotFound,
-                    ConnectionClosed,
-                    aiohttp.ClientError,
-                    asyncio.TimeoutError) as exc:
+            except (
+                OSError,
+                HTTPException,
+                GatewayNotFound,
+                ConnectionClosed,
+                aiohttp.ClientError,
+                asyncio.TimeoutError,
+            ) as exc:
 
-                self.dispatch('disconnect')
+                self.dispatch("disconnect")
                 if not reconnect:
                     await self.close()
                     if isinstance(exc, ConnectionClosed) and exc.code == 1000:
@@ -674,10 +698,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         try:
             loop.run_forever()
         except KeyboardInterrupt:
-            _log.info('Received signal to terminate bot and event loop.')
+            _log.info("Received signal to terminate bot and event loop.")
         finally:
             future.remove_done_callback(stop_loop_on_completion)
-            _log.info('Cleaning up tasks.')
+            _log.info("Cleaning up tasks.")
             _cleanup_loop(loop)
 
         if not future.cancelled():
@@ -704,7 +728,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         Method to start registering and unregistering commands.
         """
         app_data = await self.http.application_info()
-        self._app_cmd_ids = int(app_data['id'])
+        self._app_cmd_ids = int(app_data["id"])
 
         pending_registration = self._pending_registration[:]
 
@@ -712,9 +736,11 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         global_commands = await self.http.get_global_commands(self._app_cmd_ids)
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is None]:
             if len(global_commands) > 0:
-                match_this = utils.find(lambda x: x['name'] == command.name and x.get('type', 1) == command.type.value, global_commands)
+                match_this = utils.find(
+                    lambda x: x["name"] == command.name and x.get("type", 1) == command.type.value, global_commands
+                )
                 if match_this is not None:
-                    command.id = int(match_this['id'])
+                    command.id = int(match_this["id"])
                     global_payloads.append(command)
 
         update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT, AppCommandT]]] = {}
@@ -729,41 +755,38 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         for guild_id, payloads in update_guild_commands.items():
             try:
                 cmds = await self.http.bulk_upsert_guild_commands(
-                    self._app_cmd_ids,
-                    guild_id,
-                    [p.to_dict() for p in payloads]
+                    self._app_cmd_ids, guild_id, [p.to_dict() for p in payloads]
                 )
             except Forbidden:
                 if not update_guild_commands[guild_id]:
                     continue
                 else:
-                    _log.debug('Failed to bulk upsert guild commands for %s', str(guild_id))
+                    _log.debug("Failed to bulk upsert guild commands for %s", str(guild_id))
                     raise
             else:
                 for cmd in cmds:
                     parsed_cmd = utils.get(
                         pending_registration,
-                        name=cmd['name'],
-                        type=ApplicationCommandType(cmd['type']),
+                        name=cmd["name"],
+                        type=ApplicationCommandType(cmd["type"]),
                     )
-                    parsed_cmd.id = int(cmd['id'])
+                    parsed_cmd.id = int(cmd["id"])
                     self.register_application(parsed_cmd)
 
         # Update global commands
         update_globals = await self.http.bulk_upsert_global_commands(
-            self._app_cmd_ids,
-            [p.to_dict() for p in global_payloads]
+            self._app_cmd_ids, [p.to_dict() for p in global_payloads]
         )
 
         for glb_payload in update_globals:
             parsed_cmd = utils.get(
                 pending_registration,
-                name=glb_payload['name'],
-                type=ApplicationCommandType(glb_payload['type']),
+                name=glb_payload["name"],
+                type=ApplicationCommandType(glb_payload["type"]),
             )
-            parsed_cmd.id = int(glb_payload['id'])
+            parsed_cmd.id = int(glb_payload["id"])
             self.register_application(parsed_cmd)
-        self.dispatch('application_registered')
+        self.dispatch("application_registered")
 
     # properties
 
@@ -784,9 +807,9 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             self._connection._activity = None
         elif isinstance(value, BaseActivity):
             # ConnectionState._activity is typehinted as ActivityPayload, we're passing Dict[str, Any]
-            self._connection._activity = value.to_dict() # type: ignore
+            self._connection._activity = value.to_dict()  # type: ignore
         else:
-            raise TypeError('activity must derive from BaseActivity.')
+            raise TypeError("activity must derive from BaseActivity.")
 
     @property
     def status(self):
@@ -802,11 +825,11 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     @status.setter
     def status(self, value):
         if value is Status.offline:
-            self._connection._status = 'invisible'
+            self._connection._status = "invisible"
         elif isinstance(value, Status):
             self._connection._status = str(value)
         else:
-            raise TypeError('status must derive from Status.')
+            raise TypeError("status must derive from Status.")
 
     @property
     def allowed_mentions(self) -> Optional[AllowedMentions]:
@@ -821,7 +844,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         if value is None or isinstance(value, AllowedMentions):
             self._connection.allowed_mentions = value
         else:
-            raise TypeError(f'allowed_mentions must be AllowedMentions not {value.__class__!r}')
+            raise TypeError(f"allowed_mentions must be AllowedMentions not {value.__class__!r}")
 
     @property
     def intents(self) -> Intents:
@@ -1099,8 +1122,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         future = self.loop.create_future()
         if check is None:
+
             def _check(*args):
                 return True
+
             check = _check
 
         ev = event.lower()
@@ -1138,10 +1163,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
 
         if not asyncio.iscoroutinefunction(coro):
-            raise TypeError('event registered must be a coroutine function')
+            raise TypeError("event registered must be a coroutine function")
 
         setattr(self, coro.__name__, coro)
-        _log.debug('%s has successfully been registered as an event', coro.__name__)
+        _log.debug("%s has successfully been registered as an event", coro.__name__)
         return coro
 
     async def change_presence(
@@ -1180,10 +1205,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
 
         if status is None:
-            status_str = 'online'
+            status_str = "online"
             status = Status.online
         elif status is Status.offline:
-            status_str = 'invisible'
+            status_str = "invisible"
             status = Status.offline
         else:
             status_str = str(status)
@@ -1205,11 +1230,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     # Guild stuff
 
     def fetch_guilds(
-        self,
-        *,
-        limit: Optional[int] = 100,
-        before: SnowflakeTime = None,
-        after: SnowflakeTime = None
+        self, *, limit: Optional[int] = 100, before: SnowflakeTime = None, after: SnowflakeTime = None
     ) -> GuildIterator:
         """Retrieves an :class:`.AsyncIterator` that enables receiving your guilds.
 
@@ -1289,7 +1310,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
         code = utils.resolve_template(code)
         data = await self.http.get_template(code)
-        return Template(data=data, state=self._connection) # type: ignore
+        return Template(data=data, state=self._connection)  # type: ignore
 
     async def fetch_guild(self, guild_id: int, /) -> Guild:
         """|coro|
@@ -1405,12 +1426,14 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             The stage instance from the stage channel ID.
         """
         data = await self.http.get_stage_instance(channel_id)
-        guild = self.get_guild(int(data['guild_id']))
+        guild = self.get_guild(int(data["guild_id"]))
         return StageInstance(guild=guild, state=self._connection, data=data)  # type: ignore
 
     # Invite management
 
-    async def fetch_invite(self, url: Union[Invite, str], *, with_counts: bool = True, with_expiration: bool = True) -> Invite:
+    async def fetch_invite(
+        self, url: Union[Invite, str], *, with_counts: bool = True, with_expiration: bool = True
+    ) -> Invite:
         """|coro|
 
         Gets an :class:`.Invite` from a discord.gg URL or ID.
@@ -1526,8 +1549,8 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             The bot's application information.
         """
         data = await self.http.application_info()
-        if 'rpc_origins' not in data:
-            data['rpc_origins'] = None
+        if "rpc_origins" not in data:
+            data["rpc_origins"] = None
         return AppInfo(self._connection, data)
 
     async def fetch_user(self, user_id: int, /) -> User:
@@ -1539,7 +1562,8 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         .. note::
 
-            This method is an API call. If you have :attr:`discord.Intents.members` and member cache enabled, consider :meth:`get_user` instead.
+            This method is an API call. If you have :attr:`discord.Intents.members` and member cache enabled,
+            consider :meth:`get_user` instead.
 
         Parameters
         -----------
@@ -1590,19 +1614,19 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
         data = await self.http.get_channel(channel_id)
 
-        factory, ch_type = _threaded_channel_factory(data['type'])
+        factory, ch_type = _threaded_channel_factory(data["type"])
         if factory is None:
-            raise InvalidData('Unknown channel type {type} for channel ID {id}.'.format_map(data))
+            raise InvalidData("Unknown channel type {type} for channel ID {id}.".format_map(data))
 
         if ch_type in (ChannelType.group, ChannelType.private):
             # the factory will be a DMChannel or GroupChannel here
-            channel = factory(me=self.user, data=data, state=self._connection) # type: ignore
+            channel = factory(me=self.user, data=data, state=self._connection)  # type: ignore
         else:
             # the factory can't be a DMChannel or GroupChannel here
-            guild_id = int(data['guild_id']) # type: ignore
+            guild_id = int(data["guild_id"])  # type: ignore
             guild = self.get_guild(guild_id) or Object(id=guild_id)
             # GuildChannels expect a Guild, we may be passing an Object
-            channel = factory(guild=guild, state=self._connection, data=data) # type: ignore
+            channel = factory(guild=guild, state=self._connection, data=data)  # type: ignore
 
         return channel
 
@@ -1648,8 +1672,8 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             The sticker you requested.
         """
         data = await self.http.get_sticker(sticker_id)
-        cls, _ = _sticker_factory(data['type'])  # type: ignore
-        return cls(state=self._connection, data=data) # type: ignore
+        cls, _ = _sticker_factory(data["type"])  # type: ignore
+        return cls(state=self._connection, data=data)  # type: ignore
 
     async def fetch_premium_sticker_packs(self) -> List[StickerPack]:
         """|coro|
@@ -1669,7 +1693,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             All available premium sticker packs.
         """
         data = await self.http.list_premium_sticker_packs()
-        return [StickerPack(state=self._connection, data=pack) for pack in data['sticker_packs']]
+        return [StickerPack(state=self._connection, data=pack) for pack in data["sticker_packs"]]
 
     async def create_dm(self, user: Snowflake) -> DMChannel:
         """|coro|
@@ -1726,10 +1750,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
 
         if not isinstance(view, View):
-            raise TypeError(f'expected an instance of View not {view.__class__!r}')
+            raise TypeError(f"expected an instance of View not {view.__class__!r}")
 
         if not view.is_persistent():
-            raise ValueError('View is not persistent. Items need to have a custom_id set and View must have no timeout')
+            raise ValueError("View is not persistent. Items need to have a custom_id set and View must have no timeout")
 
         self._connection.store_view(view, message_id)
 
@@ -1820,6 +1844,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         .. versionadded:: 2.0
 
+        .. note::
+
+            This method is an API call. For general usage use :meth:`get_applications`.
+
         Raises
         -------
         :exc:`.HTTPException`
@@ -1836,7 +1864,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         unknown_registed_commands = []
         for command_set in registered_commands:
             _get_factory = self._app_factories.get_command(
-                command_set['name'], ApplicationCommandType(command_set['type'])
+                command_set["name"], ApplicationCommandType(command_set["type"])
             )
             if _get_factory is not None:
                 registered_command_sets.append(command_set)
@@ -1844,11 +1872,11 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 # Find from need to be registered commands.
                 _unregistred_cmd = utils.get(
                     self._pending_registration,
-                    name=command_set['name'],
-                    type=ApplicationCommandType(command_set['type']),
+                    name=command_set["name"],
+                    type=ApplicationCommandType(command_set["type"]),
                 )
                 if _unregistred_cmd is not None:
-                    _unregistred_cmd.id = command_set['id']
+                    _unregistred_cmd.id = command_set["id"]
                     try:
                         self._app_factories.add_command(_unregistred_cmd)
                     except ApplicationRegistrationError:
@@ -1864,6 +1892,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         Get all registered guild commands on Discord.
 
         .. versionadded:: 2.0
+
+        .. note::
+
+            This method is an API call. For general usage use :meth:`get_guild_applications`.
 
         Parameters
         ------------
@@ -1887,7 +1919,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         unknown_registed_commands = []
         for command_set in registered_commands:
             _get_factory = self._app_factories.get_command(
-                command_set['name'], ApplicationCommandType(command_set['type'])
+                command_set["name"], ApplicationCommandType(command_set["type"])
             )
             if _get_factory is not None:
                 registered_command_sets.append(command_set)
@@ -1895,11 +1927,11 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 # Find from need to be registered commands.
                 _unregistred_cmd = utils.get(
                     self._pending_registration,
-                    name=command_set['name'],
-                    type=ApplicationCommandType(command_set['type']),
+                    name=command_set["name"],
+                    type=ApplicationCommandType(command_set["type"]),
                 )
                 if _unregistred_cmd is not None:
-                    _unregistred_cmd.id = command_set['id']
+                    _unregistred_cmd.id = command_set["id"]
                     try:
                         self._app_factories.add_command(_unregistred_cmd)
                     except ApplicationRegistrationError:

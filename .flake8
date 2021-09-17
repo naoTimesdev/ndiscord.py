@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 120
+ignore = E731,E203,W503,F403,F405,E241
+exclude = .git
+    # Auto-generated stuff.
+    .git
+    .mypy_cache
+    .vscode
+    __pycache__
+    venv
+    .pytest_cache
+    # Examples
+    examples
+    # Tests folder
+    tests
+    # Docs
+    docs
+
