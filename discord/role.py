@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
+from .asset import Asset
 from .colour import Colour
 from .errors import InvalidArgument
 from .mixins import Hashable
@@ -176,6 +177,7 @@ class Role(Hashable):
         "id",
         "name",
         "_permissions",
+        "_icon",
         "_colour",
         "position",
         "managed",
@@ -242,6 +244,7 @@ class Role(Hashable):
         self.hoist: bool = data.get("hoist", False)
         self.managed: bool = data.get("managed", False)
         self.mentionable: bool = data.get("mentionable", False)
+        self._icon: str = data.get("icon", "")
         self.tags: Optional[RoleTags]
 
         try:
@@ -316,6 +319,20 @@ class Role(Hashable):
 
         role_id = self.id
         return [member for member in all_members if member._roles.has(role_id)]
+
+    @property
+    def icon(self) -> Optional[Asset]:
+        """Optional[:class:`Asset`]: Returns the icon asset associated with this role, can be ``None``.
+
+        .. versionadded: 2.0
+
+        .. note::
+
+            The guild needs to have the ``ROLE_ICONS`` features to have this enabled.
+        """
+        if not self._icon:
+            return None
+        return Asset._from_icon(self._state, self.id, self._icon, "role")
 
     async def _move(self, position: int, reason: Optional[str]) -> None:
         if position <= 0:

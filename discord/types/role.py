@@ -31,6 +31,7 @@ from .snowflake import Snowflake
 
 class _RoleOptional(TypedDict, total=False):
     tags: RoleTags
+    icon: str
 
 
 class Role(_RoleOptional):
