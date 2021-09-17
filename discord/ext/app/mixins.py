@@ -22,12 +22,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import traceback
+import sys
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
 
-from ._types import CogT, Check
+from ._types import CogT, BotT, AppCommandT, Check
 from .context import ApplicationContext
 from .core import ApplicationCommand, MessageCommand, SlashCommand, UserCommand, command, AppCommandT
-from .errors import ApplicationRegistrationError
+from .errors import ApplicationRegistrationError, ApplicationCommandError
 
 import discord
 from discord.interactions import Interaction
@@ -42,10 +44,10 @@ __all__ = (
 )
 
 MISSING: Any = discord.utils.MISSING
-AppCommand = Union[SlashCommand, UserCommand, MessageCommand]
+AppCommand = Union[SlashCommand[CogT, BotT, T], UserCommand[CogT, BotT, T], MessageCommand[CogT, BotT, T]]
 
 
-class ApplicationCommandFactory:
+class ApplicationCommandFactory(Generic[CogT, BotT, T, AppCommandT]):
     """A "factory" or collector of application commands.
 
     These factory should not be created manually, it will be called from
@@ -61,9 +63,9 @@ class ApplicationCommandFactory:
         All message commands registered with this factory.
     """
     def __init__(self):
-        self._slash_commands: Dict[str, SlashCommand] = {}
-        self._user_commands: Dict[str, UserCommand] = {}
-        self._message_commands: Dict[str, MessageCommand] = {}
+        self._slash_commands: Dict[str, SlashCommand[CogT, BotT, T]] = {}
+        self._user_commands: Dict[str, UserCommand[CogT, BotT, T]] = {}
+        self._message_commands: Dict[str, MessageCommand[CogT, BotT, T]] = {}
 
     @property
     def slash_commands(self):
@@ -77,7 +79,7 @@ class ApplicationCommandFactory:
     def message_commands(self):
         return self._message_commands
 
-    def all_commands(self) -> List[ApplicationCommand]:
+    def all_commands(self) -> List[AppCommandT]:
         """List[:class:`.ApplicationCommand`]: Get all commands from this factory.
         """
         slash_commands = list(self._slash_commands.values())
@@ -186,7 +188,7 @@ class ApplicationCommandFactory:
             return self._remove_by_name(command.name, command.type)
         return None
 
-class ApplicationCommandMixin(Generic[CogT]):
+class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT]):
     """A mixin that provides application commands to the bot.
 
     These mixin should not be created manually, this will be used by :class:`.Client`
@@ -204,10 +206,10 @@ class ApplicationCommandMixin(Generic[CogT]):
     """
 
     _debug_guilds: List[int]
-    _app_factories: ApplicationCommandFactory
-    _pending_registration: List[ApplicationCommand] = []
+    _app_factories: ApplicationCommandFactory[CogT, BotT, T, AppCommandT]
+    _pending_registration: List[ApplicationCommand[CogT, BotT, T]] = []
 
-    def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin":
+    def __new__(cls: Type["ApplicationCommandMixin"], *args, **kwargs) -> "ApplicationCommandMixin[CogT, BotT, AppCommandT]":
         debug_guild = kwargs.pop("debug_guild", None)
         debug_guilds = kwargs.pop("debug_guilds", None)
 
@@ -326,7 +328,7 @@ class ApplicationCommandMixin(Generic[CogT]):
             else:
                 self.dispatch('application_completion', ctx)
 
-    async def get_application_context(self, interaction: Interaction, cls = None) -> ApplicationContext:
+    async def get_application_context(self, interaction: Interaction, cls = None) -> ApplicationContext[CogT, BotT, AppCommandT]:
         r"""|coro|
 
         Returns the invocation context from the interaction.
@@ -368,6 +370,35 @@ class ApplicationCommandMixin(Generic[CogT]):
             The interaction to process
         """
         await self.process_application_commands(interaction)
+
+    async def on_application_error(
+        self,
+        context: ApplicationContext[CogT, BotT, AppCommandT],
+        exception: ApplicationCommandError
+    ) -> None:
+        """|coro|
+
+        The default command error handler provided by the bot.
+
+        By default this prints to :data:`sys.stderr` however it could be
+        overridden to have a different implementation.
+
+        This only fires if you do not specify any listeners for command error.
+        """
+        extra_events: dict = getattr(self, 'extra_events', None)
+        if extra_events is not None and extra_events.get('on_application_error', None):
+            return
+
+        command = context.command
+        if command and command.has_error_handler():
+            return
+
+        cog = context.cog
+        if cog and cog.has_error_handler():
+            return
+
+        print(f'Ignoring exception in command {context.command}:', file=sys.stderr)
+        traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     @overload
     def application_command(
@@ -420,7 +451,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         description: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[SlashCommand]:
+    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
         ...
 
     def slash_command(self, **kwargs):
@@ -457,7 +488,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         name: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[UserCommand]:
+    ) -> DecoApp[UserCommand[CogT, BotT, T]]:
         ...
 
     def user_command(self, **kwargs):
@@ -492,7 +523,7 @@ class ApplicationCommandMixin(Generic[CogT]):
         name: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[MessageCommand]:
+    ) -> DecoApp[MessageCommand[CogT, BotT, T]]:
         ...
 
     def message_command(self, **kwargs):

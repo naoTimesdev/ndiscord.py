@@ -34,6 +34,7 @@ from typing import (
     ClassVar,
     Dict,
     Generator,
+    Generic,
     List,
     Optional,
     Set,
@@ -45,7 +46,7 @@ from typing import (
 
 import discord
 from discord.enums import ApplicationCommandType, SlashCommandOptionType
-from discord.errors import ClientException
+from discord.errors import ClientException, HTTPException
 from discord.member import Member
 from discord.message import Message
 from discord.user import User
@@ -54,6 +55,8 @@ from typing_extensions import Concatenate, ParamSpec, TypeGuard
 from ._types import (
     AcceptedInputType,
     ApplicationCallback,
+    AppCommandT,
+    BotT,
     Check,
     CogT,
     Coro,
@@ -97,7 +100,6 @@ __all__ = (
 )
 
 T = TypeVar('T')
-AppCommandT = TypeVar('AppCommandT', bound="Union[ApplicationCommand, SlashCommand, UserCommand, MessageCommand]")
 ContextT = TypeVar('ContextT', bound="ApplicationContext")
 ErrorT = TypeVar('ErrorT', bound="Error")
 HookT = TypeVar('HookT', bound="Hook")
@@ -158,7 +160,7 @@ def hooked_wrapped_callback(command: AppCommandT, ctx: ApplicationContext, coro:
     return wrapped
 
 
-class ApplicationCommand(_BaseApplication):
+class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
     r"""A class that implements the protocol for bot application command.
 
     These should not be created manually, instead please use the provided decorator
@@ -267,7 +269,7 @@ class ApplicationCommand(_BaseApplication):
         """
         raise NotImplementedError
 
-    async def prepare(self, ctx: ApplicationContext):
+    async def prepare(self, ctx: ApplicationContext[CogT]):
         # Bind
         ctx.command = self
 
@@ -425,7 +427,7 @@ class ApplicationCommand(_BaseApplication):
         finally:
             ctx.bot.dispatch('application_error', ctx, error)
 
-    async def call_before_hooks(self, ctx: ApplicationContext) -> None:
+    async def call_before_hooks(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
         # now that we're done preparing we can call the pre-command hooks
         # first, call the command local hook:
         cog = self.cog
@@ -450,7 +452,7 @@ class ApplicationCommand(_BaseApplication):
         if hook is not None:
             await hook(ctx)
 
-    async def call_after_hooks(self, ctx: ApplicationContext) -> None:
+    async def call_after_hooks(self, ctx: ApplicationContext[CogT, T, AppCommandT]) -> None:
         cog = self.cog
         if self._after_invoke is not None:
             instance = getattr(self._after_invoke, '__self__', cog)
@@ -469,7 +471,7 @@ class ApplicationCommand(_BaseApplication):
         if hook is not None:
             await hook(ctx)
 
-    async def invoke(self, ctx: ApplicationContext) -> None:
+    async def invoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
         """|coro|
 
         Execute or invoke the function callback of the app command.
@@ -483,6 +485,19 @@ class ApplicationCommand(_BaseApplication):
         -------
         ApplicationCommandInvokeError
             An error occurred while invoking the command.
+        ApplicationTooManyArguments
+            The number of arguments passed to the command was more than
+            allowed.
+        ApplicationMissingRequiredArgument
+            The command failed because it was missing a required argument.
+        ApplicationBadArgument
+            The command failed because one of the arguments passed to it was invalid.
+        ApplicationMemberNotFound
+            The member data being passed does not exist in cache.
+        ApplicationUserNotFound
+            The user data being passed does not exist in cache.
+        ApplicationMentionableNotFound
+            The mentionable data being passed does not exist in cache.
         """
 
         await self.prepare(ctx)
@@ -490,7 +505,7 @@ class ApplicationCommand(_BaseApplication):
         injected = hooked_wrapped_callback(self, ctx, self.callback)
         await injected(*ctx.args, **ctx.kwargs)
 
-    async def reinvoke(self, ctx: ApplicationContext, *, call_hooks: bool = False):
+    async def reinvoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT], *, call_hooks: bool = False):
         """|coro|
 
         Execute again or reinvoke the function callback of the app command.
@@ -548,7 +563,7 @@ class ApplicationCommand(_BaseApplication):
         ret = self.__class__(self.callback, **self.__original_kwargs__)
         return self._ensure_assignment_on_copy(ret)
 
-    async def can_run(self, ctx: ApplicationContext) -> bool:
+    async def can_run(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> bool:
         """|coro|
 
         Checks if the command can be executed by checking all the predicates
@@ -643,6 +658,11 @@ class Option:
             o if isinstance(o, OptionChoice) else OptionChoice(o)
             for o in kwargs.pop('choices', [])
         ]
+
+        self._is_default_nonetype = False
+        if 'default' in kwargs:
+            if kwargs['default'] is None:
+                self._is_default_nonetype = True
         self.default: Optional[Any] = kwargs.pop('default', None)
 
     def to_dict(self):
@@ -678,7 +698,7 @@ class OptionChoice:
         return {'name': self.name, 'value': self.value}
 
 
-class SlashCommand(ApplicationCommand):
+class SlashCommand(ApplicationCommand[CogT, BotT, T]):
     r"""A class that implements an application command that can be invoked through a
     via Discord /slash command.
 
@@ -838,7 +858,7 @@ class SlashCommand(ApplicationCommand):
             and other.name == self.name
         )
 
-    async def _parse_arguments(self, ctx: ApplicationContext):
+    async def _parse_arguments(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
         _INVALID_TYPE = [SlashCommandOptionType.sub_command.value, SlashCommandOptionType.sub_command_group.value]
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
@@ -848,6 +868,8 @@ class SlashCommand(ApplicationCommand):
             if arg['type'] in _INVALID_TYPE:
                 continue
             op = discord.utils.find(lambda o: o.name == arg['name'], self.options)
+            # Copy of data
+            _real_val = arg['value']
             arg = arg['value']
 
             if (
@@ -856,15 +878,50 @@ class SlashCommand(ApplicationCommand):
                 <= SlashCommandOptionType.role.value
             ):
                 name = 'member' if op.input_type == 'user' else op.input_type.name
-                arg = await discord.utils.get_or_fetch(ctx.guild, name, int(arg), default=int(arg))
+                try:
+                    arg = await discord.utils.get_or_fetch(ctx.guild, name, int(arg))
+                except HTTPException:
+                    pass
+                if arg is None and op.default is None and not op._is_default_nonetype:
+                    if arg == 'member':
+                        raise ApplicationMemberNotFound(_real_val)
+                    else:
+                        raise ApplicationUserNotFound(_real_val)
             elif op.input_type == SlashCommandOptionType.mentionable:
                 arg_id = int(arg)
                 arg = await discord.utils.get_or_fetch(ctx.guild, 'member', arg_id)
                 if arg is None:
-                    arg = ctx.guild.get_role(arg_id) or arg_id
-            if arg is None and op.default is not None:
-                arg = op.default
+                    arg = ctx.guild.get_role(arg_id)
+                    if arg is None and op.default is None and not op._is_default_nonetype:
+                        raise ApplicationMentionableNotFound(_real_val)
+            if arg is None:
+                # Determine if we should pass something.
+                if op._is_default_nonetype:
+                    arg = None
+                elif op.default is not None:
+                    arg = op.default
             kwargs[op.name] = arg
+
+        params = iter(self.params.items())
+
+        if self.cog is not None:
+            try:
+                next(params)
+            except StopIteration:
+                raise ApplicationTooManyArguments(
+                    f'Callback for {self.name} command is missing "self" parameter.'
+                )
+
+        try:
+            next(params)
+        except StopIteration:
+            raise ApplicationTooManyArguments(
+                f'Callback for {self.name} command is missing "ctx" parameter.'
+            )
+
+        for name, param in params:
+            if name not in kwargs and param.default == inspect.Parameter.empty:
+                raise ApplicationMissingRequiredArgument(param)
 
         ctx.args = args
         ctx.kwargs = kwargs
@@ -879,7 +936,7 @@ class SlashCommand(ApplicationCommand):
         """
         return hasattr(self, 'parent') and self.parent is not None
 
-    async def _invoke_children(self, ctx: ApplicationContext):
+    async def _invoke_children(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
         """|coro|
 
         Execute all the children of the slash group command.
@@ -905,7 +962,7 @@ class SlashCommand(ApplicationCommand):
         first_children = options[0]
         if not first_children:
             return
-        sub_command: Optional[SlashCommand] = None
+        sub_command: Optional[SlashCommand[CogT, BotT, AppCommandT]] = None
         if first_children.get('type') == 2:
             sub_command = self._children.get(first_children.get('name'))
             first_child_opts = first_children.get('options', [])
@@ -927,11 +984,11 @@ class SlashCommand(ApplicationCommand):
                 ctx.command_failed = True
                 raise err
 
-    async def invoke(self, ctx: ApplicationContext) -> None:
+    async def invoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
         await super().invoke(ctx)
         await self._invoke_children(ctx)
 
-    def add_command(self, command: "SlashCommand"):
+    def add_command(self, command: "SlashCommand[CogT, BotT, T]"):
         """Adds a :class:`.SlashCommand` into the internal list of commands.
 
         This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
@@ -967,7 +1024,7 @@ class SlashCommand(ApplicationCommand):
 
         parent: Optional[SlashCommand] = getattr(self, 'parent', None)
         if parent is not None:
-            parent_parent: Optional[SlashCommand] = getattr(parent, 'parent', None)
+            parent_parent: Optional[SlashCommand[CogT, BotT, T]] = getattr(parent, 'parent', None)
             if parent_parent is not None:
                 raise ApplicationRegistrationMaxDepthError(command.name, self.name)
             if self.sub_type != _CROSS_CHECK[1]:
@@ -983,11 +1040,11 @@ class SlashCommand(ApplicationCommand):
         self._children[command.name] = command
 
     @property
-    def commands(self) -> Set[SlashCommand]:
+    def commands(self) -> Set[SlashCommand[CogT, BotT, T]]:
         """Set[:class:`.SlashCommand`]: A unique set of commands without aliases that are registered."""
         return set(self._children.values())
 
-    def walk_commands(self) -> Generator[SlashCommand, None, None]:
+    def walk_commands(self) -> Generator[SlashCommand[CogT, BotT, T], None, None]:
         """An iterator that recursively walks through all commands and subcommands.
 
         Yields
@@ -1023,7 +1080,7 @@ class SlashCommand(ApplicationCommand):
         description: str = ...,
         *args: Any,
         **kwargs: Any,
-    ) -> DecoApp[SlashCommand]:
+    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
         ...
 
     def command(self, *args, **kwargs):
@@ -1053,7 +1110,7 @@ class SlashCommand(ApplicationCommand):
         description: str = ...,
         *args: Any,
         **kwargs: Any,
-    ) -> DecoApp[SlashCommand]:
+    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
         ...
 
     def group(self, *args, **kwargs):
@@ -1080,7 +1137,7 @@ class SlashCommand(ApplicationCommand):
         return decorator
 
 
-class ContextMenuApplication(ApplicationCommand):
+class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
     r"""A class that implements an application command that can be invoked
     by opening Discord context menu.
 
@@ -1155,7 +1212,7 @@ class ContextMenuApplication(ApplicationCommand):
         else:
             self.after_invoke(after_invoke)
 
-    def walk_commands(self) -> Generator[ContextMenuApplication, None, None]:
+    def walk_commands(self) -> Generator[ContextMenuApplication[CogT, BotT, T], None, None]:
         """An iterator that recursively walks through all commands and subcommands.
 
         Yields
@@ -1165,15 +1222,41 @@ class ContextMenuApplication(ApplicationCommand):
         """
         yield self
 
-    async def _parse_arguments(self, ctx: ApplicationContext):
+    async def _parse_arguments(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
+        _NO_RES = 'Missing "resolved" key in result from Discord.'
         args = [ctx] if self.cog is None else [self.cog, ctx]
         ctx.args = args
         ctx.kwargs = {}
 
         resolved = ctx.interaction.data.get('resolved')
         if resolved is None:
-            ctx.args.append(MISSING)
-            return
+            params = iter(self.params.items())
+            if self.cog is not None:
+                try:
+                    next(params)
+                except StopIteration:
+                    raise ApplicationTooManyArguments(
+                        f'Callback for {self.name} command is missing "self" parameter.'
+                    )
+
+            try:
+                next(params)
+            except StopIteration:
+                raise ApplicationTooManyArguments(
+                    f'Callback for {self.name} command is missing "ctx" parameter.'
+                )
+            else:
+                _default_fallback = inspect.Parameter.empty
+                for _, param in params:
+                    _default_fallback = param.default
+                    if param.default == inspect.Parameter.empty:
+                        raise ApplicationBadArgument(_NO_RES)
+                    break
+
+                if _default_fallback == inspect.Parameter.empty:
+                    raise ApplicationBadArgument(_NO_RES)
+                ctx.args.append(_default_fallback)
+                return
 
         if self.type == ApplicationCommandType.user:
             if "members" in resolved:
@@ -1216,7 +1299,7 @@ class ContextMenuApplication(ApplicationCommand):
             )
 
 
-class UserCommand(ContextMenuApplication):
+class UserCommand(ContextMenuApplication[CogT, BotT, T]):
     r"""A class that implements the context menu application.
     This will be used to implement user command where someone can right click
     someone username to execute an application command.
@@ -1263,7 +1346,7 @@ class UserCommand(ContextMenuApplication):
         return self
 
 
-class MessageCommand(ContextMenuApplication):
+class MessageCommand(ContextMenuApplication[CogT, BotT, T]):
     r"""A class that implements the context menu application.
     This will be used to implement message command where someone can
     right click someone message to execute an application command.
@@ -1303,7 +1386,7 @@ class MessageCommand(ContextMenuApplication):
 
     type = ApplicationCommandType.message
 
-    def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand:
+    def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand[CogT, BotT, T]:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs.copy()
         return self

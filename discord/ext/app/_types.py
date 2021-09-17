@@ -25,10 +25,12 @@ from typing import Any, Callable, Coroutine, TYPE_CHECKING, Dict, List, Protocol
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
-    from .core import Option
+    from .core import Option, SlashCommand, UserCommand, MessageCommand, ApplicationCommand
     from .context import ApplicationContext
     from .errors import ApplicationCommandError
-    from discord.ext.commands import Cog
+    from discord.ext.commands import Cog, Bot, AutoShardedBot
+
+    from discord import Client, AutoShardedClient
 
     from discord.abc import Snowflake, GuildChannel
     from discord.member import Member
@@ -39,7 +41,10 @@ T = TypeVar('T')
 Coro = Coroutine[Any, Any, T]
 MaybeCoro = Union[T, Coro[T]]
 CoroFunc = Callable[..., Coro[Any]]
+
 CogT = TypeVar('CogT', bound='Cog')
+BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client, AutoShardedClient]")
+AppCommandT = TypeVar('AppCommandT', bound="Union[SlashCommand, UserCommand, MessageCommand, ApplicationCommand]")
 
 Check = Union[Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]], Callable[["ApplicationContext"], MaybeCoro[bool]]]
 Hook = Union[Callable[["Cog", "ApplicationContext"], Coro[Any]], Callable[["ApplicationContext"], Coro[Any]]]

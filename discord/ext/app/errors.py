@@ -22,6 +22,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from inspect import Parameter
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Union
 from discord.errors import ClientException, DiscordException
 
@@ -39,6 +40,15 @@ __all__ = (
     'ApplicationRegistrationError',
     'ApplicationRegistrationMaxDepthError',
     'ApplicationRegistrationExistingParentOptions',
+
+    'ApplicationUserInputError',
+    'ApplicationMissingRequiredArgument',
+    'ApplicationTooManyArguments',
+    'ApplicationBadArgument',
+    'ApplicationMemberNotFound',
+    'ApplicationUserNotFound',
+    'ApplicationMentionableNotFound',
+    'ApplicationCommandOnCooldown',
 
     'ApplicationCheckAnyFailure',
     'ApplicationPrivateMessageOnly',
@@ -87,6 +97,7 @@ class ApplicationCommandInvokeError(ApplicationCommandError):
         self.original: Exception = e
         super().__init__(f'Command raised an exception: {e.__class__.__name__}: {e}')
 
+
 class ApplicationRegistrationError(ClientException):
     """An exception raised when the command can't be added
     because the name is already taken by a different command.
@@ -101,7 +112,6 @@ class ApplicationRegistrationError(ClientException):
     def __init__(self, name: str) -> None:
         self.name: str = name
         super().__init__(f'The command \'{name}\' is already an existing command.')
-
 
 class ApplicationRegistrationMaxDepthError(ClientException):
     """An exception raised when the command can't be added
@@ -122,7 +132,6 @@ class ApplicationRegistrationMaxDepthError(ClientException):
             f'The command \'{name}\' cannot be registered to \'{parent_name}\' because '
             'it reach the maximum depth.'
         )
-
 
 class ApplicationRegistrationExistingParentOptions(ClientException):
     """An exception raise when the command can't be added
@@ -145,6 +154,114 @@ class ApplicationRegistrationExistingParentOptions(ClientException):
             f'The command \'{name}\' cannot be registered since the parent command contains option \'{option.name}\''
             f' which is a type \'{option.input_type.name}\' (need to be subcommand or group)'
         )
+
+
+class ApplicationUserInputError(ApplicationCommandError):
+    """The base exception type for errors that involve errors
+    regarding user input.
+
+    This inherits from :exc:`ApplicationCommandError`.
+    """
+    pass
+
+class ApplicationMissingRequiredArgument(ApplicationUserInputError):
+    """Exception raised when parsing a command and a parameter
+    that is required is not encountered.
+
+    This inherits from :exc:`ApplicationUserInputError`
+
+    Attributes
+    -----------
+    param: :class:`inspect.Parameter`
+        The argument that is missing.
+    """
+    def __init__(self, command: str, param: Parameter) -> None:
+        self.param: Parameter = param
+        self.command: str = command
+        super().__init__(f'Command {command} needs {param.name} which is a required argument that is missing.')
+
+class ApplicationTooManyArguments(ApplicationUserInputError):
+    """Exception raised when the command was passed too many arguments.
+
+    This inherits from :exc:`ApplicationUserInputError`
+    """
+    pass
+
+class ApplicationBadArgument(ApplicationUserInputError):
+    """Exception raised when a parsing or conversion failure is encountered
+    on an argument to pass into a command.
+
+    This inherits from :exc:`ApplicationUserInputError`
+    """
+    pass
+
+class ApplicationMemberNotFound(ApplicationBadArgument):
+    """Exception raised when the member provided was not found in the bot's
+    cache.
+
+    This inherits from :exc:`ApplicationBadArgument`
+
+    Attributes
+    -----------
+    argument: :class:`str`
+        The member supplied by the caller that was not found
+    """
+    def __init__(self, argument: str) -> None:
+        self.argument: str = argument
+        super().__init__(f'Member "{argument}" not found.')
+
+class ApplicationMentionableNotFound(ApplicationBadArgument):
+    """Exception raised when the mentionable provided was not found in the bot's
+    cache.
+
+    This inherits from :exc:`ApplicationBadArgument`
+
+    Attributes
+    -----------
+    argument: :class:`str`
+        The member supplied by the caller that was not found
+    """
+    def __init__(self, argument: str) -> None:
+        self.argument: str = argument
+        super().__init__(f'Mentionable "{argument}" not found.')
+
+class ApplicationUserNotFound(ApplicationBadArgument):
+    """Exception raised when the user provided was not found in the bot's
+    cache.
+
+    This inherits from :exc:`ApplicationBadArgument`
+
+    .. versionadded:: 1.5
+
+    Attributes
+    -----------
+    argument: :class:`str`
+        The user supplied by the caller that was not found
+    """
+    def __init__(self, argument: str) -> None:
+        self.argument: str = argument
+        super().__init__(f'User "{argument}" not found.')
+
+class ApplicationCommandOnCooldown(ApplicationCommandError):
+    """Exception raised when the command being invoked is on cooldown.
+
+    This inherits from :exc:`ApplicationCommandError`
+
+    Attributes
+    -----------
+    cooldown: :class:`.ApplicationCooldown`
+        A class with attributes ``rate`` and ``per`` similar to the
+        :func:`.cooldown` decorator.
+    type: :class:`BucketType`
+        The type associated with the cooldown.
+    retry_after: :class:`float`
+        The amount of seconds to wait before you can retry again.
+    """
+    def __init__(self, cooldown: Cooldown, retry_after: float, type: BucketType) -> None:
+        self.cooldown: Cooldown = cooldown
+        self.retry_after: float = retry_after
+        self.type: AppBucketType = type
+        super().__init__(f'You are on cooldown. Try again in {retry_after:.2f}s')
 
 
 # Check failure inherits

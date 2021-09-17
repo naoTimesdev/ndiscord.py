@@ -22,7 +22,9 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
+
+from ._types import CogT, BotT, AppCommandT
 
 import discord.abc
 import discord.utils
@@ -37,12 +39,7 @@ from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
 
 if TYPE_CHECKING:
-    from discord.client import Client
-    from discord.ext.commands import AutoShardedBot, Bot, Cog
-
     from discord.interactions import InteractionChannel
-
-    from .core import SlashCommand, UserCommand, MessageCommand
 
 __all__ = (
     'ApplicationContext',
@@ -50,13 +47,8 @@ __all__ = (
 
 MISSING: Any = discord.utils.MISSING
 
-BotT = TypeVar('BotT', bound="Union[Bot, AutoShardedBot, Client]")
-CogT = TypeVar('CogT', bound="Cog")
-AppCommandT = TypeVar('AppCommandT', bound="Union[SlashCommand, UserCommand, MessageCommand]")
-SlashT = TypeVar('SlashT', bound="SlashCommand")
 
-
-class ApplicationContext(discord.abc.Messageable):
+class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommandT]):
     """Represents the context in which a application command is being invoked under.
 
     This class contains a lot of meta data to help you understand more about
@@ -107,7 +99,7 @@ class ApplicationContext(discord.abc.Messageable):
         self.command: AppCommandT = command
 
         # Subcommand stuff for /slash command
-        self.invoked_subcommand: Optional[SlashT] = None
+        self.invoked_subcommand: Optional[AppCommandT] = None
 
         self._deferred: bool = False
         self._state: ConnectionState = self.interaction._state
