@@ -50,6 +50,7 @@ __all__ = (
     'ApplicationUserNotFound',
     'ApplicationMentionableNotFound',
     'ApplicationCommandOnCooldown',
+    'ApplicationMaxConcurrencyReached',
 
     'ApplicationCheckAnyFailure',
     'ApplicationPrivateMessageOnly',
@@ -62,9 +63,6 @@ __all__ = (
     'ApplicationBotMissingPermissions',
     'ApplicationNSFWChannelRequired',
     'ApplicationNotOwner',
-
-    'ApplicationCommandOnCooldown',
-    'ApplicationMaxConcurrencyReached',
 )
 
 class ApplicationCommandError(DiscordException):
