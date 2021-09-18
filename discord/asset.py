@@ -235,6 +235,15 @@ class Asset(AssetMixin):
         )
 
     @classmethod
+    def _from_guild_scheduled_event(cls, state, event_id: int, image_hash: str) -> Asset:
+        return cls(
+            state,
+            url=f"{cls.BASE}/guild-events/{event_id}/images/{image_hash}.png?size=1024",
+            key=image_hash,
+            animated=False,
+        )
+
+    @classmethod
     def _from_user_banner(cls, state, user_id: int, banner_hash: str) -> Asset:
         animated = banner_hash.startswith("a_")
         format = "gif" if animated else "png"

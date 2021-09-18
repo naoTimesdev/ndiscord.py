@@ -84,6 +84,7 @@ if TYPE_CHECKING:
 
     from .abc import Snowflake, SnowflakeTime
     from .channel import CategoryChannel, StageChannel, StoreChannel, TextChannel, VoiceChannel
+    from .guild_events import GuildScheduledEvent
     from .permissions import Permissions
     from .state import ConnectionState
     from .template import Template
@@ -283,6 +284,7 @@ class Guild(Hashable):
         self._channels: Dict[int, GuildChannel] = {}
         self._members: Dict[int, Member] = {}
         self._voice_states: Dict[int, VoiceState] = {}
+        self._guild_events: Dict[int, GuildScheduledEvent] = {}
         self._threads: Dict[int, Thread] = {}
         self._state: ConnectionState = state
         self._from_data(data)
@@ -306,6 +308,12 @@ class Guild(Hashable):
 
     def _remove_member(self, member: Snowflake, /) -> None:
         self._members.pop(member.id, None)
+
+    def _add_guild_event(self, event: GuildScheduledEvent, /) -> None:
+        self._guild_events[event.id] = event
+
+    def _remove_guild_event(self, event: GuildScheduledEvent, /) -> None:
+        self._guild_events.pop(event.id, None)
 
     def _add_thread(self, thread: Thread, /) -> None:
         self._threads[thread.id] = thread
@@ -494,6 +502,11 @@ class Guild(Hashable):
         return list(self._channels.values())
 
     @property
+    def events(self) -> List[GuildScheduledEvent]:
+        """List[:class:`GuildScheduledEvent`]: A list of guild events that belong to this guild."""
+        return list(self._guild_events.values())
+
+    @property
     def threads(self) -> List[Thread]:
         """List[:class:`Thread`]: A list of threads that you have permission to view.
 
@@ -647,6 +660,23 @@ class Guild(Hashable):
             The returned channel or ``None`` if not found.
         """
         return self._channels.get(channel_id)
+
+    def get_event(self, event_id: int, /) -> Optional[GuildScheduledEvent]:
+        """Returns a event with the given ID.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        event_id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        Optional[:class:`GuildScheduledEvent`]
+            The returned event or ``None`` if not found.
+        """
+        return self._guild_events.get(event_id)
 
     def get_thread(self, thread_id: int, /) -> Optional[Thread]:
         """Returns a thread with the given ID.
