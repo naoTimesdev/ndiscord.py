@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+import datetime
 import logging
 import sys
 import weakref
@@ -75,6 +76,7 @@ if TYPE_CHECKING:
         embed,
         emoji,
         guild,
+        guild_events,
         integration,
         interactions,
         invite,
@@ -1925,6 +1927,64 @@ class HTTPClient:
             guild_id=guild_id,
         )
         return self.request(r, json=payload)
+
+    # Guild events
+
+    def get_guild_scheduled_events(
+        self,
+        guild_id: Snowflake,
+        *,
+        with_user_count: bool = True,
+    ) -> Response[List[guild_events.GuildScheduledEvent]]:
+        params = {
+            "with_user_count": int(with_user_count),
+        }
+        return self.request(Route("GET", "/guilds/{guild_id}/events", guild_id=guild_id), params=params)
+
+    def get_guild_scheduled_event(
+        self,
+        event_id: Snowflake,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        return self.request(Route("GET", "/guild-events/{event_id}", event_id=event_id))
+
+    def create_guild_scheduled_event(
+        self,
+        guild_id: Snowflake,
+        *,
+        name: str,
+        entity_type: guild_events.GuildEventEntityType,
+        privacy_level: guild_events.GuildEventPrivacyLevel,
+        scheduled_start_time: Union[datetime.datetime, str],
+        channel_id: Optional[Snowflake] = None,
+        description: Optional[str] = None,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        r = Route("POST", "/guilds/{guild_id}/events", guild_id=guild_id)
+        start_time = scheduled_start_time
+        if isinstance(start_time, datetime.datetime):
+            start_time = start_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+        payload: Dict[str, Any] = {
+            "name": name,
+            "privacy_level": privacy_level,
+            "scheduled_start_time": start_time,
+            "entity_type": entity_type,
+        }
+
+        if channel_id is not None:
+            payload["channel_id"] = channel_id
+        if description is not None:
+            payload["description"] = description
+        return self.request(r, json=payload)
+
+    def edit_guild_scheduled_event(
+        self,
+        event_id: Snowflake,
+        **fields: Any,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        r = Route("PATCH", "/guild-events/{event_id}", event_id=event_id)
+        return self.request(r, json=fields)
+
+    def delete_guild_scheduled_event(self, event_id: Snowflake) -> Response[None]:
+        return self.request(Route("DELETE", "/guild-events/{event_id}", event_id=event_id))
 
     # Misc
 
