@@ -1357,18 +1357,18 @@ class Guild(Hashable):
         Parameters
         -----------
         name: :class:`str`
-            The new name of the event.
+            The name of the event.
         description: Optional[:class:`str`]
-            The new description of the event. Could be ``None`` for no description.
+            The description of the event. Could be ``None`` for no description.
         channel: Optional[:class:`abc.GuildChannel`]
             The channel where the event will be conducted.
         privacy_level: Optional[Any]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
-            The new schedule start time, timezone must be UTC. If not it will be converted
+            The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
         entity_type: Optional[:class`GuildScheduledEventType`]
-            The new ``entity type`` or ``type`` for the event.
+            The ``entity type`` or ``type`` for the event.
 
         Raises
         -------
