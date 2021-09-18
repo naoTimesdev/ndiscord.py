@@ -52,6 +52,7 @@ from .enums import (
     AuditLogAction,
     ChannelType,
     ContentFilter,
+    GuildScheduledEventType,
     NotificationLevel,
     NSFWLevel,
     VerificationLevel,
@@ -62,6 +63,7 @@ from .enums import (
 from .errors import ClientException, InvalidArgument, InvalidData
 from .file import File
 from .flags import SystemChannelFlags
+from .guild_events import GuildScheduledEvent
 from .integrations import Integration, _integration_factory
 from .invite import Invite
 from .iterators import AuditLogIterator, MemberIterator
@@ -84,7 +86,6 @@ if TYPE_CHECKING:
 
     from .abc import Snowflake, SnowflakeTime
     from .channel import CategoryChannel, StageChannel, StoreChannel, TextChannel, VoiceChannel
-    from .guild_events import GuildScheduledEvent
     from .permissions import Permissions
     from .state import ConnectionState
     from .template import Template
@@ -1332,6 +1333,101 @@ class Guild(Hashable):
         return channel
 
     create_category_channel = create_category
+
+    async def create_event(
+        self,
+        name: str,
+        scheduled_start_time: datetime.datetime,
+        *,
+        description: Optional[str] = MISSING,
+        # TODO: Change this later
+        privacy_level: Optional[int] = MISSING,
+        channel: Optional[GuildChannel] = MISSING,
+        entity_type: Optional[GuildScheduledEventType] = MISSING,
+    ) -> GuildScheduledEvent:
+        """|coro|
+
+        Create a new guild event.
+
+        You must have the :attr:`~Permissions.manage_events` permission
+        to create a guild event.
+
+        ..versionadded:: 2.0
+
+        Parameters
+        -----------
+        name: :class:`str`
+            The new name of the event.
+        description: Optional[:class:`str`]
+            The new description of the event. Could be ``None`` for no description.
+        channel: Optional[:class:`abc.GuildChannel`]
+            The channel where the event will be conducted.
+        privacy_level: Optional[Any]
+            The event privacy level, same thing as StageInstance PrivacyLevel
+        scheduled_start_time: :class:`datetime.datetime`
+            The new schedule start time, timezone must be UTC. If not it will be converted
+            automatically.
+        entity_type: Optional[:class`GuildScheduledEventType`]
+            The new ``entity type`` or ``type`` for the event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to edit the guild event.
+        HTTPException
+            Editing the guild event failed.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The newly updated guild event.
+        """
+        http = self._state.http
+
+        description = None
+        if description is not MISSING:
+            description = description
+
+        channel_id = None
+        if channel is not MISSING:
+            channel_id = str(channel.id)
+
+        privacy_level = 1
+        if privacy_level is not MISSING and entity_type is not None:
+            # TODO: Change later
+            privacy_level = privacy_level
+
+        scheduled_start_time = scheduled_start_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+
+        entity_type = GuildScheduledEventType.none.value
+        if entity_type is not MISSING and entity_type is not None:
+            entity_type = entity_type.value
+
+        guild = self
+
+        data = await http.create_guild_scheduled_event(
+            guild.id,
+            name=name,
+            entity_type=entity_type,
+            privacy_level=privacy_level,
+            scheduled_start_time=scheduled_start_time,
+            description=description,
+            channel_id=channel_id,
+        )
+
+        try:
+            channel = self.get_channel(int(data["channel_id"]))
+        except KeyError:
+            channel = None
+        else:
+            guild = channel or guild
+
+        event = GuildScheduledEvent(state=self._state, guild=guild, data=data)
+        # temporarily add to the cache
+        self._guild_events[event.id] = event
+        return event
+
+    create_scheduled_event = create_event
 
     async def leave(self) -> None:
         """|coro|

@@ -24,8 +24,8 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Union
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
 
 from . import utils
 from .asset import Asset
@@ -43,6 +43,8 @@ if TYPE_CHECKING:
     from .types.guild_events import GuildScheduledEventEntityMeta
 
 __all__ = ("GuildScheduledEvent")
+
+MISSING: Any = utils.MISSING
 
 
 # TODO: Still can be changed, fix later if possible
@@ -241,3 +243,103 @@ class GuildScheduledEvent(Hashable):
         return cls(state=state, guild_or_channel=guild, data=data)
 
     # TODO: API Methods
+
+    async def edit(
+        self,
+        *,
+        name: str = MISSING,
+        description: Optional[str] = MISSING,
+        channel: Optional[GuildChannel] = MISSING,
+        # TODO: Change this later
+        privacy_level: Optional[Any] = MISSING,
+        scheduled_start_time: Optional[datetime] = MISSING,
+        entity_type: Optional[GuildScheduledEventType] = MISSING,
+    ) -> GuildScheduledEvent:
+        r"""|coro|
+
+        Edits the guild event.
+
+        You must have the :attr:`~Permissions.manage_events` permission
+        to edit the guild event.
+
+        ..versionadded:: 2.0
+
+        Parameters
+        -----------
+        name: :class:`str`
+            The new name of the event.
+        description: Optional[:class:`str`]
+            The new description of the event. Could be ``None`` for no description.
+        channel: Optional[:class:`abc.GuildChannel`]
+            The channel where the event will be conducted.
+        privacy_level: Optional[Any]
+            The event privacy level, same thing as StageInstance PrivacyLevel
+        scheduled_start_time: Optional[:class:`datetime.datetime`]
+            The new schedule start time, timezone must be UTC. If not it will be converted
+            automatically.
+        entity_type: Optional[:class`GuildScheduledEventType`]
+            The new ``entity type`` or ``type`` for the event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to edit the guild event.
+        HTTPException
+            Editing the guild event failed.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The newly updated guild event.
+        """
+
+        http = self._state.http
+
+        fields: Dict[str, Any] = {}
+        if name is not MISSING and entity_type is not None:
+            fields["name"] = name
+
+        if description is not MISSING:
+            fields["description"] = description
+
+        if channel is not MISSING:
+            fields["channel_id"] = str(channel.id)
+
+        if privacy_level is not MISSING and entity_type is not None:
+            # TODO: Change later
+            fields["privacy_level"] = privacy_level
+
+        if scheduled_start_time is not MISSING and entity_type is not None:
+            fields["scheduled_start_time"] = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()
+
+        if entity_type is not MISSING and entity_type is not None:
+            fields["entity_type"] = entity_type.value
+
+        guild = self.guild
+
+        data = await http.edit_guild_scheduled_event(self.id, **fields)
+        try:
+            channel = guild.get_channel(int(data["channel_id"]))
+        except KeyError:
+            channel = None
+        else:
+            guild = channel or guild
+        return self.__class__(state=self._state, guild_or_channel=guild, data=data)
+
+    async def delete(self) -> None:
+        """|coro|
+
+        Deletes the guild event.
+
+        You must have the :attr:`~Permissions.manage_events` permission
+        to be able to delete the guild event.
+
+        Raises
+        --------
+        HTTPException
+            Deleting the guild event failed.
+        Forbidden
+            You do not have permissions to delete the guild event.
+        """
+
+        await self._state.http.delete_guild_scheduled_event(self.id)
