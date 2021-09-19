@@ -911,7 +911,7 @@ class ConnectionState:
 
         event._remove_member(member)
         self._add_guild_event(event)  # Update
-        self.dispatch("guild_scheduled_event_member_leave", event, member)
+        self.dispatch("guild_scheduled_event_member_remove", event, member)
 
     def parse_thread_create(self, data) -> None:
         guild_id = int(data["guild_id"])
