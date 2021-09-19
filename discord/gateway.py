@@ -56,11 +56,15 @@ from .errors import ConnectionClosed, InvalidArgument
 
 if TYPE_CHECKING:
     from .client import Client
-    from .state import ConnectionState
-    from .voice_client import VoiceClient
+    from .shard import AutoShardedClient
+    from .state import AutoShardedConnectionState, ConnectionState
     from .types.snowflake import Snowflake
-    from .types.voice import VoiceReady, VoiceSessionDescription
     from .types.voice import SupportedModes as VoiceSupportedModes
+    from .types.voice import VoiceReady, VoiceSessionDescription
+    from .voice_client import VoiceClient
+
+    CStateT = TypeVar("CStateT", bound="Union[AutoShardedConnectionState, ConnectionState]")
+    ClientT = TypeVar("ClientT", bound="Union[Client, AutoShardedClient]")
 
 _log = logging.getLogger(__name__)
 
@@ -356,7 +360,7 @@ class DiscordWebSocket:
 
         # added data later
         token: Optional[str]
-        _connection: Optional[ConnectionState]
+        _connection: Optional[CStateT]
         _discord_parsers: Optional[Dict[str, Callable[..., None]]]
         gateway: Optional[str]
         call_hooks: Optional[Callable[..., None]]
@@ -401,7 +405,7 @@ class DiscordWebSocket:
     @classmethod
     async def from_client(
         cls: Type["DiscordWebSocket"],
-        client: Client,
+        client: ClientT,
         *,
         initial: bool = False,
         gateway: Optional[str] = None,
