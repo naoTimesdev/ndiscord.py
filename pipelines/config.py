@@ -1,0 +1,3 @@
+MAIN_PACKAGE = "discord"
+EXAMPLE_SCRIPTS = "examples"
+DOCUMENTATION_DIRECTORY = "docs"
