@@ -72,6 +72,10 @@ def _transform_snowflake(entry: AuditLogEntry, data: Snowflake) -> int:
     return int(data)
 
 
+def _transform_snowflakes(data: List[Snowflake]) -> List[int]:
+    return [int(x) for x in data]
+
+
 def _transform_channel(entry: AuditLogEntry, data: Optional[Snowflake]) -> Optional[Union[abc.GuildChannel, Object]]:
     if data is None:
         return None
@@ -210,6 +214,9 @@ class AuditLogChanges:
         'privacy_level':                 (None, _enum_transformer(enums.StagePrivacyLevel)),
         'format_type':                   (None, _enum_transformer(enums.StickerFormatType)),
         'type':                          (None, _transform_type),
+        'entity_type':                   (None, _enum_transformer(enums.GuildScheduledEventType)),
+        'status':                        (None, _enum_transformer(enums.GuildScheduledEventStatus)),
+        'sku_ids':                       (None, _transform_snowflakes)
     }
     # fmt: on
 
