@@ -85,7 +85,20 @@ class GuildScheduledEvent(Hashable):
 
     Attributes
     ------------
-    TBW
+    id: :class:`int`
+        The event's ID.
+    name: :class:`str`
+        The event's name.
+    description: Optional[:class:`str`]
+        The event's description.
+    start_time: :class:`datetime.datetime`
+        The event's scheduled start time.
+    end_time: Optional[:class:`datetime.datetime`]
+        The event's scheduled end time.
+    status: :class:`GuildScheduledEventStatus`
+        The event's current status.
+    guild: :class:`Guild`
+        The guild the event belongs to.
     """
 
     __slots__ = (
@@ -175,14 +188,14 @@ class GuildScheduledEvent(Hashable):
 
     @property
     def channel(self) -> Optional[GuildChannel]:
-        """Optional[:class:`GuildChannel`]: The channel associated with this event.
-        Can be ``None``.
+        """Optional[:class:`abc.GuildChannel`]: The channel associated with this event,
+        can be ``None``.
         """
         return self._channel
 
     @property
     def image(self) -> Optional[Asset]:
-        """Optional[:class`Asset`]: The image associated with the event, can be ``None``."""
+        """Optional[:class:`Asset`]: The image associated with the event, can be ``None``."""
         if not self._image:
             return None
         return Asset._from_guild_scheduled_event(
@@ -257,8 +270,6 @@ class GuildScheduledEvent(Hashable):
         You must have the :attr:`~Permissions.manage_events` permission
         to edit the guild event.
 
-        ..versionadded:: 2.0
-
         Parameters
         -----------
         name: :class:`str`
@@ -272,7 +283,7 @@ class GuildScheduledEvent(Hashable):
         scheduled_start_time: Optional[:class:`datetime.datetime`]
             The new schedule start time, timezone must be UTC. If not it will be converted
             automatically.
-        entity_type: Optional[:class`GuildScheduledEventType`]
+        entity_type: Optional[:class:`GuildScheduledEventType`]
             The new ``entity type`` or ``type`` for the event.
 
         Raises

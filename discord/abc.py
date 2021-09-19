@@ -1143,7 +1143,7 @@ class GuildChannel:
         You must have the :attr:`~Permissions.manage_events` permission
         to create a guild event.
 
-        ..versionadded:: 2.0
+        .. versionadded:: 2.0
 
         Parameters
         -----------
@@ -1156,9 +1156,9 @@ class GuildChannel:
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
-        entity_type: Optional[:class`GuildScheduledEventType`]
-            The ``entity type`` or ``type`` for the event.
-            If you don't provide this, it will automatically check from the channel :attr:`.type`.
+        entity_type: Optional[:class:`GuildScheduledEventType`]
+            The ``entity_type`` or ``type`` for the event.
+            If you don't provide this, it will automatically check from the channel :attr:`type`.
 
         Raises
         -------
