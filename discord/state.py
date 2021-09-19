@@ -157,26 +157,26 @@ class ConnectionState:
         _get_client: Callable[..., Client]
         _parsers: Dict[str, Callable[[Dict[str, Any]], None]]
 
-        @overload
-        def __init__(
-            self,
-            *,
-            dispatch: Callable[..., None],
-            handlers: Dict[str, Callable[..., None]],
-            hooks: Dict[str, Callable[..., Coroutine[Any, Any, None]]],
-            http: HTTPClient,
-            loop: asyncio.AbstractEventLoop,
-            max_messages: int = 1000,
-            heartbeat_timeout: float = 60.0,
-            guild_ready_timeout: float = 2.0,
-            allowed_mentions: Optional[AllowedMentions] = None,
-            activity: Optional[BaseActivity] = None,
-            status: Optional[Status] = None,
-            intents: Optional[Intents] = None,
-            chunk_guilds_at_startup: bool = False,
-            member_cache_flags: Optional[MemberCacheFlags] = None,
-        ) -> None:
-            ...
+    @overload
+    def __init__(
+        self,
+        *,
+        dispatch: Callable[..., None],
+        handlers: Dict[str, Callable[..., None]],
+        hooks: Dict[str, Callable[..., Coroutine[Any, Any, None]]],
+        http: HTTPClient,
+        loop: asyncio.AbstractEventLoop,
+        max_messages: int = 1000,
+        heartbeat_timeout: float = 60.0,
+        guild_ready_timeout: float = 2.0,
+        allowed_mentions: Optional[AllowedMentions] = None,
+        activity: Optional[BaseActivity] = None,
+        status: Optional[Status] = None,
+        intents: Optional[Intents] = None,
+        chunk_guilds_at_startup: bool = False,
+        member_cache_flags: Optional[MemberCacheFlags] = None,
+    ) -> None:
+        ...
 
     def __init__(
         self,

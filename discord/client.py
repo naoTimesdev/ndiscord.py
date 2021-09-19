@@ -236,31 +236,30 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         The event loop that the client uses for asynchronous operations.
     """
 
-    if TYPE_CHECKING:
-        @overload
-        def __init__(
-            self,
-            *,
-            loop: Optional[asyncio.AbstractEventLoop] = None,
-            shard_id: Optional[int] = None,
-            shard_count: Optional[int] = None,
-            connector: Optional[aiohttp.BaseConnector] = None,
-            proxy: Optional[str] = None,
-            proxy_auth: Optional[aiohttp.BasicAuth] = None,
-            assume_unsync_clock: bool = True,
-            enable_debug_events: bool = False,
-            # Option for ConnectionState
-            max_messages: int = 1000,
-            heartbeat_timeout: float = 60.0,
-            guild_ready_timeout: float = 2.0,
-            allowed_mentions: Optional[AllowedMentions] = None,
-            activity: Optional[BaseActivity] = None,
-            status: Optional[Status] = None,
-            intents: Optional[Intents] = None,
-            chunk_guilds_at_startup: bool = False,
-            member_cache_flags: Optional[MemberCacheFlags] = None,
-        ) -> None:
-            ...
+    @overload
+    def __init__(
+        self,
+        *,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+        shard_id: Optional[int] = None,
+        shard_count: Optional[int] = None,
+        connector: Optional[aiohttp.BaseConnector] = None,
+        proxy: Optional[str] = None,
+        proxy_auth: Optional[aiohttp.BasicAuth] = None,
+        assume_unsync_clock: bool = True,
+        enable_debug_events: bool = False,
+        # Option for ConnectionState
+        max_messages: int = 1000,
+        heartbeat_timeout: float = 60.0,
+        guild_ready_timeout: float = 2.0,
+        allowed_mentions: Optional[AllowedMentions] = None,
+        activity: Optional[BaseActivity] = None,
+        status: Optional[Status] = None,
+        intents: Optional[Intents] = None,
+        chunk_guilds_at_startup: bool = False,
+        member_cache_flags: Optional[MemberCacheFlags] = None,
+    ) -> None:
+        ...
 
     def __init__(
         self,
