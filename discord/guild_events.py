@@ -209,6 +209,21 @@ class GuildScheduledEvent(Hashable):
         """List[Union[:class:`Member`]]: List of user that subscribed to the event."""
         return list(self._members.values())
 
+    def get_member(self, user_id: int, /) -> Optional[Member]:
+        """Returns a member with the given ID.
+
+        Parameters
+        -----------
+        user_id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        Optional[:class:`Member`]
+            The member or ``None`` if not found.
+        """
+        return self._members.get(user_id)
+
     @property
     def member_count(self) -> Optional[int]:
         """Optional[:class:`int`]: Total member that are subscribed to the event"""
