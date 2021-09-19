@@ -125,9 +125,12 @@ class Interaction:
         "_cs_channel",
     )
 
+    if TYPE_CHECKING:
+        message: Optional[Message]
+
     def __init__(self, *, data: InteractionPayload, state: ConnectionState):
         self._state: ConnectionState = state
-        self._session: ClientSession = state.http._HTTPClient__session
+        self._session: ClientSession = state.http._get_session()
         self._original_message: Optional[InteractionMessage] = None
         self._from_data(data)
 
@@ -141,7 +144,6 @@ class Interaction:
         self.guild_id: Optional[int] = utils._get_as_snowflake(data, "guild_id")
         self.application_id: int = int(data["application_id"])
 
-        self.message: Optional[Message]
         try:
             self.message = Message(state=self._state, channel=self.channel, data=data["message"])  # type: ignore
         except KeyError:

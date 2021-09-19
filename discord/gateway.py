@@ -31,7 +31,21 @@ import threading
 import time
 import traceback
 import zlib
-from collections import deque, namedtuple
+from collections import deque
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Coroutine,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 
 import aiohttp
 
@@ -39,6 +53,14 @@ from . import utils
 from .activity import BaseActivity
 from .enums import SpeakingState
 from .errors import ConnectionClosed, InvalidArgument
+
+if TYPE_CHECKING:
+    from .client import Client
+    from .state import ConnectionState
+    from .voice_client import VoiceClient
+    from .types.snowflake import Snowflake
+    from .types.voice import VoiceReady, VoiceSessionDescription
+    from .types.voice import SupportedModes as VoiceSupportedModes
 
 _log = logging.getLogger(__name__)
 
@@ -49,6 +71,10 @@ __all__ = (
     "DiscordVoiceWebSocket",
     "ReconnectWebSocket",
 )
+
+T = TypeVar("T")
+DiscordWST = TypeVar("DiscordWST", bound="Union[DiscordWebSocket, DiscordVoiceWebSocket]")
+DiscordKAT = TypeVar("DiscordKAT", bound="Union[KeepAliveHandler, VoiceKeepAliveHandler]")
 
 
 class ReconnectWebSocket(Exception):
@@ -66,18 +92,22 @@ class WebSocketClosure(Exception):
     pass
 
 
-EventListener = namedtuple("EventListener", "predicate event result future")
+class EventListener(NamedTuple):
+    predicate: Callable[[T], bool]
+    event: str
+    result: Optional[Callable[[T], Any]]
+    future: asyncio.Future
 
 
 class GatewayRatelimiter:
-    def __init__(self, count=110, per=60.0):
+    def __init__(self, count: int = 110, per: float = 60.0):
         # The default is 110 to give room for at least 10 heartbeats per minute
-        self.max = count
-        self.remaining = count
-        self.window = 0.0
-        self.per = per
-        self.lock = asyncio.Lock()
-        self.shard_id = None
+        self.max: int = count
+        self.remaining: int = count
+        self.window: float = 0.0
+        self.per: float = per
+        self.lock: asyncio.Lock = asyncio.Lock()
+        self.shard_id: Optional[int] = None
 
     def is_ratelimited(self):
         current = time.time()
@@ -112,12 +142,35 @@ class GatewayRatelimiter:
 
 
 class KeepAliveHandler(threading.Thread):
+    if TYPE_CHECKING:
+        ws: DiscordWST
+        _main_thread_id: int
+        interval: Optional[float]
+        shard_id: Optional[int]
+        _stop_ev: threading.Event
+        _last_ack: float
+        _last_send: float
+        _last_recv: float
+        latency: float
+        heartbeat_timeout: float
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ws: DiscordWST,
+        interval: Optional[float],
+        shard_id: Optional[int],
+        **kwargs: Dict[str, Any],
+    ) -> None:
+        ...
+
     def __init__(self, *args, **kwargs):
-        ws = kwargs.pop("ws", None)
-        interval = kwargs.pop("interval", None)
-        shard_id = kwargs.pop("shard_id", None)
+        ws: Optional[DiscordWST] = kwargs.pop("ws", None)
+        interval: Optional[float] = kwargs.pop("interval", None)
+        shard_id: Optional[int] = kwargs.pop("shard_id", None)
         threading.Thread.__init__(self, *args, **kwargs)
-        self.ws = ws
+        self.ws: DiscordWST = ws
         self._main_thread_id = ws.thread_id
         self.interval = interval
         self.daemon = True
@@ -194,6 +247,18 @@ class KeepAliveHandler(threading.Thread):
 
 
 class VoiceKeepAliveHandler(KeepAliveHandler):
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ws: DiscordWST,
+        interval: Optional[float],
+        shard_id: Optional[int],
+        **kwargs: Dict[str, Any],
+    ) -> None:
+        ...
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.recent_ack_latencies = deque(maxlen=20)
@@ -271,7 +336,36 @@ class DiscordWebSocket:
     HEARTBEAT_ACK = 11
     GUILD_SYNC = 12
 
-    def __init__(self, socket, *, loop):
+    if TYPE_CHECKING:
+        socket: aiohttp.ClientWebSocketResponse
+        loop: asyncio.AbstractEventLoop
+        _dispatch: Callable[..., None]
+        _dispatch_listeners: List[EventListener]
+
+        # keep alive
+        _keep_alive: Optional[DiscordKAT]
+        thread_id: int
+
+        # ws stuff
+        session_id: Optional[int]
+        sequence: Optional[int]
+        _zlib: zlib._Decompress
+        _buffer: bytearray
+        _close_code: Optional[int]
+        _rate_limiter: GatewayRatelimiter
+
+        # added data later
+        token: Optional[str]
+        _connection: Optional[ConnectionState]
+        _discord_parsers: Optional[Dict[str, Callable[..., None]]]
+        gateway: Optional[str]
+        call_hooks: Optional[Callable[..., None]]
+        _initial_identify: Optional[bool]
+        shard_id: Optional[int]
+        shard_count: Optional[int]
+        _max_heartbeat_timeout: Optional[float]
+
+    def __init__(self, socket: aiohttp.ClientWebSocketResponse, *, loop: asyncio.AbstractEventLoop):
         self.socket = socket
         self.loop = loop
 
@@ -306,7 +400,15 @@ class DiscordWebSocket:
 
     @classmethod
     async def from_client(
-        cls, client, *, initial=False, gateway=None, shard_id=None, session=None, sequence=None, resume=False
+        cls: Type["DiscordWebSocket"],
+        client: Client,
+        *,
+        initial: bool = False,
+        gateway: Optional[str] = None,
+        shard_id: Optional[int] = None,
+        session: Optional[int] = None,
+        sequence: Optional[int] = None,
+        resume: Optional[bool] = False,
     ):
         """Creates a main websocket for Discord from a :class:`Client`.
 
@@ -349,7 +451,12 @@ class DiscordWebSocket:
         await ws.resume()
         return ws
 
-    def wait_for(self, event, predicate, result=None):
+    def wait_for(
+        self,
+        event: str,
+        predicate: Callable[[T], bool],
+        result: Optional[Callable[[T], Any]] = None
+    ):
         """Waits for a DISPATCH'd event that meets the predicate.
 
         Parameters
@@ -587,23 +694,23 @@ class DiscordWebSocket:
                 _log.info("Websocket closed with %s, cannot reconnect.", code)
                 raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
 
-    async def debug_send(self, data, /):
+    async def debug_send(self, data: str, /):
         await self._rate_limiter.block()
         self._dispatch("socket_raw_send", data)
         await self.socket.send_str(data)
 
-    async def send(self, data, /):
+    async def send(self, data: str, /):
         await self._rate_limiter.block()
         await self.socket.send_str(data)
 
-    async def send_as_json(self, data):
+    async def send_as_json(self, data: Dict[str, Any]):
         try:
             await self.send(utils._to_json(data))
         except RuntimeError as exc:
             if not self._can_handle_close():
                 raise ConnectionClosed(self.socket, shard_id=self.shard_id) from exc
 
-    async def send_heartbeat(self, data):
+    async def send_heartbeat(self, data: Dict[str, Any]):
         # This bypasses the rate limit handling code since it has a higher priority
         try:
             await self.socket.send_str(utils._to_json(data))
@@ -611,7 +718,13 @@ class DiscordWebSocket:
             if not self._can_handle_close():
                 raise ConnectionClosed(self.socket, shard_id=self.shard_id) from exc
 
-    async def change_presence(self, *, activity=None, status=None, since=0.0):
+    async def change_presence(
+        self,
+        *,
+        activity: Optional[BaseActivity] = None,
+        status: Optional[str] = None,
+        since: float = 0.0
+    ):
         if activity is not None:
             if not isinstance(activity, BaseActivity):
                 raise InvalidArgument("activity must derive from BaseActivity.")
@@ -628,7 +741,16 @@ class DiscordWebSocket:
         _log.debug('Sending "%s" to change status', sent)
         await self.send(sent)
 
-    async def request_chunks(self, guild_id, query=None, *, limit, user_ids=None, presences=False, nonce=None):
+    async def request_chunks(
+        self,
+        guild_id: Snowflake,
+        query: Optional[str] = None,
+        *,
+        limit: Optional[int],
+        user_ids: Optional[Union[Snowflake, List[Snowflake]]] = None,
+        presences: bool = False,
+        nonce: Optional[str] = None
+    ):
         payload = {"op": self.REQUEST_MEMBERS, "d": {"guild_id": guild_id, "presences": presences, "limit": limit}}
 
         if nonce:
@@ -642,7 +764,13 @@ class DiscordWebSocket:
 
         await self.send_as_json(payload)
 
-    async def voice_state(self, guild_id, channel_id, self_mute=False, self_deaf=False):
+    async def voice_state(
+        self,
+        guild_id: Snowflake,
+        channel_id: Snowflake,
+        self_mute: bool = False,
+        self_deaf: bool = False
+    ):
         payload = {
             "op": self.VOICE_STATE,
             "d": {"guild_id": guild_id, "channel_id": channel_id, "self_mute": self_mute, "self_deaf": self_deaf},
@@ -651,7 +779,7 @@ class DiscordWebSocket:
         _log.debug("Updating our voice state to %s.", payload)
         await self.send_as_json(payload)
 
-    async def close(self, code=4000):
+    async def close(self, code: int = 4000):
         if self._keep_alive:
             self._keep_alive.stop()
             self._keep_alive = None
@@ -704,7 +832,29 @@ class DiscordVoiceWebSocket:
     CLIENT_CONNECT = 12
     CLIENT_DISCONNECT = 13
 
-    def __init__(self, socket, loop, *, hook=None):
+    if TYPE_CHECKING:
+        ws: aiohttp.ClientWebSocketResponse
+        loop: asyncio.AbstractEventLoop
+
+        # keep alive
+        _keep_alive: Optional[DiscordKAT]
+        thread_id: int
+
+        # ws stuff
+        _close_code: Optional[int]
+
+        # added data later
+        _connection: Optional[VoiceClient]
+        gateway: Optional[str]
+        _max_heartbeat_timeout: Optional[float]
+
+    def __init__(
+        self,
+        socket: aiohttp.ClientWebSocketResponse,
+        loop: asyncio.AbstractEventLoop,
+        *,
+        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None
+    ):
         self.ws = socket
         self.loop = loop
         self._keep_alive = None
@@ -716,7 +866,7 @@ class DiscordVoiceWebSocket:
     async def _hook(self, *args):
         pass
 
-    async def send_as_json(self, data):
+    async def send_as_json(self, data: Dict[str, Any]):
         _log.debug("Sending voice websocket frame: %s.", data)
         await self.ws.send_str(utils._to_json(data))
 
@@ -744,7 +894,13 @@ class DiscordVoiceWebSocket:
         await self.send_as_json(payload)
 
     @classmethod
-    async def from_client(cls, client, *, resume=False, hook=None):
+    async def from_client(
+        cls: Type["DiscordVoiceWebSocket"],
+        client: VoiceClient,
+        *,
+        resume: bool = False,
+        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None
+    ):
         """Creates a voice websocket for the :class:`VoiceClient`."""
         gateway = "wss://" + client.endpoint + "/?v=4"
         http = client._state.http
@@ -762,7 +918,7 @@ class DiscordVoiceWebSocket:
 
         return ws
 
-    async def select_protocol(self, ip, port, mode):
+    async def select_protocol(self, ip: str, port: int, mode: VoiceSupportedModes):
         payload = {
             "op": self.SELECT_PROTOCOL,
             "d": {"protocol": "udp", "data": {"address": ip, "port": port, "mode": mode}},
@@ -801,7 +957,7 @@ class DiscordVoiceWebSocket:
 
         await self._hook(self, msg)
 
-    async def initial_connection(self, data):
+    async def initial_connection(self, data: VoiceReady):
         state = self._connection
         state.ssrc = data["ssrc"]
         state.voice_port = data["port"]
@@ -846,7 +1002,7 @@ class DiscordVoiceWebSocket:
 
         return sum(heartbeat.recent_ack_latencies) / len(heartbeat.recent_ack_latencies)
 
-    async def load_secret_key(self, data):
+    async def load_secret_key(self, data: VoiceSessionDescription):
         _log.info("received secret key for voice connection")
         self.secret_key = self._connection.secret_key = data.get("secret_key")
         await self.speak()
@@ -864,7 +1020,7 @@ class DiscordVoiceWebSocket:
             _log.debug("Received %s", msg)
             raise ConnectionClosed(self.ws, shard_id=None, code=self._close_code)
 
-    async def close(self, code=1000):
+    async def close(self, code: int = 1000):
         if self._keep_alive is not None:
             self._keep_alive.stop()
 

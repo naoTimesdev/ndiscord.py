@@ -188,6 +188,9 @@ class Role(Hashable):
         "_state",
     )
 
+    if TYPE_CHECKING:
+        tags: Optional[RoleTags]
+
     def __init__(self, *, guild: Guild, state: ConnectionState, data: RolePayload):
         self.guild: Guild = guild
         self._state: ConnectionState = state
@@ -245,7 +248,6 @@ class Role(Hashable):
         self.managed: bool = data.get("managed", False)
         self.mentionable: bool = data.get("mentionable", False)
         self._icon: str = data.get("icon", None)
-        self.tags: Optional[RoleTags]
 
         try:
             self.tags = RoleTags(data["tags"])
