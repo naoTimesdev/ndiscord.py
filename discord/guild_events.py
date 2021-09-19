@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from .types.guild_events import GuildScheduledEvent as GuildScheduledEventPayload
     from .types.guild_events import GuildScheduledEventEntityMeta
 
-__all__ = ("GuildScheduledEvent")
+__all__ = ("GuildScheduledEvent", "GuildEventEntityMetadata")
 
 MISSING: Any = utils.MISSING
 
@@ -89,24 +89,21 @@ class GuildScheduledEvent(Hashable):
     """
 
     __slots__ = (
+        "_state",
         "id",
+        "_type",
+        "_members",
+        "guild",
+        "_channel",
         "name",
         "description",
         "_image",
+        "status",
         "start_time",
         "end_time",
-        "privacy_level",
-        "status",
-        "_type",
         "_entity_id",
         "_entity_metadata",
-        "sku_ids",
-        "skus",
-        "_members",
-        "_member_count",
-        "guild",
-        "_channel",
-        "_state",
+        "_member_count"
     )
 
     def __init__(
@@ -241,8 +238,6 @@ class GuildScheduledEvent(Hashable):
             guild = channel or guild
 
         return cls(state=state, guild_or_channel=guild, data=data)
-
-    # TODO: API Methods
 
     async def edit(
         self,
