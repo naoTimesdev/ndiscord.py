@@ -842,7 +842,7 @@ class ConnectionState:
         guild_id = int(data["guild_id"])
         guild: Optional[Guild] = self._get_guild(guild_id)
         if guild is None:
-            _log.debug("GUILD_SCHEDULED_EVENT_UPDATE referencing an unknown guild ID: %s. Discarding", guild_id)
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE referencing an unknown guild ID: %s. Discarding", guild_id)
             return
 
         guild_event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
@@ -854,13 +854,13 @@ class ConnectionState:
         guild_id = int(data["guild_id"])
         guild: Optional[Guild] = self._get_guild(guild_id)
         if guild is None:
-            _log.debug("GUILD_SCHEDULED_EVENT_UPDATE referencing an unknown guild ID: %s. Discarding", guild_id)
+            _log.debug("GUILD_SCHEDULED_EVENT_DELETE referencing an unknown guild ID: %s. Discarding", guild_id)
             return
 
         guild_event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
         guild._remove_guild_event(guild_event)
         self._remove_guild_event(guild_event)
-        self.dispatch("guild_scheduled_event_delete", guild_event)
+        self.dispatch("guild_scheduled_event_remove", guild_event)
 
     def parse_guild_scheduled_event_update(self, data) -> None:
         guild_id = int(data["guild_id"])
