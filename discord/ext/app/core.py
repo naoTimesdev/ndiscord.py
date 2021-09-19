@@ -1522,7 +1522,7 @@ def option(name, type=None, **kwargs):
     channel_types: Optional[List[:class:`.ChannelType`]]
         A list of channel types that the option is valid for.
         If provided, the user can only use the defined channel type for the option.
-    """
+    """  # noqa: E501
 
     def decor(func: ApplicationCallback):
         nonlocal type

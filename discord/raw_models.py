@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from .member import Member
     from .message import Message
     from .partial_emoji import PartialEmoji
+    from .threads import Thread
     from .types.raw_models import (
         BulkMessageDeleteEvent,
         IntegrationDeleteEvent,
@@ -41,7 +42,6 @@ if TYPE_CHECKING:
         ReactionClearEmojiEvent,
         ReactionClearEvent,
     )
-    from .threads import Thread
 
 
 __all__ = (
