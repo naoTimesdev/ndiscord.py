@@ -173,7 +173,7 @@ def hooked_wrapped_callback(command: AppCommandT, ctx: ApplicationContext, coro:
     return wrapped
 
 
-class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
+class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
     r"""A class that implements the protocol for bot application command.
 
     These should not be created manually, instead please use the provided decorator
@@ -256,7 +256,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         """:class:`str`: The application qualified name."""
         return self.name
 
-    async def __call__(self, ctx: ApplicationContext, *args: Any, **kwargs: Any):
+    async def __call__(self, ctx: ApplicationContext[BotT, CogT], *args: Any, **kwargs: Any):
         """|coro|
 
         Calls the command's callback.
@@ -274,14 +274,14 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         else:
             return await self.callback(ctx, *args, **kwargs)
 
-    async def _parse_arguments(self, ctx: ApplicationContext):
+    async def _parse_arguments(self, ctx: ApplicationContext[BotT, CogT]):
         """|coro|
 
         Parse the argument and such. Implement later on child
         """
         raise NotImplementedError
 
-    def _prepare_cooldowns(self, ctx: ApplicationContext[CogT]):
+    def _prepare_cooldowns(self, ctx: ApplicationContext[BotT, CogT]):
         if self._buckets.valid:
             current = discord.utils.snowflake_time(ctx.interaction.id)
             bucket = self._buckets.get_bucket(ctx.interaction, current)
@@ -290,7 +290,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
                 if retry_after:
                     raise ApplicationCommandOnCooldown(bucket, retry_after, self._buckets.type)
 
-    async def prepare(self, ctx: ApplicationContext[CogT]):
+    async def prepare(self, ctx: ApplicationContext[BotT, CogT]):
         # Bind
         ctx.command = self
         is_subcommand = ctx.invoked_subcommand is not None
@@ -438,7 +438,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         """Return None if the method is not overridden. Otherwise returns the overridden method."""
         return getattr(method.__func__, "__cog_special_method__", method)
 
-    async def dispatch_error(self, ctx: ApplicationContext, error: Exception) -> None:
+    async def dispatch_error(self, ctx: ApplicationContext[BotT, CogT], error: Exception) -> None:
         ctx.command_failed = True
         cog = self.cog
         try:
@@ -461,7 +461,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         finally:
             ctx.bot.dispatch("application_error", ctx, error)
 
-    async def call_before_hooks(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
+    async def call_before_hooks(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         # now that we're done preparing we can call the pre-command hooks
         # first, call the command local hook:
         cog = self.cog
@@ -486,7 +486,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         if hook is not None:
             await hook(ctx)
 
-    async def call_after_hooks(self, ctx: ApplicationContext[CogT, T, AppCommandT]) -> None:
+    async def call_after_hooks(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         cog = self.cog
         if self._after_invoke is not None:
             instance = getattr(self._after_invoke, "__self__", cog)
@@ -505,7 +505,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         if hook is not None:
             await hook(ctx)
 
-    async def invoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
+    async def invoke(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         """|coro|
 
         Execute or invoke the function callback of the app command.
@@ -543,7 +543,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         injected = hooked_wrapped_callback(self, ctx, self.callback)
         await injected(*ctx.args, **ctx.kwargs)
 
-    async def reinvoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT], *, call_hooks: bool = False):
+    async def reinvoke(self, ctx: ApplicationContext[BotT, CogT], *, call_hooks: bool = False):
         """|coro|
 
         Execute again or reinvoke the function callback of the app command.
@@ -601,7 +601,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT, ContextT]):
         ret = self.__class__(self.callback, **self.__original_kwargs__)
         return self._ensure_assignment_on_copy(ret)
 
-    async def can_run(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> bool:
+    async def can_run(self, ctx: ApplicationContext[BotT, CogT]) -> bool:
         """|coro|
 
         Checks if the command can be executed by checking all the predicates
@@ -748,7 +748,7 @@ class OptionChoice:
         return {"name": self.name, "value": self.value}
 
 
-class SlashCommand(ApplicationCommand[CogT, BotT, T]):
+class SlashCommand(ApplicationCommand[CogT, BotT]):
     r"""A class that implements an application command that can be invoked through a
     via Discord /slash command.
 
@@ -937,7 +937,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
     def __eq__(self, other: "SlashCommand") -> bool:
         return isinstance(other, SlashCommand) and other.name == self.name
 
-    async def _parse_arguments(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
+    async def _parse_arguments(self, ctx: ApplicationContext[BotT, CogT]):
         _INVALID_TYPE = [SlashCommandOptionType.sub_command.value, SlashCommandOptionType.sub_command_group.value]
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
@@ -1006,7 +1006,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         """:class:`bool`: Check if the command have parent or not."""
         return hasattr(self, "parent") and self.parent is not None
 
-    async def _invoke_children(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
+    async def _invoke_children(self, ctx: ApplicationContext[BotT, CogT]):
         """|coro|
 
         Execute all the children of the slash group command.
@@ -1054,11 +1054,11 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
                 ctx.command_failed = True
                 raise err
 
-    async def invoke(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]) -> None:
+    async def invoke(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         await super().invoke(ctx)
         await self._invoke_children(ctx)
 
-    def add_command(self, command: "SlashCommand[CogT, BotT, T]"):
+    def add_command(self, command: "SlashCommand[CogT, BotT]"):
         """Adds a :class:`.SlashCommand` into the internal list of commands.
 
         This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
@@ -1107,11 +1107,11 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         self._children[command.name] = command
 
     @property
-    def commands(self) -> Set[SlashCommand[CogT, BotT, T]]:
+    def commands(self) -> Set[SlashCommand[CogT, BotT]]:
         """Set[:class:`.SlashCommand`]: A unique set of commands without aliases that are registered."""
         return set(self._children.values())
 
-    def walk_commands(self) -> Generator[SlashCommand[CogT, BotT, T], None, None]:
+    def walk_commands(self) -> Generator[SlashCommand[CogT, BotT], None, None]:
         """An iterator that recursively walks through all commands and subcommands.
 
         Yields
@@ -1147,7 +1147,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         description: str = ...,
         *args: Any,
         **kwargs: Any,
-    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
+    ) -> DecoApp[SlashCommand[CogT, BotT]]:
         ...
 
     def command(self, *args, **kwargs):
@@ -1206,7 +1206,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
         return decorator
 
 
-class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
+class ContextMenuApplication(ApplicationCommand[CogT, BotT]):
     r"""A class that implements an application command that can be invoked
     by opening Discord context menu.
 
@@ -1314,7 +1314,7 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         else:
             self.after_invoke(after_invoke)
 
-    def walk_commands(self) -> Generator[ContextMenuApplication[CogT, BotT, T], None, None]:
+    def walk_commands(self) -> Generator[ContextMenuApplication[CogT, BotT], None, None]:
         """An iterator that recursively walks through all commands and subcommands.
 
         Yields
@@ -1324,7 +1324,7 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
         """
         yield self
 
-    async def _parse_arguments(self, ctx: ApplicationContext[CogT, BotT, AppCommandT]):
+    async def _parse_arguments(self, ctx: ApplicationContext[BotT, CogT]):
         _NO_RES = 'Missing "resolved" key in result from Discord.'
         args = [ctx] if self.cog is None else [self.cog, ctx]
         ctx.args = args
@@ -1393,7 +1393,7 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT, T]):
             ctx.args.append(Message(state=ctx.interaction._state, channel=channel, data=msg))
 
 
-class UserCommand(ContextMenuApplication[CogT, BotT, T]):
+class UserCommand(ContextMenuApplication[CogT, BotT]):
     r"""A class that implements the context menu application.
     This will be used to implement user command where someone can right click
     someone username to execute an application command.
@@ -1434,13 +1434,13 @@ class UserCommand(ContextMenuApplication[CogT, BotT, T]):
 
     type = ApplicationCommandType.user
 
-    def __new__(cls: Type[UserCommand], *args, **kwargs) -> UserCommand:
+    def __new__(cls: Type[UserCommand], *args, **kwargs) -> UserCommand[CogT, BotT]:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs.copy()
         return self
 
 
-class MessageCommand(ContextMenuApplication[CogT, BotT, T]):
+class MessageCommand(ContextMenuApplication[CogT, BotT]):
     r"""A class that implements the context menu application.
     This will be used to implement message command where someone can
     right click someone message to execute an application command.
@@ -1480,7 +1480,7 @@ class MessageCommand(ContextMenuApplication[CogT, BotT, T]):
 
     type = ApplicationCommandType.message
 
-    def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand[CogT, BotT, T]:
+    def __new__(cls: Type[MessageCommand], *args, **kwargs) -> MessageCommand[CogT, BotT]:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs.copy()
         return self
@@ -1604,7 +1604,7 @@ def slash_command(
     description: Optional[str] = MISSING,
     guild_ids: Optional[List[int]] = MISSING,
     checks: Optional[List[Check]] = MISSING,
-) -> DecoApp[SlashCommand]:
+) -> DecoApp[SlashCommand[CogT, BotT]]:
     ...
 
 
@@ -1639,7 +1639,7 @@ def user_command(
     name: Optional[str] = MISSING,
     guild_ids: Optional[List[int]] = MISSING,
     checks: Optional[List[Check]] = MISSING,
-) -> DecoApp[UserCommand]:
+) -> DecoApp[UserCommand[CogT, BotT]]:
     ...
 
 
@@ -1672,7 +1672,7 @@ def message_command(
     name: Optional[str] = MISSING,
     guild_ids: Optional[List[int]] = MISSING,
     checks: Optional[List[Check]] = MISSING,
-) -> DecoApp[MessageCommand]:
+) -> DecoApp[MessageCommand[CogT, BotT]]:
     ...
 
 

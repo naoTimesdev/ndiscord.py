@@ -33,17 +33,21 @@ from discord.state import ConnectionState
 from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
 
-from ._types import AppCommandT, BotT, CogT
+from ._types import BotT, CogT
 
 if TYPE_CHECKING:
     from discord.interactions import InteractionChannel
+
+    from .core import MessageCommand, SlashCommand, UserCommand
+
+    AppCommandT = Union[SlashCommand, MessageCommand, UserCommand]
 
 __all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
 
 
-class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommandT]):
+class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
     """Represents the context in which a application command is being invoked under.
 
     This class contains a lot of meta data to help you understand more about

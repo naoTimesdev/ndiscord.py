@@ -330,8 +330,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
                 self.dispatch("application_completion", ctx)
 
     async def get_application_context(
-        self, interaction: Interaction, cls: Optional[ApplicationContext[CogT, BotT, AppCommandT]] = None
-    ) -> ApplicationContext[CogT, BotT, AppCommandT]:
+        self, interaction: Interaction, cls: Optional[ApplicationContext[BotT]] = None
+    ) -> ApplicationContext[BotT]:
         r"""|coro|
 
         Returns the invocation context from the interaction.
@@ -375,7 +375,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         await self.process_application_commands(interaction)
 
     async def on_application_error(
-        self, context: ApplicationContext[CogT, BotT, AppCommandT], exception: ApplicationCommandError
+        self, context: ApplicationContext[BotT], exception: ApplicationCommandError
     ) -> None:
         """|coro|
 

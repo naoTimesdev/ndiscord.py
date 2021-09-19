@@ -32,7 +32,7 @@ import inspect
 import sys
 import traceback
 import types
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Optional, Set, Type, TypeVar, Union, overload
 
 import discord
 
@@ -45,10 +45,15 @@ from .view import StringView
 
 if TYPE_CHECKING:
     import importlib.machinery
+    from aiohttp import BaseConnector, BasicAuth
 
+    from discord.activity import BaseActivity
+    from discord.enums import Status
+    from discord.flags import Intents, MemberCacheFlags
     from discord.message import Message
+    from discord.mentions import AllowedMentions
 
-    from ._types import Check, CoroFunc
+    from ._types import Check, CoroFunc, Hook
 
 __all__ = (
     "when_mentioned",
@@ -124,6 +129,30 @@ _default = _DefaultRepr()
 
 
 class BotBase(GroupMixin):
+    if TYPE_CHECKING:
+        command_prefix: str
+        _before_invoke: Optional[Hook]
+        _after_invoke: Optional[Hook]
+        _help_command: Optional[HelpCommand]
+        description: str
+        owner_id: Optional[int]
+        owner_ids: Set[int]
+        strip_after_prefix: bool
+
+    @overload
+    def __init__(
+        self,
+        command_prefix: str,
+        help_command: HelpCommand = _default,
+        description: Optional[str] = None,
+        *,
+        case_insensitive: bool = False,
+        owner_id: int = None,
+        owner_ids: Set[int] = set(),
+        strip_after_prefix: bool = False
+    ) -> None:
+        ...
+
     def __init__(self, command_prefix, help_command=_default, description=None, **options):
         super().__init__(**options)
         self.command_prefix = command_prefix
@@ -1111,6 +1140,38 @@ class Bot(BotBase, discord.Client):
         .. versionadded:: 1.7
     """
 
+    if TYPE_CHECKING:
+        def __init__(
+            self,
+            command_prefix: str,
+            help_command: HelpCommand = _default,
+            description: Optional[str] = None,
+            *,
+            case_insensitive: bool = False,
+            owner_id: int = None,
+            owner_ids: Set[int] = set(),
+            strip_after_prefix: bool = False,
+            loop: Optional[asyncio.AbstractEventLoop] = None,
+            shard_id: Optional[int] = None,
+            shard_count: Optional[int] = None,
+            connector: Optional[BaseConnector] = None,
+            proxy: Optional[str] = None,
+            proxy_auth: Optional[BasicAuth] = None,
+            assume_unsync_clock: bool = True,
+            enable_debug_events: bool = False,
+            # Option for ConnectionState
+            max_messages: int = 1000,
+            heartbeat_timeout: float = 60.0,
+            guild_ready_timeout: float = 2.0,
+            allowed_mentions: Optional[AllowedMentions] = None,
+            activity: Optional[BaseActivity] = None,
+            status: Optional[Status] = None,
+            intents: Optional[Intents] = None,
+            chunk_guilds_at_startup: bool = False,
+            member_cache_flags: Optional[MemberCacheFlags] = None,
+        ) -> None:
+            ...
+
     pass
 
 
@@ -1118,5 +1179,38 @@ class AutoShardedBot(BotBase, discord.AutoShardedClient):
     """This is similar to :class:`.Bot` except that it is inherited from
     :class:`discord.AutoShardedClient` instead.
     """
+
+    if TYPE_CHECKING:
+        def __init__(
+            self,
+            command_prefix: str,
+            help_command: HelpCommand = _default,
+            description: Optional[str] = None,
+            *,
+            case_insensitive: bool = False,
+            owner_id: int = None,
+            owner_ids: Set[int] = set(),
+            strip_after_prefix: bool = False,
+            loop: Optional[asyncio.AbstractEventLoop] = None,
+            shard_id: Optional[int] = None,
+            shard_ids: Optional[List[int]] = None,
+            shard_count: Optional[int] = None,
+            connector: Optional[BaseConnector] = None,
+            proxy: Optional[str] = None,
+            proxy_auth: Optional[BasicAuth] = None,
+            assume_unsync_clock: bool = True,
+            enable_debug_events: bool = False,
+            # Option for ConnectionState
+            max_messages: int = 1000,
+            heartbeat_timeout: float = 60.0,
+            guild_ready_timeout: float = 2.0,
+            allowed_mentions: Optional[AllowedMentions] = None,
+            activity: Optional[BaseActivity] = None,
+            status: Optional[Status] = None,
+            intents: Optional[Intents] = None,
+            chunk_guilds_at_startup: bool = False,
+            member_cache_flags: Optional[MemberCacheFlags] = None,
+        ) -> None:
+            ...
 
     pass
