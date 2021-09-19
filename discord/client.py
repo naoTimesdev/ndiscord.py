@@ -1432,7 +1432,12 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     # Invite management
 
     async def fetch_invite(
-        self, url: Union[Invite, str], *, with_counts: bool = True, with_expiration: bool = True
+        self,
+        url: Union[Invite, str],
+        *,
+        with_counts: bool = True,
+        with_expiration: bool = True,
+        guild_scheduled_event_id: Optional[int] = None,
     ) -> Invite:
         """|coro|
 
@@ -1457,6 +1462,11 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             :attr:`.Invite.expires_at` field.
 
             .. versionadded:: 2.0
+        guild_scheduled_event_id: Optional[:class:`int`]
+            The ID of the guild scheduled event to which the invite belongs.
+            If provided and valid, it might return a :class:`GuildScheduledEvent` data.
+
+            .. versionadded:: 2.0
 
         Raises
         -------
@@ -1472,7 +1482,12 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
 
         invite_id = utils.resolve_invite(url)
-        data = await self.http.get_invite(invite_id, with_counts=with_counts, with_expiration=with_expiration)
+        data = await self.http.get_invite(
+            invite_id,
+            with_counts=with_counts,
+            with_expiration=with_expiration,
+            guild_scheduled_event_id=guild_scheduled_event_id
+        )
         return Invite.from_incomplete(state=self._connection, data=data)
 
     async def delete_invite(self, invite: Union[Invite, str]) -> None:
