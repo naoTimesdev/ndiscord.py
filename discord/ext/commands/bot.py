@@ -45,13 +45,14 @@ from .view import StringView
 
 if TYPE_CHECKING:
     import importlib.machinery
+
     from aiohttp import BaseConnector, BasicAuth
 
     from discord.activity import BaseActivity
     from discord.enums import Status
     from discord.flags import Intents, MemberCacheFlags
-    from discord.message import Message
     from discord.mentions import AllowedMentions
+    from discord.message import Message
 
     from ._types import Check, CoroFunc, Hook
 
