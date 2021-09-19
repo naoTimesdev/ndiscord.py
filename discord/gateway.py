@@ -53,18 +53,15 @@ from . import utils
 from .activity import BaseActivity
 from .enums import SpeakingState
 from .errors import ConnectionClosed, InvalidArgument
+from .types.snowflake import Snowflake
+from .types.voice import SupportedModes as VoiceSupportedModes
+from .types.voice import VoiceReady, VoiceSessionDescription
 
 if TYPE_CHECKING:
     from .client import Client
     from .shard import AutoShardedClient
     from .state import AutoShardedConnectionState, ConnectionState
-    from .types.snowflake import Snowflake
-    from .types.voice import SupportedModes as VoiceSupportedModes
-    from .types.voice import VoiceReady, VoiceSessionDescription
     from .voice_client import VoiceClient
-
-    CStateT = TypeVar("CStateT", bound="Union[AutoShardedConnectionState, ConnectionState]")
-    ClientT = TypeVar("ClientT", bound="Union[Client, AutoShardedClient]")
 
 _log = logging.getLogger(__name__)
 
@@ -79,6 +76,9 @@ __all__ = (
 T = TypeVar("T")
 DiscordWST = TypeVar("DiscordWST", bound="Union[DiscordWebSocket, DiscordVoiceWebSocket]")
 DiscordKAT = TypeVar("DiscordKAT", bound="Union[KeepAliveHandler, VoiceKeepAliveHandler]")
+CStateT = TypeVar("CStateT", bound="Union[AutoShardedConnectionState, ConnectionState]")
+ClientT = TypeVar("ClientT", bound="Union[Client, AutoShardedClient]")
+VClientT = TypeVar("VClientT", bound="VoiceClient")
 
 
 class ReconnectWebSocket(Exception):
@@ -848,7 +848,7 @@ class DiscordVoiceWebSocket:
         _close_code: Optional[int]
 
         # added data later
-        _connection: Optional[VoiceClient]
+        _connection: Optional[VClientT]
         gateway: Optional[str]
         _max_heartbeat_timeout: Optional[float]
 
@@ -900,7 +900,7 @@ class DiscordVoiceWebSocket:
     @classmethod
     async def from_client(
         cls: Type["DiscordVoiceWebSocket"],
-        client: VoiceClient,
+        client: VClientT,
         *,
         resume: bool = False,
         hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None

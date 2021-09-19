@@ -40,11 +40,10 @@ if TYPE_CHECKING:
 
     from .core import MessageCommand, SlashCommand, UserCommand
 
-    AppCommandT = Union[SlashCommand, MessageCommand, UserCommand]
-
 __all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
+AppCommandT = Union["SlashCommand", "MessageCommand", "UserCommand"]
 
 
 class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):

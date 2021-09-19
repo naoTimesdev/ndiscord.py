@@ -1032,7 +1032,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         first_children = options[0]
         if not first_children:
             return
-        sub_command: Optional[SlashCommand[CogT, BotT, AppCommandT]] = None
+        sub_command: Optional[SlashCommand[CogT, BotT]] = None
         if first_children.get("type") == 2:
             sub_command = self._children.get(first_children.get("name"))
             first_child_opts = first_children.get("options", [])
@@ -1091,7 +1091,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
 
         parent: Optional[SlashCommand] = getattr(self, "parent", None)
         if parent is not None:
-            parent_parent: Optional[SlashCommand[CogT, BotT, T]] = getattr(parent, "parent", None)
+            parent_parent: Optional[SlashCommand[CogT, BotT]] = getattr(parent, "parent", None)
             if parent_parent is not None:
                 raise ApplicationRegistrationMaxDepthError(command.name, self.name)
             if self.sub_type != _CROSS_CHECK[1]:
@@ -1178,7 +1178,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         description: str = ...,
         *args: Any,
         **kwargs: Any,
-    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
+    ) -> DecoApp[SlashCommand[CogT, BotT]]:
         ...
 
     def group(self, *args, **kwargs):

@@ -42,7 +42,7 @@ DecoApp = Callable[..., T]
 __all__ = ("ApplicationCommandMixin",)
 
 MISSING: Any = discord.utils.MISSING
-AppCommand = Union[SlashCommand[CogT, BotT, T], UserCommand[CogT, BotT, T], MessageCommand[CogT, BotT, T]]
+AppCommand = Union[SlashCommand[CogT, BotT], UserCommand[CogT, BotT], MessageCommand[CogT, BotT]]
 
 
 class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
@@ -62,9 +62,9 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
     """
 
     def __init__(self):
-        self._slash_commands: Dict[str, SlashCommand[CogT, BotT, ContextT]] = {}
-        self._user_commands: Dict[str, UserCommand[CogT, BotT, ContextT]] = {}
-        self._message_commands: Dict[str, MessageCommand[CogT, BotT, ContextT]] = {}
+        self._slash_commands: Dict[str, SlashCommand[CogT, BotT]] = {}
+        self._user_commands: Dict[str, UserCommand[CogT, BotT]] = {}
+        self._message_commands: Dict[str, MessageCommand[CogT, BotT]] = {}
 
     @property
     def slash_commands(self):
@@ -206,7 +206,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
 
     _debug_guilds: List[int]
     _app_factories: ApplicationCommandFactory[CogT, BotT, ContextT, AppCommandT]
-    _pending_registration: List[ApplicationCommand[CogT, BotT, ContextT]] = []
+    _pending_registration: List[ApplicationCommand[CogT, BotT]] = []
 
     def __new__(
         cls: Type["ApplicationCommandMixin"], *args, **kwargs
@@ -330,8 +330,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
                 self.dispatch("application_completion", ctx)
 
     async def get_application_context(
-        self, interaction: Interaction, cls: Optional[ApplicationContext[BotT]] = None
-    ) -> ApplicationContext[BotT]:
+        self, interaction: Interaction, cls: Optional[ApplicationContext[BotT, CogT]] = None
+    ) -> ApplicationContext[BotT, CogT]:
         r"""|coro|
 
         Returns the invocation context from the interaction.
@@ -375,7 +375,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         await self.process_application_commands(interaction)
 
     async def on_application_error(
-        self, context: ApplicationContext[BotT], exception: ApplicationCommandError
+        self, context: ApplicationContext[BotT, CogT], exception: ApplicationCommandError
     ) -> None:
         """|coro|
 
@@ -452,7 +452,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         description: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[SlashCommand[CogT, BotT, T]]:
+    ) -> DecoApp[SlashCommand[CogT, BotT]]:
         ...
 
     def slash_command(self, **kwargs):
@@ -489,7 +489,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         name: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[UserCommand[CogT, BotT, T]]:
+    ) -> DecoApp[UserCommand[CogT, BotT]]:
         ...
 
     def user_command(self, **kwargs):
@@ -524,7 +524,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         name: Optional[str] = MISSING,
         guild_ids: Optional[List[int]] = MISSING,
         checks: Optional[List[Check]] = MISSING,
-    ) -> DecoApp[MessageCommand[CogT, BotT, T]]:
+    ) -> DecoApp[MessageCommand[CogT, BotT]]:
         ...
 
     def message_command(self, **kwargs):

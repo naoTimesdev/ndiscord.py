@@ -99,10 +99,10 @@ Coro = TypeVar("Coro", bound=Callable[..., Coroutine[Any, Any, Any]])
 CoroShort = Coroutine[Any, Any, T]
 ApplicationCmdT = TypeVar("ApplicationCmdT", bound="Union[ApplicationCommand, RawApplicationCommand]")
 ApplicationCommandUnion = Union[
-    SlashCommand[CogT, BotT, ContextT],
-    UserCommand[CogT, BotT, ContextT],
-    MessageCommand[CogT, BotT, ContextT],
-    ApplicationCommand[CogT, BotT, ContextT],
+    SlashCommand[CogT, BotT],
+    UserCommand[CogT, BotT],
+    MessageCommand[CogT, BotT],
+    ApplicationCommand[CogT, BotT],
 ]
 
 
@@ -774,7 +774,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         pending_registration = self._pending_registration[:]
 
-        global_payloads: List[ApplicationCommand[CogT, BotT, AppCommandT]] = []
+        global_payloads: List[ApplicationCommand[CogT, BotT]] = []
         global_commands = await self.http.get_global_commands(self._app_cmd_ids)
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is None]:
             if len(global_commands) > 0:
@@ -785,7 +785,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                     command.id = int(match_this["id"])
                     global_payloads.append(command)
 
-        update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT, AppCommandT]]] = {}
+        update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT]]] = {}
         async for guild in self.fetch_guilds(limit=None):
             update_guild_commands[guild.id] = []
 
@@ -1809,7 +1809,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
     # application related
 
-    def get_applications(self) -> List[ApplicationCommand[CogT, BotT, T]]:
+    def get_applications(self) -> List[ApplicationCommand[CogT, BotT]]:
         """A list of application that are registered.
 
         .. versionadded:: 2.0
