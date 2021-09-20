@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,161 +19,161 @@ msgstr ""
 
 #: ../../ext/commands/cogs.rst:6
 msgid "Cogs"
-msgstr ""
+msgstr "Cogs"
 
 #: ../../ext/commands/cogs.rst:8
 msgid "There comes a point in your bot's development when you want to organize a collection of commands, listeners, and some state into one class. Cogs allow you to do just that."
-msgstr ""
+msgstr "Ada di mana ketika anda membuat bot dan anda ingin mengorganisir koleksi perintah, listener, dan sebuah status dalam satu kelas. Cogs dapat membantu anda melakukan hal itu."
 
 #: ../../ext/commands/cogs.rst:10
 msgid "The gist:"
-msgstr ""
+msgstr "Singkatnya:"
 
 #: ../../ext/commands/cogs.rst:12
 msgid "Each cog is a Python class that subclasses :class:`.commands.Cog`."
-msgstr ""
+msgstr "Setiap cog merupakan kelas Python yang merupakan turunan dari kelas :class:`.commands.Cog`."
 
 #: ../../ext/commands/cogs.rst:13
 msgid "Every command is marked with the :func:`.commands.command` decorator."
-msgstr ""
+msgstr "Setiap perintah ditandakan dengan dekorator :func:`.commands.command`."
 
 #: ../../ext/commands/cogs.rst:14
 msgid "Every listener is marked with the :meth:`.commands.Cog.listener` decorator."
-msgstr ""
+msgstr "Setiap listener ditandakan dengan dekorator :meth:`.commands.Cog.listener`."
 
 #: ../../ext/commands/cogs.rst:15
 msgid "Cogs are then registered with the :meth:`.Bot.add_cog` call."
-msgstr ""
+msgstr "Cogs dapat diregistrasi dengan memanggil fungsi :meth:`.Bot.add_cog`."
 
 #: ../../ext/commands/cogs.rst:16
 msgid "Cogs are subsequently removed with the :meth:`.Bot.remove_cog` call."
-msgstr ""
+msgstr "Cogs juga dapat dihapus dengan memanggil fungsi :meth:`.Bot.remove_cog`."
 
 #: ../../ext/commands/cogs.rst:18
 msgid "It should be noted that cogs are typically used alongside with :ref:`ext_commands_extensions`."
-msgstr ""
+msgstr "Harus dicatat bahwa cogs biasanya digunakan bersamaan dengan :ref:`ext_commands_extensions`."
 
 #: ../../ext/commands/cogs.rst:21
 msgid "Quick Example"
-msgstr ""
+msgstr "Contoh"
 
 #: ../../ext/commands/cogs.rst:23
 msgid "This example cog defines a ``Greetings`` category for your commands, with a single :ref:`command <ext_commands_commands>` named ``hello`` as well as a listener to listen to an :ref:`Event <discord-api-events>`."
-msgstr ""
+msgstr "Contoh ini akan mendefinisasikan kategori ``Greetings`` untuk perintah anda, dengan :ref:`perintah <ext_commands_commands>` bernama ``hello`` dan juga listener untuk memantau :ref:`Event <discord-api-events>`."
 
 #: ../../ext/commands/cogs.rst:48
 msgid "A couple of technical notes to take into consideration:"
-msgstr ""
+msgstr "Beberapa catatan teknis untuk dipertimbangkan:"
 
 #: ../../ext/commands/cogs.rst:50
 msgid "All listeners must be explicitly marked via decorator, :meth:`~.commands.Cog.listener`."
-msgstr ""
+msgstr "Semua listener harus ditandakan dengan dekorator, :meth:`~.commands.Cog.listener`."
 
 #: ../../ext/commands/cogs.rst:51
 msgid "The name of the cog is automatically derived from the class name but can be overridden. See :ref:`ext_commands_cogs_meta_options`."
-msgstr ""
+msgstr "Nama cog akan otomatis diambil dari nama kelas tetapi dapat diubah secara manual. Lihat :ref:`ext_commands_cogs_meta_options`."
 
 #: ../../ext/commands/cogs.rst:52
 msgid "All commands must now take a ``self`` parameter to allow usage of instance attributes that can be used to maintain state."
-msgstr ""
+msgstr "Semua perintah harus mengawali semua parameter dengan ``self`` untuk dapat menggunakan semua attribut yang dipakai untuk mengatur status."
 
 #: ../../ext/commands/cogs.rst:55
 msgid "Cog Registration"
-msgstr ""
+msgstr "Pendaftaran Cog"
 
 #: ../../ext/commands/cogs.rst:57
 msgid "Once you have defined your cogs, you need to tell the bot to register the cogs to be used. We do this via the :meth:`~.commands.Bot.add_cog` method."
-msgstr ""
+msgstr "Ketika anda mendifinisasikan cog, anda juga harus memberitau bot untuk mendaftarkan cog tersebut agar bisa digunakan. Kita bisa lakukan dengan fungsi :meth:`~.commands.Bot.add_cog`."
 
 #: ../../ext/commands/cogs.rst:63
 msgid "This binds the cog to the bot, adding all commands and listeners to the bot automatically."
-msgstr ""
+msgstr "Ini akan mengaitkan cog dengan bot, menambah semua perintah dan listener secara otomatis."
 
 #: ../../ext/commands/cogs.rst:65
 msgid "Note that we reference the cog by name, which we can override through :ref:`ext_commands_cogs_meta_options`. So if we ever want to remove the cog eventually, we would have to do the following."
-msgstr ""
+msgstr "Perlu diketahui modul ini menggunakan nama cog sebagai referensi, dan kita juga bisa mengubahnya melalui :ref:`ext_commands_cogs_meta_options`. Jadi jika kita ingin menghapus cog, kita harus melakukan hal berikut."
 
 #: ../../ext/commands/cogs.rst:72
 msgid "Using Cogs"
-msgstr ""
+msgstr "Memakai Cogs"
 
 #: ../../ext/commands/cogs.rst:74
 msgid "Just as we remove a cog by its name, we can also retrieve it by its name as well. This allows us to use a cog as an inter-command communication protocol to share data. For example:"
-msgstr ""
+msgstr "Kita juga bisa mengambil cog dengan namanya, seperti kita menghapus dengan namanya. Ini membolehkan kita untuk berkomunikasi antar perintah untuk menyebar data. Contoh:"
 
 #: ../../ext/commands/cogs.rst:109
 msgid "Special Methods"
-msgstr ""
+msgstr "Metode Spesial"
 
 #: ../../ext/commands/cogs.rst:111
 msgid "As cogs get more complicated and have more commands, there comes a point where we want to customise the behaviour of the entire cog or bot."
-msgstr ""
+msgstr "Ketika cog mulai jadi rumit dan lebih banyak perintah, ada kalanya kita ingin mengkustomisasi bagaimana bot atau cog akan bekerja."
 
 #: ../../ext/commands/cogs.rst:113
 msgid "They are as follows:"
-msgstr ""
+msgstr "Anda dapat mengubah fungsi berikut:"
 
 #: ../../ext/commands/cogs.rst:115
 msgid ":meth:`.Cog.cog_unload`"
-msgstr ""
+msgstr ":meth:`.Cog.cog_unload`"
 
 #: ../../ext/commands/cogs.rst:116
 msgid ":meth:`.Cog.cog_check`"
-msgstr ""
+msgstr ":meth:`.Cog.cog_check`"
 
 #: ../../ext/commands/cogs.rst:117
 msgid ":meth:`.Cog.cog_command_error`"
-msgstr ""
+msgstr ":meth:`.Cog.cog_command_error`"
 
 #: ../../ext/commands/cogs.rst:118
 msgid ":meth:`.Cog.cog_before_invoke`"
-msgstr ""
+msgstr ":meth:`.Cog.cog_before_invoke`"
 
 #: ../../ext/commands/cogs.rst:119
 msgid ":meth:`.Cog.cog_after_invoke`"
-msgstr ""
+msgstr ":meth:`.Cog.cog_after_invoke`"
 
 #: ../../ext/commands/cogs.rst:120
 msgid ":meth:`.Cog.bot_check`"
-msgstr ""
+msgstr ":meth:`.Cog.bot_check`"
 
 #: ../../ext/commands/cogs.rst:121
 msgid ":meth:`.Cog.bot_check_once`"
-msgstr ""
+msgstr ":meth:`.Cog.bot_check_once`"
 
 #: ../../ext/commands/cogs.rst:123
 msgid "You can visit the reference to get more detail."
-msgstr ""
+msgstr "Anda dapat mengunjungi referensi untuk info lebih lanjut."
 
 #: ../../ext/commands/cogs.rst:128
 msgid "Meta Options"
-msgstr ""
+msgstr "Opsi Meta"
 
 #: ../../ext/commands/cogs.rst:130
 msgid "At the heart of a cog resides a metaclass, :class:`.commands.CogMeta`, which can take various options to customise some of the behaviour. To do this, we pass keyword arguments to the class definition line. For example, to change the cog name we can pass the ``name`` keyword argument as follows:"
-msgstr ""
+msgstr "Didalam cog, terdapat sebuah metadata untuk kelas Cog, yaitu :class:`.commands.CogMeta`, di mana kita dapat mengatur bagaiman cog akan bekerja. Untuk melakukannya, kita harus memberikan parameter ke bagian definisi kelas. Sebagai contoh, untuk mengatur nama cog kita dapat memberikan parameter ``name`` ke argument dengan cara berikut:"
 
 #: ../../ext/commands/cogs.rst:137
 msgid "To see more options that you can set, see the documentation of :class:`.commands.CogMeta`."
-msgstr ""
+msgstr "Untuk melihat opsi yang dapat anda atur, silakan lihat dokumentasi :class:`.commands.CogMeta`."
 
 #: ../../ext/commands/cogs.rst:140
 msgid "Inspection"
-msgstr ""
+msgstr "Inspeksi"
 
 #: ../../ext/commands/cogs.rst:142
 msgid "Since cogs ultimately are classes, we have some tools to help us inspect certain properties of the cog."
-msgstr ""
+msgstr "Karena cogs merupakan tipe kelas, kita dapat menggunakan beberapa fungsi untuk memeriksa berbagai macam attribut pada cog."
 
 #: ../../ext/commands/cogs.rst:145
 msgid "To get a :class:`list` of commands, we can use :meth:`.Cog.get_commands`. ::"
-msgstr ""
+msgstr "Untuk mendapatkan :class:`list` perintah, kita dapat menggunakan :meth:`.Cog.get_commands`. ::"
 
 #: ../../ext/commands/cogs.rst:151
 msgid "If we want to get the subcommands as well, we can use the :meth:`.Cog.walk_commands` generator. ::"
-msgstr ""
+msgstr "Jika kita ingin mendapatkan subperintah, kita bisa menggunakan generator :meth:`.Cog.walk_commands`. ::"
 
 #: ../../ext/commands/cogs.rst:155
 msgid "To do the same with listeners, we can query them with :meth:`.Cog.get_listeners`. This returns a list of tuples -- the first element being the listener name and the second one being the actual function itself. ::"
-msgstr ""
+msgstr "Untuk melakukan hal yang sama untuk listener, kita dapat mengambilnya dengan :meth:`.Cog.get_listeners`. Ini akan mengembalikan tuples -- dengan elemen pertama adalah nama listener dan yang kedua adalah fungsinya. ::"
 

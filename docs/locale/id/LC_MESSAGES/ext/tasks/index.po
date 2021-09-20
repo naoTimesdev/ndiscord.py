@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -38,7 +38,7 @@ msgid "What is the maximum number of seconds I can sleep anyway?"
 msgstr ""
 
 #: ../../ext/tasks/index.rst:14
-msgid "The goal of this discord.py extension is to abstract all these worries away from you."
+msgid "The goal of this ndiscord.py extension is to abstract all these worries away from you."
 msgstr ""
 
 #: ../../ext/tasks/index.rst:17

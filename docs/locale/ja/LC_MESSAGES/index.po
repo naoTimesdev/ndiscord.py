@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 15:35+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -26,16 +26,16 @@ msgid "discord.ext.tasks API Reference"
 msgstr "discord.ext.tasks API リファレンス"
 
 #: ../../index.rst:59
-msgid "discord.ext.api API Reference"
-msgstr "discord.ext.api API リファレンス"
+msgid "discord.ext.app API Reference"
+msgstr "discord.ext.app API リファレンス"
 
 #: ../../index.rst:7
 msgid "Welcome to ndiscord.py"
 msgstr "ndiscord.py へようこそ。"
 
 #: ../../index.rst:12
-msgid "discord.py is a modern, easy to use, feature-rich, and async ready API wrapper for Discord."
-msgstr "discord.py は機能豊富かつモダンで使いやすい、非同期処理にも対応したDiscord用のAPIラッパーです。"
+msgid "ndiscord.py is a modern, easy to use, feature-rich, and async ready API wrapper for Discord."
+msgstr "ndiscord.py は機能豊富かつモダンで使いやすい、非同期処理にも対応したDiscord用のAPIラッパーです。"
 
 #: ../../index.rst:15
 msgid "**Features:**"

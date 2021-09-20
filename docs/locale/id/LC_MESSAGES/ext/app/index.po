@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,13 +19,13 @@ msgstr ""
 
 #: ../../ext/app/index.rst:4
 msgid "``discord.ext.app`` -- An application command extension"
-msgstr ""
+msgstr "``discord.ext.app`` -- Sebuah ekstensi perintah aplikasi"
 
 #: ../../ext/app/index.rst:8
 msgid "``ndiscord.py`` fork have a native support for slash command and more. User or developer can develop their own version by intercepting the ``on_interaction`` event and handling the error. But, we made it simple so developer can just use this to obviously create a easy slash command without worrying much."
-msgstr ""
+msgstr "``ndiscord.py`` merupakan fork yang memiliki dukungan langsung untuk perintah slash dan lain-lain. Anda dapat membuat sendiri versi mereka dengan cara memproses data dari ``on_interaction`` event dan memproses errornya sendiri. Tetapi, kita membuatnya lebih mudah agar developer dapat menggunakan ekstensi modul ini untuk membuat perintah slash tanpa ribet."
 
 #: ../../ext/app/index.rst:12
 msgid "This app framework follows closely the ``discord.ext.commands`` framework."
-msgstr ""
+msgstr "Kerangka ekstensi ini mengikuti kerangka ``discord.ext.commands``."
 

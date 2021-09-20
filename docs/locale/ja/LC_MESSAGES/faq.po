@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -22,8 +22,8 @@ msgid "Frequently Asked Questions"
 msgstr "よくある質問"
 
 #: ../../faq.rst:9
-msgid "This is a list of Frequently Asked Questions regarding using ``discord.py`` and its extension modules. Feel free to suggest a new question or submit one via pull requests."
-msgstr "これは ``discord.py`` 及び 拡張モジュールに対して、よくある質問をまとめたものです。気軽に質問やプルリクエストを提出してください。"
+msgid "This is a list of Frequently Asked Questions regarding using ``ndiscord.py`` and its extension modules. Feel free to suggest a new question or submit one via pull requests."
+msgstr "これは ``ndiscord.py`` 及び 拡張モジュールに対して、よくある質問をまとめたものです。気軽に質問やプルリクエストを提出してください。"
 
 #: ../../faq.rst:13
 msgid "Questions"
@@ -99,7 +99,7 @@ msgid "Where can I find usage examples?"
 msgstr "使用例はどこで確認できますか。"
 
 #: ../../faq.rst:84
-msgid "Example code can be found in the `examples folder <https://github.com/Rapptz/discord.py/tree/master/examples>`_ in the repository."
+msgid "Example code can be found in the `examples folder <https://github.com/naoTimesdev/ndiscord.py/tree/master/examples>`_ in the repository."
 msgstr "サンプルコードはレポジトリの `examplesフォルダ <https://github.com/naoTimesdev/ndiscord.py/tree/master/examples>`_ で確認できます。"
 
 #: ../../faq.rst:88
@@ -259,9 +259,8 @@ msgid "How do I run something in the background?"
 msgstr "バックグラウンドで何かを動かすにはどうすればいいですか。"
 
 #: ../../faq.rst:256
-msgid "`Check the background_task.py example. <https://github.com/Rapptz/discord.py/blob/master/examples/background_task.py>`_"
-msgstr "`background_task.pyの例を参照してください。 \n"
-"<https://github.com/naoTimesdev/ndiscord.py/blob/master/examples/background_task.py>`_"
+msgid "`Check the background_task.py example. <https://github.com/naoTimesdev/ndiscord.py/blob/master/examples/background_task.py>`_"
+msgstr "`background_task.pyの例を参照してください。 <https://github.com/naoTimesdev/ndiscord.py/blob/master/examples/background_task.py>`_"
 
 #: ../../faq.rst:259
 msgid "How do I get a specific model?"

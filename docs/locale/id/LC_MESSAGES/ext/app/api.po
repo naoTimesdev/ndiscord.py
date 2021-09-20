@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: ../../ext/app/api.rst:4
 msgid "API Reference"
-msgstr ""
+msgstr "Referensi API"
 
 #: ../../ext/app/api.rst:6
-msgid "The following section outlines the API of discord.py's application extension module."
-msgstr ""
+msgid "The following section outlines the API of ndiscord.py's application extension module."
+msgstr "Laman ini akan memberikan garis besar untuk ekstensi aplikasi API ndiscord.py."
 
 #: ../../ext/app/api.rst:11
 msgid "Core Functions"
-msgstr ""
+msgstr "Fungsi Utama"
 
 #: ../../ext/app/api.rst:14
 msgid "ApplicationCommand"
-msgstr ""
+msgstr "ApplicationCommand"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:1
 msgid "A class that implements the protocol for bot application command."
-msgstr ""
+msgstr "Sebuah kelas yang mengimplementasikan protokol untuk perintah aplikasi."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:3
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:6
@@ -43,7 +43,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:8
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:7
 msgid "These should not be created manually, instead please use the provided decorator or function interface."
-msgstr ""
+msgstr "Ini tidak untuk dibuat secara manual, tetapi mohon gunakan dekorator atau fungsi yang sudah disediakan."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:8
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:11
@@ -51,7 +51,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:13
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:12
 msgid "The ID of the command, can be None if the command has not been registered yet."
-msgstr ""
+msgstr "ID untuk perintahnya, bisa jadi None jika perintah belum didaftarkan."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
@@ -167,7 +167,7 @@ msgstr ""
 #: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:0
 #: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:0
 msgid "type"
-msgstr ""
+msgstr "tipe"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:11
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:14
@@ -175,7 +175,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:16
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:15
 msgid "Optional[:class:`int`]"
-msgstr ""
+msgstr "Optional[:class:`int`]"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:15
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:18
@@ -183,7 +183,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:20
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:19
 msgid "The name of the command."
-msgstr ""
+msgstr "Nama perintahnya."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:17
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.qualified_name:3
@@ -208,7 +208,7 @@ msgstr ""
 #: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:10
 #: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:10
 msgid ":class:`str`"
-msgstr ""
+msgstr ":class:`str`"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:21
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:30
@@ -216,7 +216,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:32
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:31
 msgid "The coroutine that is executed when the command is called."
-msgstr ""
+msgstr "Coroutine yang akan dipanggil saat perintah dipanggil."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:23
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:32
@@ -224,7 +224,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:34
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:33
 msgid ":ref:`coroutine <coroutine>`"
-msgstr ""
+msgstr ":ref:`coroutine <coroutine>`"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:27
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:24
@@ -232,7 +232,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:26
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:25
 msgid "A list of guild IDs where the command can only be run at."
-msgstr ""
+msgstr "Koleksi ID guild di mana perintah ini dapat dipakai."
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:29
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:26
@@ -241,7 +241,7 @@ msgstr ""
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:27
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:18
 msgid "List[:class:`int`]"
-msgstr ""
+msgstr "List[:class:`int`]"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:33
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:36
@@ -634,7 +634,7 @@ msgstr ""
 #: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:1
 #: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.trigger_typing:1
 msgid "|coro|"
-msgstr ""
+msgstr "|coro|"
 
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3
 #: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3

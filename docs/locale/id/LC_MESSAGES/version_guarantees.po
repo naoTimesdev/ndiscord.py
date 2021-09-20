@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,61 +19,61 @@ msgstr ""
 
 #: ../../version_guarantees.rst:4
 msgid "Version Guarantees"
-msgstr ""
+msgstr "Jaminan Versi"
 
 #: ../../version_guarantees.rst:6
 msgid "The library follows a `semantic versioning principle <https://semver.org/>`_ which means that the major version is updated every time there is an incompatible API change. However due to the lack of guarantees on the Discord side when it comes to breaking changes along with the fairly dynamic nature of Python it can be hard to discern what can be considered a breaking change and what isn't."
-msgstr ""
+msgstr "Modul ini mengikuti `prinsipalitas semantic versioning <https://semver.org/>`_ yang berarti versi major akan diubah setiap ada perubahan yang tidak cocok dengan versi lama. Tapi dikarenakan Discord tidak memberikan jaminan ketika ada perubahan mendadak dan juga Python sendiri yang ribet untuk diurus. Akan susah menentukan mana yang perubahan major dan yang tidak."
 
 #: ../../version_guarantees.rst:8
 msgid "The first thing to keep in mind is that breaking changes only apply to **publicly documented functions and classes**. If it's not listed in the documentation here then it is not part of the public API and is thus bound to change. This includes attributes that start with an underscore or functions without an underscore that are not documented."
-msgstr ""
+msgstr "Hal yang harus diketahui, perubahan major hanyalah berlaku untuk **fungsi dan kelas yang didokumentasikan**. Jika tidak ada di dokumentasi maka fungsi atau kelas tersebut bukanlah bagian dari API publik dan dapat berubah sewaktu-waktu. Ini berlaku juga untuk attribut yang diawali dengan garis bawah atau fungsi tanpa garis bawah yang tidak didokumentasikan."
 
 #: ../../version_guarantees.rst:12
 msgid "The examples below are non-exhaustive."
-msgstr ""
+msgstr "Contoh berikut tidak mencakup sepenuhnya."
 
 #: ../../version_guarantees.rst:15
 msgid "Examples of Breaking Changes"
-msgstr ""
+msgstr "Contoh perubahan major"
 
 #: ../../version_guarantees.rst:17
 msgid "Changing the default parameter value to something else."
-msgstr ""
+msgstr "Mengubah parameter default menjadi yang lain."
 
 #: ../../version_guarantees.rst:18
 msgid "Renaming a function without an alias to an old function."
-msgstr ""
+msgstr "Mengubah nama fungsi tanpa membuat alias nama fungsi lama."
 
 #: ../../version_guarantees.rst:19
 msgid "Adding or removing parameters to an event."
-msgstr ""
+msgstr "Menambah atau menghapus parameter ke sebuah event."
 
 #: ../../version_guarantees.rst:22
 msgid "Examples of Non-Breaking Changes"
-msgstr ""
+msgstr "Contoh perubahan non-major"
 
 #: ../../version_guarantees.rst:24
 msgid "Adding or removing private underscored attributes."
-msgstr ""
+msgstr "Menambah atau menghapus attribute awalan garis bawah."
 
 #: ../../version_guarantees.rst:25
 msgid "Adding an element into the ``__slots__`` of a data class."
-msgstr ""
+msgstr "Menambah elemen ke data ``__slots__`` pada sebuah kelas."
 
 #: ../../version_guarantees.rst:26
 msgid "Changing the behaviour of a function to fix a bug."
-msgstr ""
+msgstr "Mengubah sesuatu untuk memperbaiki bug atau error."
 
 #: ../../version_guarantees.rst:27
 msgid "Changes in the documentation."
-msgstr ""
+msgstr "Perubahan pada dokumentasi."
 
 #: ../../version_guarantees.rst:28
 msgid "Modifying the internal HTTP handling."
-msgstr ""
+msgstr "Mengubah penangan internal HTTP."
 
 #: ../../version_guarantees.rst:29
 msgid "Upgrading the dependencies to a new version, major or otherwise."
-msgstr ""
+msgstr "Mengubah versi depedencies, maupun yang major atau tidak."
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,51 +19,51 @@ msgstr ""
 
 #: ../../api.rst:4
 msgid "API Reference"
-msgstr ""
+msgstr "Referensi API"
 
 #: ../../api.rst:6
-msgid "The following section outlines the API of discord.py."
-msgstr ""
+msgid "The following section outlines the API of ndiscord.py."
+msgstr "Laman ini akan memberikan garis besar untuk API ndiscord.py."
 
 #: ../../api.rst:10
-msgid "This module uses the Python logging module to log diagnostic and errors in an output independent way.  If the logging module is not configured, these logs will not be output anywhere.  See :ref:`logging_setup` for more information on how to set up and use the logging module with discord.py."
-msgstr ""
+msgid "This module uses the Python logging module to log diagnostic and errors in an output independent way.  If the logging module is not configured, these logs will not be output anywhere.  See :ref:`logging_setup` for more information on how to set up and use the logging module with ndiscord.py."
+msgstr "Modul ini menggunakan modul logging Python untuk mensimpan diagnosa dan error tanpa membuat output utama berantakan. Jika modul logging tidak diatur, maka anda tidak dapat melihat hal-hal tersebut di manapun. Mohon kunjungi :ref:`logging_setup` untuk info lebih lanjut untuk menyiapkan sistem logging dan menggunakannya dengan ndiscord.py."
 
 #: ../../api.rst:17
 msgid "Version Related Info"
-msgstr ""
+msgstr "Informasi Terkait Versi"
 
 #: ../../api.rst:19
 msgid "There are two main ways to query version information about the library. For guarantees, check :ref:`version_guarantees`."
-msgstr ""
+msgstr "Ada dua cara melihat informasi versi modul ini. Untuk jaminan, periksa :ref:`version_guarantees`."
 
 #: ../../api.rst:23
 msgid "A named tuple that is similar to :obj:`py:sys.version_info`."
-msgstr ""
+msgstr "Sebuah named tuple yang mirip dengan :obj:`py:sys.version_info`."
 
 #: ../../api.rst:25
 msgid "Just like :obj:`py:sys.version_info` the valid values for ``releaselevel`` are 'alpha', 'beta', 'candidate' and 'final'."
-msgstr ""
+msgstr "Seperti :obj:`py:sys.version_info` hal yang valid untuk ``releaselevel`` adalah 'alpha', 'beta', 'candidate' dan 'final'."
 
 #: ../../api.rst:30
 msgid "A string representation of the version. e.g. ``'1.0.0rc1'``. This is based off of :pep:`440`."
-msgstr ""
+msgstr "Sebuah representasi string untuk versi, contohnya ``1.0.0rc1``. Ini mengikuti saran dari :pep:`440`."
 
 #: ../../api.rst:34
 msgid "Clients"
-msgstr ""
+msgstr "Clients"
 
 #: ../../api.rst:37
 msgid "Client"
-msgstr ""
+msgstr "Client"
 
 #: ../../../discord/client.py:docstring of discord.client.Client:1
 msgid "Represents a client connection that connects to Discord. This class is used to interact with the Discord WebSocket and API."
-msgstr ""
+msgstr "Merepresentasikan koneksi klien dengan Discord. Kelas ini dipakai untuk berinteraksi dengan WebSocket dan API Discord."
 
 #: ../../../discord/client.py:docstring of discord.client.Client:4
 msgid "A number of options can be passed to the :class:`Client`."
-msgstr ""
+msgstr "Berbagai macam opsi dapat diberikan ke :class:`Client`."
 
 #: ../../../discord/client.py:docstring of discord.client.Client:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_guilds:0
@@ -91,14 +91,14 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_user:0
 #: ../../../discord/client.py:docstring of discord.client.Client.create_dm:0
 #: ../../../discord/client.py:docstring of discord.client.Client.add_view:0
+#: ../../../discord/client.py:docstring of discord.client.Client.get_application:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.add_application:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.register_application:0
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.remove_application:0
-#: ../../../discord/client.py:docstring of discord.client.Client.get_application:0
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_guild_applications:0
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.connect:0
@@ -435,7 +435,7 @@ msgstr ""
 #: ../../../discord/ui/select.py:docstring of discord.ui.item.Item.callback:0
 #: ../../../discord/ui/select.py:docstring of discord.ui.select.select:0
 msgid "Parameters"
-msgstr ""
+msgstr "Parameter"
 
 #: ../../../discord/client.py:docstring of discord.client.Client:6
 msgid "The maximum number of messages to store in the internal message cache. This defaults to ``1000``. Passing in ``None`` disables the message cache.  .. versionchanged:: 1.3     Allow disabling the message cache and change the default size to ``1000``."
@@ -1522,7 +1522,7 @@ msgstr ""
 #: ../../../discord/errors.py:docstring of discord.errors.InteractionResponded:0
 #: ../../../discord/opus.py:docstring of discord.opus.OpusError:0
 msgid "type"
-msgstr ""
+msgstr "tipe"
 
 #: ../../../discord/client.py:docstring of discord.client.Client:90
 #: ../../../discord/voice_client.py:docstring of discord.voice_client.VoiceClient:41
@@ -1544,7 +1544,7 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.event:8
 #: ../../../discord/client.py:docstring of discord.client.Client.change_presence:6
 msgid "Example"
-msgstr ""
+msgstr "Contoh"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.event:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_guilds:0
@@ -1812,7 +1812,7 @@ msgstr ""
 #: ../../../discord/ui/select.py:docstring of discord.ui.select.Select.add_option:0
 #: ../../../discord/ui/select.py:docstring of discord.ui.select.Select.append_option:0
 msgid "Raises"
-msgstr ""
+msgstr "Menimbulkan"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.event:15
 msgid "The coroutine passed is not actually a coroutine."
@@ -1957,9 +1957,9 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_sticker:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_premium_sticker_packs:0
 #: ../../../discord/client.py:docstring of discord.client.Client.create_dm:0
-#: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_applications:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_application:0
+#: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_global_applications:0
@@ -2210,9 +2210,9 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_sticker:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_premium_sticker_packs:0
 #: ../../../discord/client.py:docstring of discord.client.Client.create_dm:0
-#: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_applications:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_application:0
+#: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:0
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:0
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_global_applications:0
@@ -2434,11 +2434,11 @@ msgstr ""
 #: ../../../discord/ui/view.py:docstring of discord.ui.view.View.interaction_check:0
 #: ../../../discord/ui/view.py:docstring of discord.ui.view.View.wait:0
 msgid "Return type"
-msgstr ""
+msgstr "Tipe pengembalian"
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:8
 msgid "Callable[..., :class:`ApplicationCommand`]"
-msgstr ""
+msgstr "Callable[..., :class:`ApplicationCommand`]"
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:1
 msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.SlashCommand`."
@@ -2472,7 +2472,7 @@ msgstr ""
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:19
 msgid "Callable[..., :class:`.SlashCommand`]"
-msgstr ""
+msgstr "Callable[..., :class:`.SlashCommand`]"
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:1
 msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.UserCommand`."
@@ -2484,7 +2484,7 @@ msgstr ""
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:17
 msgid "Callable[..., :class:`.UserCommand`]"
-msgstr ""
+msgstr "Callable[..., :class:`.UserCommand`]"
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:1
 msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.MessageCommand`."
@@ -2496,7 +2496,7 @@ msgstr ""
 
 #: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:17
 msgid "Callable[..., :class:`.MessageCommand`]"
-msgstr ""
+msgstr "Callable[..., :class:`.MessageCommand`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.latency:1
 #: ../../../discord/shard.py:docstring of discord.AutoShardedClient.latency:1
@@ -2514,13 +2514,13 @@ msgstr ""
 #: ../../../discord/guild.py:docstring of discord.Guild.bitrate_limit:3
 #: ../../../discord/shard.py:docstring of discord.ShardInfo.latency:3
 msgid ":class:`float`"
-msgstr ""
+msgstr ":class:`float`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.is_ws_ratelimited:1
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.is_ws_ratelimited:1
 #: ../../../discord/shard.py:docstring of discord.shard.ShardInfo.is_ws_ratelimited:1
 msgid ":class:`bool`: Whether the websocket is currently rate limited."
-msgstr ""
+msgstr ":class:`bool`: Apakah websocket terkena rate limit apa tidak."
 
 #: ../../../discord/client.py:docstring of discord.client.Client.is_ws_ratelimited:3
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.is_ws_ratelimited:3
@@ -2534,7 +2534,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.user:3
 msgid "Optional[:class:`.ClientUser`]"
-msgstr ""
+msgstr "Optional[:class:`.ClientUser`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.guilds:1
 msgid "The guilds that the connected client is a member of."
@@ -2542,7 +2542,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.guilds:3
 msgid "List[:class:`.Guild`]"
-msgstr ""
+msgstr "List[:class:`.Guild`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.emojis:1
 msgid "The emojis that the connected client has."
@@ -2550,7 +2550,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.emojis:3
 msgid "List[:class:`.Emoji`]"
-msgstr ""
+msgstr "List[:class:`.Emoji`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.stickers:1
 msgid "The stickers that the connected client has."
@@ -2558,7 +2558,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.stickers:5
 msgid "List[:class:`.GuildSticker`]"
-msgstr ""
+msgstr "List[:class:`.GuildSticker`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.cached_messages:1
 msgid "Read-only list of messages the connected client has cached."
@@ -2566,7 +2566,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.cached_messages:5
 msgid "Sequence[:class:`.Message`]"
-msgstr ""
+msgstr "Sequence[:class:`.Message`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.private_channels:1
 msgid "The private channels that the connected client is participating on."
@@ -2578,7 +2578,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.private_channels:8
 msgid "List[:class:`.abc.PrivateChannel`]"
-msgstr ""
+msgstr "List[:class:`.abc.PrivateChannel`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.voice_clients:1
 msgid "Represents a list of voice connections."
@@ -2590,7 +2590,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.voice_clients:5
 msgid "List[:class:`.VoiceProtocol`]"
-msgstr ""
+msgstr "List[:class:`.VoiceProtocol`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.application_id:3
 msgid "If this is not passed via ``__init__`` then this is retrieved through the gateway when an event contains the data. Usually after :func:`~discord.on_connect` is called."
@@ -2639,7 +2639,7 @@ msgstr ""
 #: ../../../discord/errors.py:docstring of discord.errors.ConnectionClosed:20
 #: ../../../discord/errors.py:docstring of discord.errors.PrivilegedIntentsRequired:14
 msgid "Optional[:class:`int`]"
-msgstr ""
+msgstr "Optional[:class:`int`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.application_flags:1
 msgid "The client's application flags."
@@ -2647,11 +2647,11 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.application_flags:5
 msgid ":class:`~discord.ApplicationFlags`"
-msgstr ""
+msgstr ":class:`~discord.ApplicationFlags`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.is_ready:1
 msgid ":class:`bool`: Specifies if the client's internal cache is ready for use."
-msgstr ""
+msgstr ":class:`bool`: Menandakan apabila cache internal klien sudah siap dipakai apa tidak."
 
 #: ../../../discord/client.py:docstring of discord.client.Client.on_error:1
 #: ../../../discord/client.py:docstring of discord.client.Client.before_identify_hook:1
@@ -2929,7 +2929,7 @@ msgstr ""
 #: ../../../discord/ui/button.py:docstring of discord.ui.item.Item.callback:1
 #: ../../../discord/ui/select.py:docstring of discord.ui.item.Item.callback:1
 msgid "|coro|"
-msgstr ""
+msgstr "|coro|"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.on_error:3
 msgid "The default error handler provided by the client."
@@ -3050,7 +3050,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.activity:4
 msgid "Optional[:class:`.BaseActivity`]"
-msgstr ""
+msgstr "Optional[:class:`.BaseActivity`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.status:1
 msgid ":class:`.Status`: The status being used upon logging on to Discord."
@@ -3062,7 +3062,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.allowed_mentions:5
 msgid "Optional[:class:`~discord.AllowedMentions`]"
-msgstr ""
+msgstr "Optional[:class:`~discord.AllowedMentions`]"
 
 #: ../../../discord/client.py:docstring of discord.Client.intents:1
 msgid "The intents configured for this connection."
@@ -3070,7 +3070,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.intents:5
 msgid ":class:`~discord.Intents`"
-msgstr ""
+msgstr ":class:`~discord.Intents`"
 
 #: ../../../discord/client.py:docstring of discord.Client.users:1
 msgid "Returns a list of all the users the bot can see."
@@ -3078,7 +3078,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.users:3
 msgid "List[:class:`~discord.User`]"
-msgstr ""
+msgstr "List[:class:`~discord.User`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_channel:1
 #: ../../../discord/guild.py:docstring of discord.guild.Guild.get_channel_or_thread:1
@@ -3108,7 +3108,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_channel:7
 msgid "Optional[Union[:class:`.abc.GuildChannel`, :class:`.Thread`, :class:`.abc.PrivateChannel`]]"
-msgstr ""
+msgstr "Optional[Union[:class:`.abc.GuildChannel`, :class:`.Thread`, :class:`.abc.PrivateChannel`]]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_partial_messageable:1
 msgid "Returns a partial messageable with the given channel ID."
@@ -3132,7 +3132,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_partial_messageable:14
 msgid ":class:`.PartialMessageable`"
-msgstr ""
+msgstr ":class:`.PartialMessageable`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_stage_instance:1
 msgid "Returns a stage instance with the given stage channel ID."
@@ -3144,7 +3144,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_stage_instance:9
 msgid "Optional[:class:`.StageInstance`]"
-msgstr ""
+msgstr "Optional[:class:`.StageInstance`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild:1
 msgid "Returns a guild with the given ID."
@@ -3156,7 +3156,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_guild:7
 msgid "Optional[:class:`.Guild`]"
-msgstr ""
+msgstr "Optional[:class:`.Guild`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_user:1
 msgid "Returns a user with the given ID."
@@ -3168,7 +3168,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_user:7
 msgid "Optional[:class:`~discord.User`]"
-msgstr ""
+msgstr "Optional[:class:`~discord.User`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_emoji:1
 msgid "Returns an emoji with the given ID."
@@ -3180,7 +3180,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_emoji:7
 msgid "Optional[:class:`.Emoji`]"
-msgstr ""
+msgstr "Optional[:class:`.Emoji`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_sticker:1
 msgid "Returns a guild sticker with the given ID."
@@ -3196,7 +3196,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_sticker:11
 msgid "Optional[:class:`.GuildSticker`]"
-msgstr ""
+msgstr "Optional[:class:`.GuildSticker`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_all_channels:1
 msgid "A generator that retrieves every :class:`.abc.GuildChannel` the client can 'access'."
@@ -3205,7 +3205,7 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.get_all_channels:3
 #: ../../../discord/client.py:docstring of discord.client.Client.get_all_members:3
 msgid "This is equivalent to: ::"
-msgstr ""
+msgstr "Ini setara dengan: ::"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.get_all_channels:11
 msgid "Just because you receive a :class:`.abc.GuildChannel` does not mean that you can communicate in said channel. :meth:`.abc.GuildChannel.permissions_for` should be used for that."
@@ -3249,7 +3249,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.wait_for:23
 msgid "Waiting for a user reply: ::"
-msgstr ""
+msgstr "Menunggu jawaban pengguna: ::"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.wait_for:37
 msgid "Waiting for a thumbs up reaction from the message author: ::"
@@ -3320,7 +3320,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_template:12
 msgid ":class:`.Template`"
-msgstr ""
+msgstr ":class:`.Template`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_guild:3
 msgid "Retrieves a :class:`.Guild` from an ID."
@@ -3355,7 +3355,7 @@ msgstr ""
 #: ../../../discord/client.py:docstring of discord.client.Client.create_guild:25
 #: ../../../discord/template.py:docstring of discord.template.Template.create_guild:21
 msgid ":class:`.Guild`"
-msgstr ""
+msgstr ":class:`.Guild`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.create_guild:3
 msgid "Creates a :class:`.Guild`."
@@ -3468,7 +3468,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_invite:27
 msgid ":class:`.Invite`"
-msgstr ""
+msgstr ":class:`.Invite`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.delete_invite:3
 msgid "Revokes an :class:`.Invite`, URL, or ID to an invite."
@@ -3543,7 +3543,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.application_info:8
 msgid ":class:`.AppInfo`"
-msgstr ""
+msgstr ":class:`.AppInfo`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_user:3
 msgid "Retrieves a :class:`~discord.User` based on their ID. You do not have to share any guilds with the user to get this information, however many operations do require that you do."
@@ -3573,7 +3573,7 @@ msgstr ""
 #: ../../../discord/abc.py:docstring of discord.abc.User:5
 #: ../../../discord/abc.py:docstring of discord.abc.Messageable:8
 msgid ":class:`~discord.User`"
-msgstr ""
+msgstr ":class:`~discord.User`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_channel:3
 msgid "Retrieves a :class:`.abc.GuildChannel`, :class:`.abc.PrivateChannel`, or :class:`.Thread` with the specified ID."
@@ -3610,7 +3610,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_channel:17
 msgid "Union[:class:`.abc.GuildChannel`, :class:`.abc.PrivateChannel`, :class:`.Thread`]"
-msgstr ""
+msgstr "Union[:class:`.abc.GuildChannel`, :class:`.abc.PrivateChannel`, :class:`.Thread`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_webhook:3
 msgid "Retrieves a :class:`.Webhook` with the specified ID."
@@ -3634,7 +3634,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_webhook:10
 msgid ":class:`.Webhook`"
-msgstr ""
+msgstr ":class:`.Webhook`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_sticker:3
 msgid "Retrieves a :class:`.Sticker` with the specified ID."
@@ -3655,7 +3655,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_sticker:11
 msgid "Union[:class:`.StandardSticker`, :class:`.GuildSticker`]"
-msgstr ""
+msgstr "Union[:class:`.StandardSticker`, :class:`.GuildSticker`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_premium_sticker_packs:3
 msgid "Retrieves all available premium sticker packs."
@@ -3671,7 +3671,7 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_premium_sticker_packs:10
 msgid "List[:class:`.StickerPack`]"
-msgstr ""
+msgstr "List[:class:`.StickerPack`]"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.create_dm:3
 msgid "Creates a :class:`.DMChannel` with this user."
@@ -3703,7 +3703,7 @@ msgstr ""
 #: ../../../discord/user.py:docstring of discord.user.User.create_dm:9
 #: ../../../discord/member.py:docstring of discord.member.flatten_user.<locals>.generate_function.<locals>.general:9
 msgid ":class:`.DMChannel`"
-msgstr ""
+msgstr ":class:`.DMChannel`"
 
 #: ../../../discord/client.py:docstring of discord.client.Client.add_view:1
 msgid "Registers a :class:`~discord.ui.View` for persistent listening."
@@ -3735,6 +3735,40 @@ msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.Client.persistent_views:5
 msgid "Sequence[:class:`.View`]"
+msgstr "Sequence[:class:`.View`]"
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:1
+msgid "A list of application that are registered."
+msgstr ""
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:5
+msgid "List of registered global applications."
+msgstr ""
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:6
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:9
+msgid "List[:class:`.ApplicationCommand`]"
+msgstr "List[:class:`.ApplicationCommand`]"
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_application:1
+msgid "Get an application by its ID."
+msgstr ""
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_application:5
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:7
+#: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:6
+#: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:7
+msgid "The application ID."
+msgstr ""
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_application:8
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:10
+msgid "The application command or ``None`` if not found."
+msgstr ""
+
+#: ../../../discord/client.py:docstring of discord.client.Client.get_application:9
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:11
+msgid "Optional[:class:`.ApplicationCommand`]"
 msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.add_application:1
@@ -3767,17 +3801,18 @@ msgstr ""
 msgid ":class:`.ApplicationContext`"
 msgstr ""
 
-#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:1
-msgid "A list of application that are registered."
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:1
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:1
+msgid "A list of application that are registered for a guild."
 msgstr ""
 
-#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:5
-msgid "List of registered global applications."
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:5
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:5
+msgid "The guild ID."
 msgstr ""
 
-#: ../../../discord/client.py:docstring of discord.client.Client.get_applications:6
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:9
-msgid "List[:class:`.ApplicationCommand`]"
+#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:8
+msgid "List of registered applications for a guild."
 msgstr ""
 
 #: ../../../discord/client.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_application_error:3
@@ -3825,41 +3860,6 @@ msgstr ""
 msgid "Remove command from the list of registered commands."
 msgstr ""
 
-#: ../../../discord/client.py:docstring of discord.client.Client.get_application:1
-msgid "Get an application by its ID."
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_application:5
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:7
-#: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:6
-#: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:7
-msgid "The application ID."
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_application:8
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:10
-msgid "The application command or ``None`` if not found."
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_application:9
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:11
-msgid "Optional[:class:`.ApplicationCommand`]"
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:1
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:1
-msgid "A list of application that are registered for a guild."
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:5
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_application:5
-msgid "The guild ID."
-msgstr ""
-
-#: ../../../discord/client.py:docstring of discord.client.Client.get_guild_applications:8
-msgid "List of registered applications for a guild."
-msgstr ""
-
 #: ../../../discord/client.py:docstring of discord.client.Client.fetch_global_applications:3
 msgid "Get all registered global commands on Discord."
 msgstr ""
@@ -3903,7 +3903,7 @@ msgstr ""
 
 #: ../../api.rst:65
 msgid "AutoShardedClient"
-msgstr ""
+msgstr "AutoShardedClient"
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient:1
 msgid "A client similar to :class:`Client` except it handles the complications of sharding for the user into a more manageable and transparent single process bot."
@@ -3931,7 +3931,7 @@ msgstr ""
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient:25
 msgid "Optional[List[:class:`int`]]"
-msgstr ""
+msgstr "Optional[List[:class:`int`]]"
 
 #: ../../../discord/shard.py:docstring of discord.AutoShardedClient.latency:3
 msgid "This operates similarly to :meth:`Client.latency` except it uses the average latency of every shard's latency. To get a list of shard latency, check the :attr:`latencies` property. Returns ``nan`` if there are no shards ready."
@@ -3947,7 +3947,7 @@ msgstr ""
 
 #: ../../../discord/shard.py:docstring of discord.AutoShardedClient.latencies:5
 msgid "List[Tuple[:class:`int`, :class:`float`]]"
-msgstr ""
+msgstr "List[Tuple[:class:`int`, :class:`float`]]"
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.get_shard:1
 msgid "Optional[:class:`ShardInfo`]: Gets the shard information at a given shard ID or ``None`` if not found."
@@ -3959,7 +3959,7 @@ msgstr ""
 
 #: ../../../discord/shard.py:docstring of discord.AutoShardedClient.shards:3
 msgid "Mapping[int, :class:`ShardInfo`]"
-msgstr ""
+msgstr "Mapping[int, :class:`ShardInfo`]"
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.on_shard_connect:3
 msgid "Initialize application registration to first shard."
@@ -3967,7 +3967,7 @@ msgstr ""
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.change_presence:5
 msgid "Example: ::"
-msgstr ""
+msgstr "Contoh: ::"
 
 #: ../../../discord/shard.py:docstring of discord.shard.AutoShardedClient.change_presence:15
 msgid "Indicates what status to change to. If ``None``, then :attr:`Status.online` is used."
@@ -3991,7 +3991,7 @@ msgstr ""
 
 #: ../../api.rst:76
 msgid "AppInfo"
-msgstr ""
+msgstr "AppInfo"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:1
 msgid "Represents the application info for the bot provided by Discord."
@@ -4150,7 +4150,7 @@ msgstr ""
 #: ../../../discord/errors.py:docstring of discord.errors.ConnectionClosed:8
 #: ../../../discord/opus.py:docstring of discord.opus.OpusError:7
 msgid ":class:`int`"
-msgstr ""
+msgstr ":class:`int`"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:12
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:13
@@ -4511,7 +4511,7 @@ msgstr ""
 #: ../../../discord/ui/button.py:docstring of discord.ui.Button.disabled:3
 #: ../../../discord/ui/select.py:docstring of discord.ui.Select.disabled:3
 msgid ":class:`bool`"
-msgstr ""
+msgstr ":class:`bool`"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:45
 msgid "Whether the bot requires the completion of the full oauth2 code grant flow to join."
@@ -4525,7 +4525,7 @@ msgstr ""
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:54
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:27
 msgid "Optional[List[:class:`str`]]"
-msgstr ""
+msgstr "Optional[List[:class:`str`]]"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:58
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:31
@@ -4602,7 +4602,7 @@ msgstr ""
 #: ../../../discord/ui/button.py:docstring of discord.ui.Button.label:3
 #: ../../../discord/ui/select.py:docstring of discord.ui.Select.placeholder:3
 msgid "Optional[:class:`str`]"
-msgstr ""
+msgstr "Optional[:class:`str`]"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.AppInfo:104
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:45
@@ -4624,7 +4624,7 @@ msgstr ""
 #: ../../../discord/appinfo.py:docstring of discord.PartialAppInfo.icon:3
 #: ../../../discord/team.py:docstring of discord.Team.icon:3
 msgid "Optional[:class:`.Asset`]"
-msgstr ""
+msgstr "Optional[:class:`.Asset`]"
 
 #: ../../../discord/appinfo.py:docstring of discord.AppInfo.cover_image:1
 msgid "Retrieves the cover image on a store embed, if any."
@@ -4647,11 +4647,11 @@ msgstr ""
 #: ../../docstring of discord.GuildSticker.guild:6
 #: ../../docstring of discord.PartialMessage.guild:3
 msgid "Optional[:class:`Guild`]"
-msgstr ""
+msgstr "Optional[:class:`Guild`]"
 
 #: ../../api.rst:84
 msgid "PartialAppInfo"
-msgstr ""
+msgstr "PartialAppInfo"
 
 #: ../../../discord/appinfo.py:docstring of discord.appinfo.PartialAppInfo:1
 msgid "Represents a partial AppInfo given by :func:`~discord.abc.GuildChannel.create_invite`"
@@ -4683,7 +4683,7 @@ msgstr ""
 
 #: ../../../discord/team.py:docstring of discord.team.Team:27
 msgid "List[:class:`TeamMember`]"
-msgstr ""
+msgstr "List[:class:`TeamMember`]"
 
 #: ../../../discord/team.py:docstring of discord.Team.icon:1
 msgid "Retrieves the team's icon asset, if any."
@@ -4695,11 +4695,11 @@ msgstr ""
 
 #: ../../../discord/team.py:docstring of discord.Team.owner:3
 msgid "Optional[:class:`TeamMember`]"
-msgstr ""
+msgstr "Optional[:class:`TeamMember`]"
 
 #: ../../api.rst:100
 msgid "TeamMember"
-msgstr ""
+msgstr "TeamMember"
 
 #: ../../../discord/team.py:docstring of discord.team.TeamMember:1
 msgid "Represents a team member in a team."
@@ -4749,7 +4749,7 @@ msgstr ""
 
 #: ../../../discord/team.py:docstring of discord.team.TeamMember:57
 msgid ":class:`Team`"
-msgstr ""
+msgstr ":class:`Team`"
 
 #: ../../../discord/team.py:docstring of discord.team.TeamMember:61
 msgid "The membership state of the member (e.g. invited or accepted)"
@@ -4757,7 +4757,7 @@ msgstr ""
 
 #: ../../../discord/team.py:docstring of discord.team.TeamMember:63
 msgid ":class:`TeamMembershipState`"
-msgstr ""
+msgstr ":class:`TeamMembershipState`"
 
 #: ../../api.rst:108
 msgid "Voice Related"
@@ -4765,7 +4765,7 @@ msgstr ""
 
 #: ../../api.rst:111
 msgid "VoiceClient"
-msgstr ""
+msgstr "VoiceClient"
 
 #: ../../../discord/voice_client.py:docstring of discord.voice_client.VoiceClient:1
 msgid "Represents a Discord voice connection."
@@ -4936,7 +4936,7 @@ msgstr ""
 
 #: ../../api.rst:120
 msgid "VoiceProtocol"
-msgstr ""
+msgstr "VoiceProtocol"
 
 #: ../../../discord/voice_client.py:docstring of discord.voice_client.VoiceProtocol:1
 msgid "A class that represents the Discord voice protocol."
@@ -9291,7 +9291,7 @@ msgid "Webhook Support"
 msgstr ""
 
 #: ../../api.rst:3369
-msgid "discord.py offers support for creating, editing, and executing webhooks through the :class:`Webhook` class."
+msgid "ndiscord.py offers support for creating, editing, and executing webhooks through the :class:`Webhook` class."
 msgstr ""
 
 #: ../../api.rst:3372
@@ -11335,10 +11335,6 @@ msgid ":class:`~discord.ext.commands.Context`"
 msgstr ""
 
 #: ../../../discord/abc.py:docstring of discord.abc.Messageable:11
-msgid ":class:`~discord.ext.app.ApplicationContext`"
-msgstr ""
-
-#: ../../../discord/abc.py:docstring of discord.abc.Messageable:12
 msgid ":class:`~discord.Thread`"
 msgstr ""
 

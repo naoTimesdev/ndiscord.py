@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -22,8 +22,8 @@ msgid "Setting Up Logging"
 msgstr "ログの設定"
 
 #: ../../logging.rst:9
-msgid "*discord.py* logs errors and debug information via the :mod:`logging` python module. It is strongly recommended that the logging module is configured, as no errors or warnings will be output if it is not set up. Configuration of the ``logging`` module can be as simple as::"
-msgstr "*discord.py* はPythonの :mod:`logging` モジュールを介してエラーやデバッグの情報を記録します。loggingモジュールが設定されていない場合は、エラーや警告が出力されないため、設定するとを強くおすすめします。loggingモジュールの設定は下記手順で簡単に実装が可能です。"
+msgid "*ndiscord.py* logs errors and debug information via the :mod:`logging` python module. It is strongly recommended that the logging module is configured, as no errors or warnings will be output if it is not set up. Configuration of the ``logging`` module can be as simple as::"
+msgstr "*ndiscord.py* はPythonの :mod:`logging` モジュールを介してエラーやデバッグの情報を記録します。loggingモジュールが設定されていない場合は、エラーや警告が出力されないため、設定することを強くおすすめします。loggingモジュールの設定は下記手順で簡単に実装が可能です。"
 
 #: ../../logging.rst:18
 msgid "Placed at the start of the application. This will output the logs from discord as well as other libraries that use the ``logging`` module directly to the console."

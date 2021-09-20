@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,65 +19,65 @@ msgstr ""
 
 #: ../../ext/commands/extensions.rst:6
 msgid "Extensions"
-msgstr ""
+msgstr "Ekstensi"
 
 #: ../../ext/commands/extensions.rst:8
 msgid "There comes a time in the bot development when you want to extend the bot functionality at run-time and quickly unload and reload code (also called hot-reloading). The command framework comes with this ability built-in, with a concept called **extensions**."
-msgstr ""
+msgstr "Ada kalanya ketika anda membuat bot dan anda ingin mengeksten fungsi bot ketika run-time dan melakukan unload atau reload kode (biasa dipanggil hot-reloading). Framework perintah/command datang dengan kemampuan ini didalam modul, konsep ini dipanggil dengan nama **ekstensi**."
 
 #: ../../ext/commands/extensions.rst:11
 msgid "Primer"
-msgstr ""
+msgstr "Introduksi"
 
 #: ../../ext/commands/extensions.rst:13
 msgid "An extension at its core is a python file with an entry point called ``setup``. This setup must be a plain Python function (not a coroutine). It takes a single parameter -- the :class:`~.commands.Bot` that loads the extension."
-msgstr ""
+msgstr "Sebuah ekstensi adalah sebuah file python dengan entry point bernama ``setup``. Setup ini haruslah merupakan fungsi Python biasa (bukan coroutine). Fungsi ini menerima satu parameter -- :class:`~.commands.Bot` yang memuat ekstensinya."
 
 #: ../../ext/commands/extensions.rst:15
 msgid "An example extension looks like this:"
-msgstr ""
+msgstr "Contoh ekstensi adalah seperti ini:"
 
 #: ../../ext/commands/extensions.rst:17
 msgid "hello.py"
-msgstr ""
+msgstr "hello.py"
 
 #: ../../ext/commands/extensions.rst:30
 msgid "In this example we define a simple command, and when the extension is loaded this command is added to the bot. Now the final step to this is loading the extension, which we do by calling :meth:`.Bot.load_extension`. To load this extension we call ``bot.load_extension('hello')``."
-msgstr ""
+msgstr "Di contoh ini kita akan menyiapkan perintah simpel, dan ketika ekstensi ini dimuat perintah akan ditambahkan ke bot. Langkah akhirnya sekarang adalah memuat ekstensinya dengan cara :meth:`.Bot.load_extension`. Untuk memuat extensi kita memanggil fungsi dengan cara ``bot.load_extension('hello')``."
 
 #: ../../ext/commands/extensions.rst:32
 msgid "Cogs"
-msgstr ""
+msgstr "Cogs"
 
 #: ../../ext/commands/extensions.rst:35
 msgid "Extensions are usually used in conjunction with cogs. To read more about them, check out the documentation, :ref:`ext_commands_cogs`."
-msgstr ""
+msgstr "Ekstensi biasanya digunakan bersamaan dengan cogs. Untuk membaca lebih lanjut, mohon baca dokumentasi :ref:`ext_commands_cogs`."
 
 #: ../../ext/commands/extensions.rst:39
 msgid "Extension paths are ultimately similar to the import mechanism. What this means is that if there is a folder, then it must be dot-qualified. For example to load an extension in ``plugins/hello.py`` then we use the string ``plugins.hello``."
-msgstr ""
+msgstr "Direktori ekstensi mirip dengan mekanisme import Python. Maksudnya adalah jika ada folder, maka harus terkualifikasi dengan titik (dot-qualified). Contohnya untuk ekstensi di ``plugins/hello.py`` maka kita gunakan string ``plugins.hello``."
 
 #: ../../ext/commands/extensions.rst:42
 msgid "Reloading"
-msgstr ""
+msgstr "Memuat ulang"
 
 #: ../../ext/commands/extensions.rst:44
 msgid "When you make a change to the extension and want to reload the references, the library comes with a function to do this for you, :meth:`.Bot.reload_extension`."
-msgstr ""
+msgstr "Ketika anda membuat perubahan dan ingin memuat ulang ekstensinya, modul ini mempunyai fungsi untuk membantu anda, :meth:`.Bot.reload_extension`."
 
 #: ../../ext/commands/extensions.rst:50
 msgid "Once the extension reloads, any changes that we did will be applied. This is useful if we want to add or remove functionality without restarting our bot. If an error occurred during the reloading process, the bot will pretend as if the reload never happened."
-msgstr ""
+msgstr "Ketika ekstensinya dimuat ulang, semua perubahan yang anda buat akan diproses. Ini sangat berguna jika anda ingin menambah atau menghapus fungsi tanpa merestart bot. Jika terjadi kesalahan ketika memuat ulang ekstensi, bot tidak akan kenapa-napa."
 
 #: ../../ext/commands/extensions.rst:53
 msgid "Cleaning Up"
-msgstr ""
+msgstr "Membersihkan"
 
 #: ../../ext/commands/extensions.rst:55
 msgid "Although rare, sometimes an extension needs to clean-up or know when it's being unloaded. For cases like these, there is another entry point named ``teardown`` which is similar to ``setup`` except called when the extension is unloaded."
-msgstr ""
+msgstr "Walaupun sangat jarang, terkadang ekstensi butuh melakukan pembersihan atau tau ketika ekstensinya sedang diurungkan. Untuk kasus seperti ini, ada entry point lain bernama ``teardown`` yang mirip dengan ``setup`` tetapi dipanggil ketika ekstensi sedang diurungkan."
 
 #: ../../ext/commands/extensions.rst:57
 msgid "basic_ext.py"
-msgstr ""
+msgstr "basic_ext.py"
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,91 +19,91 @@ msgstr ""
 
 #: ../../_templates/layout.html:36
 msgid "About these documents"
-msgstr ""
+msgstr "Mengenai dokumentasi ini"
 
 #: ../../_templates/layout.html:39
 msgid "Index"
-msgstr ""
+msgstr "Indeks"
 
 #: ../../_templates/layout.html:42
 #: ../../_templates/layout.html:65
 msgid "Search"
-msgstr ""
+msgstr "Pencarian"
 
 #: ../../_templates/layout.html:45
 msgid "Copyright"
-msgstr ""
+msgstr "Hak cipta"
 
 #: ../../_templates/layout.html:66
 msgid "Close"
-msgstr ""
+msgstr "Tutup"
 
 #: ../../_templates/layout.html:71
 #: ../../_templates/layout.html:94
 msgid "Search documentation"
-msgstr ""
+msgstr "Cari dokumentasi"
 
 #: ../../_templates/layout.html:81
 msgid "View Documentation For"
-msgstr ""
+msgstr "Lihat dokumentasi untuk"
 
 #: ../../_templates/layout.html:124
 msgid "&#169; <a href=\"%(path)s\">Copyright</a> %(copyright)s."
-msgstr ""
+msgstr "&#169; <a href=\"%(path)s\">Hak cipta</a> %(copyright)s."
 
 #: ../../_templates/layout.html:126
 msgid "&#169; Copyright %(copyright)s."
-msgstr ""
+msgstr "&#169; Hak cipta %(copyright)s."
 
 #: ../../_templates/layout.html:130
 msgid "Last updated on %(last_updated)s."
-msgstr ""
+msgstr "Diperbaharui pada %(last_updated)s."
 
 #: ../../_templates/layout.html:133
 msgid "Created using <a href=\"https://www.sphinx-doc.org/\">Sphinx</a> %(sphinx_version)s."
-msgstr ""
+msgstr "Dibuat menggunakan <a href=\"https://www.sphinx-doc.org/\">Sphinx</a> %(sphinx_version)s."
 
 #: ../../_templates/layout.html:154
 msgid "Settings"
-msgstr ""
+msgstr "Pengaturan"
 
 #: ../../_templates/layout.html:156
 msgid "Font"
-msgstr ""
+msgstr "Fonta"
 
 #: ../../_templates/layout.html:158
 msgid "Use a serif font:"
-msgstr ""
+msgstr "Gunakan fonta serif:"
 
 #: ../../_templates/layout.html:160
 msgid "Use a serif font? Your system font will be used, falling back to serif."
-msgstr ""
+msgstr "Gunakan font serif? Font sistem anda akan digunakan, kembali menggunakan serif."
 
 #: ../../_templates/layout.html:167
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: ../../_templates/layout.html:170
 msgid "Set your theme based on your system preferences"
-msgstr ""
+msgstr "Gunakan tema sesuai preferensi sistem"
 
 #: ../../_templates/layout.html:173
 msgid "Automatic"
-msgstr ""
+msgstr "Otomatis"
 
 #: ../../_templates/layout.html:176
 msgid "Set your theme to light theme"
-msgstr ""
+msgstr "Atur tema menjadi tema putih/cerah"
 
 #: ../../_templates/layout.html:179
 msgid "Light"
-msgstr ""
+msgstr "Putih"
 
 #: ../../_templates/layout.html:182
 msgid "Set your theme to dark theme"
-msgstr ""
+msgstr "Atur tema menjadi tema gelap"
 
 #: ../../_templates/layout.html:185
 msgid "Dark"
-msgstr ""
+msgstr "Gelap"
 

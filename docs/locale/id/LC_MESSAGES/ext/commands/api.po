@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgid "API Reference"
 msgstr ""
 
 #: ../../ext/commands/api.rst:6
-msgid "The following section outlines the API of discord.py's command extension module."
+msgid "The following section outlines the API of ndiscord.py's command extension module."
 msgstr ""
 
 #: ../../ext/commands/api.rst:11

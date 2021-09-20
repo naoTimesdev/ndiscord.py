@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 09:34+0800\n"
-"PO-Revision-Date: 2021-09-20 02:49\n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,29 +19,29 @@ msgstr ""
 
 #: ../../logging.rst:7
 msgid "Setting Up Logging"
-msgstr ""
+msgstr "Menyiapkan Logging"
 
 #: ../../logging.rst:9
-msgid "*discord.py* logs errors and debug information via the :mod:`logging` python module. It is strongly recommended that the logging module is configured, as no errors or warnings will be output if it is not set up. Configuration of the ``logging`` module can be as simple as::"
-msgstr ""
+msgid "*ndiscord.py* logs errors and debug information via the :mod:`logging` python module. It is strongly recommended that the logging module is configured, as no errors or warnings will be output if it is not set up. Configuration of the ``logging`` module can be as simple as::"
+msgstr "*ndiscord.py* menyimpan error dan informasi debug melalui modul :mod:`logging` python. Sangat disarankan anda mengatur modul logging, dikarenakan tidak akan ada error atau peringatan yang akan muncul jika tidak diatur. Mengatur ``logging`` sangatlah simpel seperti: ::"
 
 #: ../../logging.rst:18
 msgid "Placed at the start of the application. This will output the logs from discord as well as other libraries that use the ``logging`` module directly to the console."
-msgstr ""
+msgstr "Ditaruh diawal aplikasi. Ini akan memberikan semua informasi dari discord dan juga modul lain yang menggunakan modul ``logging`` juga ke konsol anda."
 
 #: ../../logging.rst:22
 msgid "The optional ``level`` argument specifies what level of events to log out and can be any of ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO``, and ``DEBUG`` and if not specified defaults to ``WARNING``."
-msgstr ""
+msgstr "Opsi ``level`` dapat mengatur level events yang ingin anda lihat dan bisa salah satu dari ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO``, dan ``DEBUG`` dan jika tidak dispesifikasikan akan menggunakan ``WARNING``."
 
 #: ../../logging.rst:26
 msgid "More advanced setups are possible with the :mod:`logging` module. For example to write the logs to a file called ``discord.log`` instead of outputting them to the console the following snippet can be used::"
-msgstr ""
+msgstr "Pengaturan lebih lanjut dapat dilakukan dengan modul :mod:`logging`. Contohnya, untuk menulis semua hal ke sebuah file bernama ``discord.log``, daripada memperlihatkannya ke konsol kita dapat menulis sebagai berikut::"
 
 #: ../../logging.rst:39
 msgid "This is recommended, especially at verbose levels such as ``INFO`` and ``DEBUG``, as there are a lot of events logged and it would clog the stdout of your program."
-msgstr ""
+msgstr "Ini sangat direkomendasikan, apalagi di level ``INFO`` dan ``DEBUG``, di mana akan banyak event yang dimunculkan dan akan memenuhi layar konsol anda."
 
 #: ../../logging.rst:45
 msgid "For more information, check the documentation and tutorial of the :mod:`logging` module."
-msgstr ""
+msgstr "Untuk info lebih lanjut, mohon kunjungi dan ikuti tutorial modul :mod:`logging`."
 
