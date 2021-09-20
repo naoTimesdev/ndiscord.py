@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 import asyncio
 import concurrent.futures
 import logging
@@ -404,7 +406,7 @@ class DiscordWebSocket:
 
     @classmethod
     async def from_client(
-        cls: Type["DiscordWebSocket"],
+        cls: Type[DiscordWebSocket],
         client: ClientT,
         *,
         initial: bool = False,
@@ -493,8 +495,8 @@ class DiscordWebSocket:
                 "token": self.token,
                 "properties": {
                     "$os": sys.platform,
-                    "$browser": "discord.py",
-                    "$device": "discord.py",
+                    "$browser": "ndiscord.py",
+                    "$device": "ndiscord.py",
                     "$referrer": "",
                     "$referring_domain": "",
                 },
@@ -899,7 +901,7 @@ class DiscordVoiceWebSocket:
 
     @classmethod
     async def from_client(
-        cls: Type["DiscordVoiceWebSocket"],
+        cls: Type[DiscordVoiceWebSocket],
         client: VClientT,
         *,
         resume: bool = False,

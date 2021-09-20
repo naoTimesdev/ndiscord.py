@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 import copy
 import functools
 import itertools
@@ -202,11 +204,11 @@ def _not_overriden(f):
 
 
 class _HelpCmdCallback(Protocol):
-    command_callback: "_HelpCmdCallback"
-    context: "Context"
-    on_help_command_error: "Error"
+    command_callback: _HelpCmdCallback
+    context: Context
+    on_help_command_error: Error
 
-    def __call__(self, ctx: "Context", *args: Any, **kwargs: Any) -> None:
+    def __call__(self, ctx: Context, *args: Any, **kwargs: Any) -> None:
         ...
 
 
@@ -221,7 +223,7 @@ class _HelpCommandImpl(Command):
         self._original = inject
         self._injected = inject
 
-    async def prepare(self, ctx: "Context"):
+    async def prepare(self, ctx: Context):
         injected: _HelpCmdCallback
         self._injected = injected = self._original.copy()
         injected.context = ctx
@@ -236,7 +238,7 @@ class _HelpCommandImpl(Command):
 
         await super().prepare(ctx)
 
-    async def _parse_arguments(self, ctx: "Context"):
+    async def _parse_arguments(self, ctx: Context):
         # Make the parser think we don't have a cog so it doesn't
         # inject the parameter into `ctx.args`.
         original_cog = self.cog
@@ -259,7 +261,7 @@ class _HelpCommandImpl(Command):
         else:
             return result
 
-    def _inject_into_cog(self, cog: "Cog"):
+    def _inject_into_cog(self, cog: Cog):
         # Warning: hacky
 
         # Make the cog think that get_commands returns this command
@@ -370,7 +372,7 @@ class HelpCommand:
         self.command_attrs = attrs = options.pop("command_attrs", {})
         attrs.setdefault("name", "help")
         attrs.setdefault("help", "Shows this message")
-        self.context: "ContextT" = discord.utils.MISSING
+        self.context: ContextT = discord.utils.MISSING
         self._command_impl = _HelpCommandImpl(self, **self.command_attrs)
 
     def copy(self):
@@ -378,16 +380,16 @@ class HelpCommand:
         obj._command_impl = self._command_impl
         return obj
 
-    def _add_to_bot(self, bot: "BotBase"):
+    def _add_to_bot(self, bot: BotBase):
         command = _HelpCommandImpl(self, **self.command_attrs)
         bot.add_command(command)
         self._command_impl = command
 
-    def _remove_from_bot(self, bot: "BotBase"):
+    def _remove_from_bot(self, bot: BotBase):
         bot.remove_command(self._command_impl.name)
         self._command_impl._eject_cog()
 
-    def add_check(self, func: "Check"):
+    def add_check(self, func: Check):
         """
         Adds a check to the help command.
 
@@ -401,7 +403,7 @@ class HelpCommand:
 
         self._command_impl.add_check(func)
 
-    def remove_check(self, func: "Check"):
+    def remove_check(self, func: Check):
         """
         Removes a check from the help command.
 
@@ -420,7 +422,7 @@ class HelpCommand:
 
     def get_bot_mapping(self):
         """Retrieves the bot mapping passed to :meth:`send_bot_help`."""
-        bot: "BotBase" = self.context.bot
+        bot: BotBase = self.context.bot
         mapping = {cog: cog.get_commands() for cog in bot.cogs.values()}
         mapping[None] = [c for c in bot.commands if c.cog is None]
         return mapping
@@ -515,7 +517,7 @@ class HelpCommand:
         return self._command_impl.cog
 
     @cog.setter
-    def cog(self, cog: "Cog"):
+    def cog(self, cog: Cog):
         # Remove whatever cog is currently valid, if any
         self._command_impl._eject_cog()
 
@@ -692,7 +694,7 @@ class HelpCommand:
         await destination.send(error)
 
     @_not_overriden
-    async def on_help_command_error(self, ctx: "ContextT", error: CommandError):
+    async def on_help_command_error(self, ctx: ContextT, error: CommandError):
         """|coro|
 
         The help command's error handler, as specified by :ref:`ext_commands_error_handler`.
@@ -712,7 +714,7 @@ class HelpCommand:
         """
         pass
 
-    async def send_bot_help(self, mapping: Mapping[Optional["Cog"], List[Command]]):
+    async def send_bot_help(self, mapping: Mapping[Optional[Cog], List[Command]]):
         """|coro|
 
         Handles the implementation of the bot command page in the help command.
@@ -741,7 +743,7 @@ class HelpCommand:
         """
         return None
 
-    async def send_cog_help(self, cog: "Cog"):
+    async def send_cog_help(self, cog: Cog):
         """|coro|
 
         Handles the implementation of the cog page in the help command.
@@ -835,7 +837,7 @@ class HelpCommand:
         """
         return None
 
-    async def prepare_help_command(self, ctx: "ContextT", command: Optional[Command] = None):
+    async def prepare_help_command(self, ctx: ContextT, command: Optional[Command] = None):
         """|coro|
 
         A low level method that can be used to prepare the help command
@@ -859,7 +861,7 @@ class HelpCommand:
         """
         pass
 
-    async def command_callback(self, ctx: "ContextT", *, command: Optional[Command] = None):
+    async def command_callback(self, ctx: ContextT, *, command: Optional[Command] = None):
         """|coro|
 
         The actual implementation of the help command.
@@ -1079,11 +1081,11 @@ class DefaultHelpCommand(HelpCommand):
         else:
             return ctx.channel
 
-    async def prepare_help_command(self, ctx: "ContextT", command: Command):
+    async def prepare_help_command(self, ctx: ContextT, command: Command):
         self.paginator.clear()
         await super().prepare_help_command(ctx, command)
 
-    async def send_bot_help(self, mapping: Mapping[Optional["Cog"], List[Command]]):
+    async def send_bot_help(self, mapping: Mapping[Optional[Cog], List[Command]]):
         ctx = self.context
         bot = ctx.bot
 
@@ -1094,7 +1096,7 @@ class DefaultHelpCommand(HelpCommand):
         no_category = f"\u200b{self.no_category}:"
 
         def get_category(command: Command, *, no_category=no_category):
-            cog: "Cog" = command.cog
+            cog: Cog = command.cog
             return cog.qualified_name + ":" if cog is not None else no_category
 
         filtered = await self.filter_commands(bot.commands, sort=True, key=get_category)
@@ -1132,7 +1134,7 @@ class DefaultHelpCommand(HelpCommand):
 
         await self.send_pages()
 
-    async def send_cog_help(self, cog: "Cog"):
+    async def send_cog_help(self, cog: Cog):
         if cog.description:
             self.paginator.add_line(cog.description, empty=True)
 
@@ -1323,13 +1325,13 @@ class MinimalHelpCommand(HelpCommand):
         else:
             return ctx.channel
 
-    async def prepare_help_command(self, ctx: "Context", command: Command):
+    async def prepare_help_command(self, ctx: Context, command: Command):
         self.paginator.clear()
         await super().prepare_help_command(ctx, command)
 
     async def send_bot_help(self, mapping):
-        ctx: "Context" = self.context
-        bot: "BotBase" = ctx.bot
+        ctx: Context = self.context
+        bot: BotBase = ctx.bot
 
         if bot.description:
             self.paginator.add_line(bot.description, empty=True)
@@ -1358,8 +1360,8 @@ class MinimalHelpCommand(HelpCommand):
 
         await self.send_pages()
 
-    async def send_cog_help(self, cog: "Cog"):
-        bot: "BotBase" = self.context.bot
+    async def send_cog_help(self, cog: Cog):
+        bot: BotBase = self.context.bot
         if bot.description:
             self.paginator.add_line(bot.description, empty=True)
 
