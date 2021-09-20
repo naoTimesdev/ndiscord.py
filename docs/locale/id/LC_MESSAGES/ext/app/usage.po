@@ -1,0 +1,195 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 09:34+0800\n"
+"PO-Revision-Date: 2021-09-20 02:49\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/ext/app/usage.pot\n"
+"X-Crowdin-File-ID: 27\n"
+"Language: id_ID\n"
+
+#: ../../ext/app/usage.rst:8
+msgid "Usage"
+msgstr ""
+
+#: ../../ext/app/usage.rst:10
+msgid "This is a basic and simple way to implement your own slash command."
+msgstr ""
+
+#: ../../ext/app/usage.rst:12
+msgid "Slash command and other are defined by attaching a decorator to a regular Python function. The command then would be invoking that command if it match the signature."
+msgstr ""
+
+#: ../../ext/app/usage.rst:15
+msgid "For example, here's a simple slash command:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:26
+msgid "That slash command would create a command called ``echo``. You can use it like:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:32
+msgid "This in turn would return ``hello world`` to user."
+msgstr ""
+
+#: ../../ext/app/usage.rst:34
+msgid "A command must always have at least one parameter, ``ctx``, which is the :class:`.ApplicationContext` as the first one."
+msgstr ""
+
+#: ../../ext/app/usage.rst:36
+msgid "There are only one way to register a slash command and other. By using :func:`~ext.app.slash_command` decorator. There's other decorator like :func:`~ext.app.user_command` and :func:`~ext.app.message_command` which is just a context slash command type that can only receive 2 parameters:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:58
+msgid "Any parameter that is accepted by the :class:`.ApplicationCommand` constructor can be passed into the decorator. For example, to change the slash command name, you can do:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:69
+msgid "This would change the slash command from ``echo`` to ``Louder``"
+msgstr ""
+
+#: ../../ext/app/usage.rst:72
+msgid "Parameters"
+msgstr ""
+
+#: ../../ext/app/usage.rst:74
+msgid "Since we define commands by making Python functions, we also define the argument passing behaviour by the function parameters."
+msgstr ""
+
+#: ../../ext/app/usage.rst:77
+msgid "This would only work on slash command where you can customize the option. User and Message command is context-based, so you dont even need to pass it."
+msgstr ""
+
+#: ../../ext/app/usage.rst:80
+msgid "To create an option, you either use the :func:`~ext.app.option` decorator or just use the Python typing in the parameter."
+msgstr ""
+
+#: ../../ext/app/usage.rst:114
+msgid "The :func:`~ext.app.option` decorator parameter is optional if you use typing. But if you want to adjust it manually you should use it."
+msgstr ""
+
+#: ../../ext/app/usage.rst:117
+msgid "The first parameter would be the variable name that you want to change, while the second one is the type. You can also use the :class:`~enums.SlashCommandOptionType` for the 2nd parameter."
+msgstr ""
+
+#: ../../ext/app/usage.rst:120
+msgid "Everything else are optional."
+msgstr ""
+
+#: ../../ext/app/usage.rst:125
+msgid "Error Handling"
+msgstr ""
+
+#: ../../ext/app/usage.rst:127
+msgid "When our commands fail to parse we will, by default, receive a noisy error in ``stderr`` of our console that tells us that an error has happened and has been silently ignored."
+msgstr ""
+
+#: ../../ext/app/usage.rst:130
+msgid "In order to handle our errors, we must use something called an error handler. There is a global error handler, called :func:`.on_application_error` which works like any other event in the :ref:`discord-api-events`. This global error handler is called for every error reached."
+msgstr ""
+
+#: ../../ext/app/usage.rst:134
+msgid "App extension also includes their own :ref:`ext_app_api_event` that you can check out."
+msgstr ""
+
+#: ../../ext/app/usage.rst:136
+msgid "Most of the time however, we want to handle an error local to the command itself. Luckily, commands come with local error handlers that allow us to do just that. First we decorate an error handler function with :meth:`.ApplicationCommand.error`:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:152
+msgid "The first parameter of the error handler is the :class:`.ApplicationContext` while the second one is an exception that is derived from :exc:`~ext.app.ApplicationCommandError`. A list of errors is found in the :ref:`ext_app_api_errors` page of the documentation."
+msgstr ""
+
+#: ../../ext/app/usage.rst:156
+msgid "Checks"
+msgstr ""
+
+#: ../../ext/app/usage.rst:158
+msgid "The application command can also use checks to make sure some stuff is working as intended. It follow closely how ext.commands works."
+msgstr ""
+
+#: ../../ext/app/usage.rst:161
+msgid "You just need to use the :func:`~ext.app.check` decorator to define a check. You can also invoke :func:`~ext.app.before_invoke` and :func:`~ext.app.after_invoke` decorator."
+msgstr ""
+
+#: ../../ext/app/usage.rst:164
+msgid "A check is a basic predicate that can take in a :class:`.ApplicationContext` as its sole parameter. Within it, you have the following options:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:167
+msgid "Return ``True`` to signal that the person can run the command."
+msgstr ""
+
+#: ../../ext/app/usage.rst:168
+msgid "Return ``False`` to signal that the person cannot run the command."
+msgstr ""
+
+#: ../../ext/app/usage.rst:169
+msgid "Raise a :exc:`~ext.app.ApplicationCommandError` derived exception to signal the person cannot run the command."
+msgstr ""
+
+#: ../../ext/app/usage.rst:171
+msgid "This allows you to have custom error messages for you to handle in the :ref:`error handlers <ext_app_usage_error_handler>`."
+msgstr ""
+
+#: ../../ext/app/usage.rst:174
+msgid "To register a check for a command, we would have two ways of doing so. The first is using the :meth:`~ext.commands.check` decorator. For example:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:188
+msgid "This would only evaluate the command if the function ``is_owner`` returns ``True``. Sometimes we re-use a check often and want to split it into its own decorator. To do that we can just add another level of depth:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:204
+msgid "Since an owner check is so common, the library provides it for you (:func:`~ext.app.is_owner`):"
+msgstr ""
+
+#: ../../ext/app/usage.rst:214
+msgid "When multiple checks are specified, **all** of them must be ``True``:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:230
+msgid "If any of those checks fail in the example above, then the command will not be run."
+msgstr ""
+
+#: ../../ext/app/usage.rst:232
+msgid "When an error happens, the error is propagated to the :ref:`error handlers <ext_app_usage_error_handler>`. If you do not raise a custom :exc:`~ext.app.ApplicationCommandError` derived exception, then it will get wrapped up into a :exc:`~ext.app.ApplicationCheckFailure` exception as so:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:250
+msgid "If you want a more robust error system, you can derive from the exception and raise it instead of returning ``False``:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:275
+msgid "Since having a ``guild_only`` decorator is pretty common, it comes built-in via :func:`~ext.commands.guild_only`."
+msgstr ""
+
+#: ../../ext/app/usage.rst:278
+msgid "Global Checks"
+msgstr ""
+
+#: ../../ext/app/usage.rst:280
+msgid "Sometimes we want to apply a check to **every** command, not just certain commands. The library supports this as well using the global check concept."
+msgstr ""
+
+#: ../../ext/app/usage.rst:283
+msgid "Global checks work similarly to regular checks except they are registered with the :meth:`.Bot.check` decorator."
+msgstr ""
+
+#: ../../ext/app/usage.rst:285
+msgid "For example, to block all DMs we could do the following:"
+msgstr ""
+
+#: ../../ext/app/usage.rst:295
+msgid "Be careful on how you write your global checks, as it could also lock you out of your own bot."
+msgstr ""
+
