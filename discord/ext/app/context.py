@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
 import discord.abc
@@ -143,7 +145,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         return self.interaction.guild
 
     @discord.utils.cached_property
-    def channel(self) -> Optional["InteractionChannel"]:
+    def channel(self) -> Optional[InteractionChannel]:
         """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns
         the channel associated with this context's command. None if not available.
         """

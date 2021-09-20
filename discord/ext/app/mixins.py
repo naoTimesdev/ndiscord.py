@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 import sys
 import traceback
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, overload
@@ -209,8 +211,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
     _pending_registration: List[ApplicationCommand[CogT, BotT]] = []
 
     def __new__(
-        cls: Type["ApplicationCommandMixin"], *args, **kwargs
-    ) -> "ApplicationCommandMixin[CogT, BotT, AppCommandT]":
+        cls: Type[ApplicationCommandMixin], *args, **kwargs
+    ) -> ApplicationCommandMixin[CogT, BotT, AppCommandT]:
         debug_guild = kwargs.pop("debug_guild", None)
         debug_guilds = kwargs.pop("debug_guilds", None)
 

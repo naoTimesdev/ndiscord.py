@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, Dict, List, Protocol, Type, TypeVar, Union
 
 if TYPE_CHECKING:
@@ -50,12 +52,12 @@ AppCommandT = TypeVar(
 ContextT = TypeVar("ContextT", bound="ApplicationContext")
 
 Check = Union[
-    Callable[["Cog", "ApplicationContext"], MaybeCoro[bool]], Callable[["ApplicationContext"], MaybeCoro[bool]]
+    Callable[[Cog, ApplicationContext], MaybeCoro[bool]], Callable[[ApplicationContext], MaybeCoro[bool]]
 ]
-Hook = Union[Callable[["Cog", "ApplicationContext"], Coro[Any]], Callable[["ApplicationContext"], Coro[Any]]]
+Hook = Union[Callable[[Cog, ApplicationContext], Coro[Any]], Callable[[ApplicationContext], Coro[Any]]]
 Error = Union[
-    Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]],
-    Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]],
+    Callable[[Cog, ApplicationContext, ApplicationCommandError], Coro[Any]],
+    Callable[[ApplicationContext, ApplicationCommandError], Coro[Any]],
 ]
 
 PythonInputType = Type[Union[str, int, float, bool]]

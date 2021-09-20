@@ -884,7 +884,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         else:
             self.after_invoke(after_invoke)
 
-    def is_match(self, other: "SlashCommand"):
+    def is_match(self, other: SlashCommand):
         return self.name == other.name and self.sub_type == other.sub_type
 
     def parse_options(self) -> List[Option]:
@@ -934,7 +934,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             options.append(option)
         return options
 
-    def __eq__(self, other: "SlashCommand") -> bool:
+    def __eq__(self, other: SlashCommand) -> bool:
         return isinstance(other, SlashCommand) and other.name == self.name
 
     async def _parse_arguments(self, ctx: ApplicationContext[BotT, CogT]):
@@ -1058,7 +1058,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         await super().invoke(ctx)
         await self._invoke_children(ctx)
 
-    def add_command(self, command: "SlashCommand[CogT, BotT]"):
+    def add_command(self, command: SlashCommand[CogT, BotT]):
         """Adds a :class:`.SlashCommand` into the internal list of commands.
 
         This is usually not called, instead the :meth:`~.ApplicationCommand.command` or
