@@ -208,7 +208,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         *,
         embeds: List["Embed"] = MISSING,
         embed: Optional["Embed"] = MISSING,
-        file: File = MISSING,
+        file: "File" = MISSING,
         files: List["File"] = MISSING,
         view: Optional["View"] = MISSING,
         allowed_mentions: Optional["AllowedMentions"] = None,
