@@ -3,7 +3,7 @@
 API Reference
 ===============
 
-The following section outlines the API of discord.py's application extension module.
+The following section outlines the API of ndiscord.py's application extension module.
 
 .. _ext_app_api_core:
 
