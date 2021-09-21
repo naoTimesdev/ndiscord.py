@@ -742,6 +742,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 if match_this is not None:
                     command.id = int(match_this["id"])
                     global_payloads.append(command)
+                else:
+                    global_payloads.append(command)
+            else:
+                global_payloads.append(command)
 
         update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT, AppCommandT]]] = {}
         async for guild in self.fetch_guilds(limit=None):
