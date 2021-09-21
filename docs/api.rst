@@ -2955,7 +2955,9 @@ AuditLogDiff
 
     .. attribute:: icon
 
-        A guild's icon. See also :attr:`Guild.icon`.
+        Depending on the action type, this may be a guild's icon or a role's icon.
+
+        See also :attr:`Guild.icon` or :attr:`Role.icon`.
 
         :type: :class:`Asset`
 
