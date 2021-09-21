@@ -382,6 +382,7 @@ class Role(Hashable):
         colour: Union[Colour, int] = MISSING,
         color: Union[Colour, int] = MISSING,
         icon: Optional[bytes] = MISSING,
+        emoji_unicode: Optional[str] = MISSING,
         hoist: bool = MISSING,
         mentionable: bool = MISSING,
         position: int = MISSING,
@@ -401,7 +402,7 @@ class Role(Hashable):
 
         .. versionchanged:: 2.0
             Edits are no longer in-place, the newly edited role is returned instead.
-            Also added a new ``icon`` parameter to change role icons.
+            Also added a new ``icon`` and ``emoji_unicode`` parameter to change role icons.
 
         Parameters
         -----------
@@ -413,6 +414,13 @@ class Role(Hashable):
             The new colour to change to. (aliased to color as well)
         icon: :class:`bytes`
             A bytes object representing the role icon.
+
+            .. versionadded:: 2.0
+
+        emoji_unicode: :class:`str`
+            The unicode value of the new role to change to.
+
+            .. versionadded:: 2.0
         hoist: :class:`bool`
             Indicates if the role should be shown separately in the member list.
         mentionable: :class:`bool`
@@ -462,6 +470,9 @@ class Role(Hashable):
                 payload["icon"] = icon
             else:
                 payload["icon"] = _bytes_to_base64_data(icon)
+
+        if emoji_unicode is not MISSING:
+            payload["unicode_emoji"] = emoji_unicode
 
         if hoist is not MISSING:
             payload["hoist"] = hoist
