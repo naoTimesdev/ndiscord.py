@@ -719,7 +719,6 @@ class Option:
             "type": self.input_type.value,
             "required": self.required,
             "choices": [c.to_dict() for c in self.choices],
-            "default": self.default,
         }
         if self.channel_types:
             data["channel_types"] = [c.value for c in self.channel_types]
