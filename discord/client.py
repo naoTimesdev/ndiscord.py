@@ -1940,3 +1940,37 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                     unknown_registed_commands.append(command_set)
 
         return [*registered_command_sets, *unknown_registed_commands]
+
+    async def is_owner(self, user: User) -> bool:
+        """|coro|
+
+        Checks if a :class:`~discord.User` or :class:`~discord.Member` is the owner of
+        this bot.
+
+        Parameters
+        -----------
+        user: :class:`.abc.User`
+            The user to check for.
+
+        Returns
+        --------
+        :class:`bool`
+            Whether the user is the owner.
+        """
+
+        # Check cache :)
+        owner_id = getattr(self, "__owner_id__", None)
+        if owner_id:
+            return user.id == owner_id
+        owner_ids = getattr(self, "__owner_ids__", None)
+        if owner_ids:
+            return user.id in owner_ids
+
+        app_info = await self.application_info()
+        if app_info.team:
+            owner_ids = {m.id for m in app_info.team.members}
+            setattr(self, "__owner_ids__", owner_ids)
+            return user.id in owner_ids
+        else:
+            setattr(self, "__owner_id__", app_info.owner.id)
+            return user.id == app_info.owner.id
