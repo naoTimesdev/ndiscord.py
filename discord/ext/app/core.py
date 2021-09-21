@@ -977,6 +977,12 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
                 elif op.default is not None:
                     arg = op.default
             kwargs[op.name] = arg
+        for opts in self.options:
+            if opts.name not in kwargs:
+                if opts._is_default_nonetype:
+                    kwargs[opts.name] = None
+                elif opts.default is not None:
+                    kwargs[opts.name] = opts.default
 
         params = iter(self.params.items())
 
@@ -993,7 +999,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
 
         for name, param in params:
             if name not in kwargs and param.default == inspect.Parameter.empty:
-                raise ApplicationMissingRequiredArgument(param)
+                raise ApplicationMissingRequiredArgument(name, param)
 
         ctx.args = args
         ctx.kwargs = kwargs
