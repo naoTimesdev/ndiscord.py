@@ -708,6 +708,8 @@ class Option:
             if kwargs["default"] is None:
                 self._is_default_nonetype = True
         self.default: Optional[Any] = kwargs.pop("default", None)
+        if self.default is not None:
+            self.required = False
         self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
 
     def to_dict(self):
