@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
 from .asset import Asset
 from .colour import Colour
+from .emoji import PartialEmoji
 from .errors import InvalidArgument
 from .mixins import Hashable
 from .permissions import Permissions
@@ -245,6 +246,7 @@ class Role(Hashable):
         self.managed: bool = data.get("managed", False)
         self.mentionable: bool = data.get("mentionable", False)
         self._icon: str = data.get("icon", None)
+        self._emoji_unicode: str = data.get("unicode_emoji", None)
         self.tags: Optional[RoleTags]
 
         try:
@@ -324,7 +326,7 @@ class Role(Hashable):
     def icon(self) -> Optional[Asset]:
         """Optional[:class:`Asset`]: Returns the icon asset associated with this role, can be ``None``.
 
-        .. versionadded: 2.0
+        .. versionadded:: 2.0
 
         .. note::
 
@@ -333,6 +335,21 @@ class Role(Hashable):
         if not self._icon:
             return None
         return Asset._from_icon(self._state, self.id, self._icon, "role")
+
+    @property
+    def emoji(self) -> Optional[PartialEmoji]:
+        """Optional[:class:`PartialEmoji`]: Returns the emoji that associated with this role, can be ``None``.
+
+        .. versionadded:: 2.0
+
+        .. note::
+
+            The guild needs to have the ``ROLE_ICONS`` features to have this enabled.
+
+        """
+        if not self._emoji_unicode:
+            return None
+        return PartialEmoji.from_str(self._emoji_unicode)
 
     async def _move(self, position: int, reason: Optional[str]) -> None:
         if position <= 0:
