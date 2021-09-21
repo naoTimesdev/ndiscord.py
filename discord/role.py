@@ -28,9 +28,9 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
 from .asset import Asset
 from .colour import Colour
-from .emoji import PartialEmoji
 from .errors import InvalidArgument
 from .mixins import Hashable
+from .partial_emoji import PartialEmoji
 from .permissions import Permissions
 from .utils import MISSING, _bytes_to_base64_data, _get_as_snowflake, snowflake_time
 
