@@ -1151,7 +1151,7 @@ class GuildChannel:
             The name of the event.
         description: Optional[:class:`str`]
             The description of the event. Could be ``None`` for no description.
-        privacy_level: Optional[Any]
+        privacy_level: Optional[:class:`int`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted

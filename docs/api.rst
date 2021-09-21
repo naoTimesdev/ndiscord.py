@@ -2859,6 +2859,22 @@ of :class:`enum.Enum`.
         The guild event is canceled.
 
 
+.. class:: GuildScheduledEventPrivacyLevel
+
+    Represents the privacy level of a guild scheduled event.
+    Almost the same as :class:`StagePrivacyLevel`.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: public
+
+        The guild event is public and can be seen from discovery.
+
+    .. attribute:: guild_only
+
+        The guild event is private and can only be seen if user is a member of the guild.
+
+
 Async Iterator
 ----------------
 

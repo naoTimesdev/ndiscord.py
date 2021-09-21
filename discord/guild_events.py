@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
 
 from . import utils
 from .asset import Asset
-from .enums import GuildScheduledEventStatus, GuildScheduledEventType, try_enum
+from .enums import GuildScheduledEventPrivacyLevel, GuildScheduledEventStatus, GuildScheduledEventType, try_enum
 from .mixins import Hashable
 
 if TYPE_CHECKING:
@@ -37,10 +37,9 @@ if TYPE_CHECKING:
     from .guild import Guild
     from .member import Member
     from .state import ConnectionState
-    from .user import User
-
     from .types.guild_events import GuildScheduledEvent as GuildScheduledEventPayload
     from .types.guild_events import GuildScheduledEventEntityMeta
+    from .user import User
 
 __all__ = ("GuildScheduledEvent", "GuildEventEntityMetadata")
 
@@ -97,6 +96,8 @@ class GuildScheduledEvent(Hashable):
         The event's scheduled end time.
     status: :class:`GuildScheduledEventStatus`
         The event's current status.
+    privacy_level: :class:`GuildScheduledEventPrivacyLevel`
+        The event's privacy level.
     guild: :class:`Guild`
         The guild the event belongs to.
     """
@@ -112,6 +113,7 @@ class GuildScheduledEvent(Hashable):
         "description",
         "_image",
         "status",
+        "privacy_level",
         "start_time",
         "end_time",
         "_entity_id",
@@ -161,6 +163,9 @@ class GuildScheduledEvent(Hashable):
         self._image: Optional[str] = data.get("image", None)
 
         self.status: GuildScheduledEventStatus = try_enum(GuildScheduledEventStatus, data["status"])
+        self.privacy_level: GuildScheduledEventPrivacyLevel = try_enum(
+            GuildScheduledEventPrivacyLevel, data["privacy_level"]
+        )
 
         self.start_time: datetime = utils.parse_time(data["scheduled_start_time"])
         self.end_time = utils.parse_time(data.get("scheduled_end_time"))
@@ -273,8 +278,8 @@ class GuildScheduledEvent(Hashable):
         name: str = MISSING,
         description: Optional[str] = MISSING,
         channel: Optional[GuildChannel] = MISSING,
-        # TODO: Change this later
-        privacy_level: Optional[Any] = MISSING,
+        # TODO: Maybe change this later
+        privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         scheduled_start_time: Optional[datetime] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
     ) -> GuildScheduledEvent:
@@ -293,8 +298,8 @@ class GuildScheduledEvent(Hashable):
             The new description of the event. Could be ``None`` for no description.
         channel: Optional[:class:`abc.GuildChannel`]
             The channel where the event will be conducted.
-        privacy_level: Optional[Any]
-            The event privacy level, same thing as StageInstance PrivacyLevel
+        privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
+            The event privacy level.
         scheduled_start_time: Optional[:class:`datetime.datetime`]
             The new schedule start time, timezone must be UTC. If not it will be converted
             automatically.
@@ -326,9 +331,9 @@ class GuildScheduledEvent(Hashable):
         if channel is not MISSING:
             fields["channel_id"] = str(channel.id)
 
-        if privacy_level is not MISSING and entity_type is not None:
-            # TODO: Change later
-            fields["privacy_level"] = privacy_level
+        if privacy_level is not MISSING and privacy_level is not None:
+            # TODO: Maybe change later
+            fields["privacy_level"] = privacy_level.value
 
         if scheduled_start_time is not MISSING and entity_type is not None:
             fields["scheduled_start_time"] = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()

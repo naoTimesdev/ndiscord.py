@@ -45,8 +45,8 @@ class _GuildScheduledEventOptional(TypedDict, total=False):
     user_count: int
 
 
-# TODO: Change to proper one, this is temporary
-GuildEventPrivacyLevel = Literal[1]
+# TODO: Maybe change later if possible
+GuildEventPrivacyLevel = Literal[1, 2]
 GuildEventStatus = Literal[1, 2, 3, 4]
 GuildEventEntityType = Literal[0, 1, 2, 3]
 
@@ -62,4 +62,5 @@ class GuildScheduledEvent(_GuildScheduledEventOptional):
     entity_metadata: GuildScheduledEventEntityMeta
     sku_ids: List[str]
     # TODO: Change later when it's documented
+    # TODO: This seems like something similar to Application SKUs
     skus: list

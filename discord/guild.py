@@ -1340,7 +1340,7 @@ class Guild(Hashable):
         scheduled_start_time: datetime.datetime,
         *,
         description: Optional[str] = MISSING,
-        # TODO: Change this later
+        # TODO: Maybe change this later
         privacy_level: Optional[int] = MISSING,
         channel: Optional[GuildChannel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
@@ -1362,7 +1362,7 @@ class Guild(Hashable):
             The description of the event. Could be ``None`` for no description.
         channel: Optional[:class:`abc.GuildChannel`]
             The channel where the event will be conducted.
-        privacy_level: Optional[Any]
+        privacy_level: Optional[:class:`int`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted
@@ -1394,7 +1394,7 @@ class Guild(Hashable):
 
         privacy_level = 1
         if privacy_level is not MISSING and entity_type is not None:
-            # TODO: Change later
+            # TODO: Maybe Change later
             privacy_level = privacy_level
 
         scheduled_start_time = scheduled_start_time.replace(tzinfo=datetime.timezone.utc).isoformat()

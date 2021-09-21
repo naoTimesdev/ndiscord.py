@@ -40,6 +40,7 @@ __all__ = (
     "AuditLogActionCategory",
     "GuildScheduledEventType",
     "GuildScheduledEventStatus",
+    "GuildScheduledEventPrivacyLevel",
     "UserFlags",
     "ActivityType",
     "NotificationLevel",
@@ -470,6 +471,11 @@ class GuildScheduledEventStatus(Enum):
     active = 1
     completed = 2
     canceled = 3
+
+
+class GuildScheduledEventPrivacyLevel(Enum):
+    public = 1
+    guild_only = 2
 
 
 class UserFlags(Enum):
