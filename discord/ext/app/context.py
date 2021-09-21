@@ -36,7 +36,11 @@ from discord.voice_client import VoiceProtocol
 from ._types import AppCommandT, BotT, CogT
 
 if TYPE_CHECKING:
+    from discord.embeds import Embed
+    from discord.file import File
     from discord.interactions import InteractionChannel
+    from discord.mentions import AllowedMentions
+    from discord.ui import View
 
 __all__ = ("ApplicationContext",)
 
@@ -177,6 +181,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         """:class:`.Webhook`: Returns the follow up webhook for follow up interactions."""
         return self.interaction.followup
 
+    @property
     def respond(self):
         """|coro|
 
@@ -197,8 +202,26 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         return self.followup.send if self.response.is_done() else self.interaction.response.send_message
 
     @discord.utils.copy_doc(Interaction.edit_original_message)
-    def edit(self):
-        return self.interaction.edit_original_message
+    def edit(
+        self,
+        content: Optional[str] = MISSING,
+        *,
+        embeds: List["Embed"] = MISSING,
+        embed: Optional["Embed"] = MISSING,
+        file: File = MISSING,
+        files: List["File"] = MISSING,
+        view: Optional["View"] = MISSING,
+        allowed_mentions: Optional["AllowedMentions"] = None,
+    ):
+        return self.interaction.edit_original_message(
+            content=content,
+            embeds=embeds,
+            embed=embed,
+            file=file,
+            files=files,
+            view=view,
+            allowed_mentions=allowed_mentions,
+        )
 
     @discord.utils.copy_doc(InteractionResponse.defer)
     async def defer(self, *, ephemeral: bool = False):
