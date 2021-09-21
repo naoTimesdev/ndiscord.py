@@ -1,0 +1,2794 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/ext/app/api.pot\n"
+"X-Crowdin-File-ID: 41\n"
+"Language: id_ID\n"
+
+#: ../../ext/app/api.rst:4
+msgid "API Reference"
+msgstr "Referensi API"
+
+#: ../../ext/app/api.rst:6
+msgid "The following section outlines the API of ndiscord.py's application extension module."
+msgstr "Laman ini akan memberikan garis besar untuk ekstensi aplikasi API ndiscord.py."
+
+#: ../../ext/app/api.rst:11
+msgid "Core Functions"
+msgstr "Fungsi Utama"
+
+#: ../../ext/app/api.rst:14
+msgid "ApplicationCommand"
+msgstr "ApplicationCommand"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:1
+msgid "A class that implements the protocol for bot application command."
+msgstr "Sebuah kelas yang mengimplementasikan protokol untuk perintah aplikasi."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:6
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:4
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:7
+msgid "These should not be created manually, instead please use the provided decorator or function interface."
+msgstr "Ini tidak untuk dibuat secara manual, tetapi mohon gunakan dekorator atau fungsi yang sudah disediakan."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:12
+msgid "The ID of the command, can be None if the command has not been registered yet."
+msgstr "ID untuk perintahnya, bisa jadi None jika perintah belum didaftarkan."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.qualified_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.cog_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.cog_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.qualified_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.children:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.commands:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.cog_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.qualified_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.cog_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.qualified_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.cog_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.qualified_name:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.cog:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.invoked_with:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.invoked_with:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.responded:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.deferred:0
+#: ../../docstring of discord.ext.app.ApplicationContext.guild:0
+#: ../../docstring of discord.ext.app.ApplicationContext.channel:0
+#: ../../docstring of discord.ext.app.ApplicationContext.author:0
+#: ../../docstring of discord.ext.app.ApplicationContext.me:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.voice_client:0
+#: ../../docstring of discord.ext.app.ApplicationContext.response:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.followup:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandInvokeError:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationError:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRequiredArgument:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserNotFound:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRole:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingRole:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingAnyRole:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingAnyRole:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:0
+msgid "type"
+msgstr "tipe"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:15
+msgid "Optional[:class:`int`]"
+msgstr "Optional[:class:`int`]"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:18
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:20
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:19
+msgid "The name of the command."
+msgstr "Nama perintahnya."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:17
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.qualified_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:20
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.qualified_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:18
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:24
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.qualified_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:22
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.qualified_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:21
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.qualified_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:15
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationError:10
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:10
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:16
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:11
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserNotFound:12
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:10
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:10
+msgid ":class:`str`"
+msgstr ":class:`str`"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:21
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:30
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:40
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:32
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:31
+msgid "The coroutine that is executed when the command is called."
+msgstr "Coroutine yang akan dipanggil saat perintah dipanggil."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:23
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:32
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:42
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:34
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:33
+msgid ":ref:`coroutine <coroutine>`"
+msgstr ":ref:`coroutine <coroutine>`"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:27
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:24
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:28
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:26
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:25
+msgid "A list of guild IDs where the command can only be run at."
+msgstr "Koleksi ID guild di mana perintah ini dapat dipakai."
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:29
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:26
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:30
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:28
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:27
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:18
+msgid "List[:class:`int`]"
+msgstr "List[:class:`int`]"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:33
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:36
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:46
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:38
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:37
+msgid "A list of predicates that verifies if the command could be executed with the given :class:`.ApplicationContext` as the sole parameter. If an exception is necessary to be thrown to signal failure, then one inherited from :exc:`.ApplicationCommandError` should be used. Note that if the checks fail then :exc:`.ApplicationCheckFailure` exception is raised to the :func:`.on_application_error` event."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:40
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:43
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:53
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:45
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:44
+msgid "List[Callable[[:class:`.ApplicationContext`], :class:`bool`]]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:44
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:47
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:64
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:49
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:48
+msgid "The type of application command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:46
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:49
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:66
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:51
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:50
+msgid ":class:`ApplicationCommandType`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:50
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:53
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:77
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:55
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:54
+msgid "The cog that this command belongs to. ``None`` if there isn't one."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand:52
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:55
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:79
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:57
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:56
+msgid "Optional[:class:`~discord.ext.commands.Cog`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.after_invoke:1
+msgid "A decorator that registers a coroutine as a post-invoke hook."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:3
+msgid "A post-invoke hook is called directly after the command is called. This makes it a useful function to clean-up database connections or any type of clean up required."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:7
+msgid "This post-invoke hook takes a sole parameter, a :class:`.ApplicationContext`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.add_application:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.remove_application:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.register_application:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:0
+#: ../../ext/app/api.rst:0
+#: ../../ext/app/api.rst:0
+#: ../../ext/app/api.rst:0
+#: ../../ext/app/api.rst:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:0
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:0
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNSFWChannelRequired:0
+msgid "Parameters"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:9
+msgid "The coroutine to register as the post-invoke hook."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:0
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:0
+msgid "Raises"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.after_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:10
+msgid "The coroutine passed is not actually a coroutine."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.before_invoke:1
+msgid "A decorator that registers a coroutine as a pre-invoke hook."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:3
+msgid "A pre-invoke hook is called directly before the command is called. This makes it a useful function to set up database connections or any type of set up required."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:7
+msgid "This pre-invoke hook takes a sole parameter, a :class:`.ApplicationContext`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.before_invoke:9
+msgid "The coroutine to register as the pre-invoke hook."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:1
+msgid "A decorator that registers a coroutine as a local error handler."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:3
+msgid "A local error handler is an :func:`.on_application_error` event limited to a single command. However, the :func:`.on_application_error` is still invoked afterwards as the catch-all."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.error:7
+msgid "The coroutine to register as the local error handler."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.qualified_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.qualified_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.qualified_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.qualified_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.qualified_name:1
+msgid "The application qualified name."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.has_error_handler:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.has_error_handler:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.has_error_handler:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.has_error_handler:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.has_error_handler:1
+msgid ":class:`bool`: Checks whether the command has an error handler registered."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:1
+msgid "Adds a check to the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:3
+msgid "This is the non-decorator interface to :func:`.check`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.add_check:5
+msgid "The function that will be used as a check."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:1
+msgid "Removes a check from the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:3
+msgid "This function is idempotent and will not raise an exception if the function is not in the command's checks."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:6
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:6
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:6
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:6
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.remove_check:6
+msgid "The function to remove from the checks."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.cog_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.cog_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.cog_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.cog_name:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.cog_name:1
+msgid "The name of the cog this command belongs to, if any."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ApplicationCommand.cog_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.ContextMenuApplication.cog_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.cog_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.UserCommand.cog_name:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.MessageCommand.cog_name:3
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.invoked_with:6
+msgid "Optional[:class:`str`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:1
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:1
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:1
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:1
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_application_error:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:1
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:1
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:1
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:1
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.trigger_typing:1
+msgid "|coro|"
+msgstr "|coro|"
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:3
+msgid "Execute or invoke the function callback of the app command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:9
+#: ../../ext/app/api.rst:206
+#: ../../ext/app/api.rst:218
+#: ../../ext/app/api.rst:228
+msgid "The invocation context."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:8
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:14
+msgid "An error occurred while invoking the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:9
+msgid "The number of arguments passed to the command was more than     allowed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:10
+msgid "The command failed because it was missing a required argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:11
+msgid "The command failed because one of the arguments passed to it was invalid."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:12
+msgid "The member data being passed does not exist in cache."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:13
+msgid "The user data being passed does not exist in cache."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:14
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:14
+msgid "The mentionable data being passed does not exist in cache."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:15
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:15
+msgid "The command you're trying to execute is on cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.invoke:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.invoke:16
+msgid "The maximum concurrency limit for this command has been reached."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:3
+msgid "Execute again or reinvoke the function callback of the app command. This will perform a similar action to :meth:`.Bot.invoke` except you can set if you want to invoke hooks or not."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:7
+msgid "This will also bypass the concurrency checks and cooldown check."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:11
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.reinvoke:11
+msgid "Should we call the before_hooks and after_hooks or not."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:1
+msgid "Creates a copy of this app command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.group:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.copy:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:0
+msgid "Returns"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:3
+msgid "A new instance of this app command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.group:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:0
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:0
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.copy:0
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:0
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:0
+msgid "Return type"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:4
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:4
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:4
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:4
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.copy:4
+msgid ":class:`ApplicationCommand`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:3
+msgid "Checks if the command can be executed by checking all the predicates inside the :attr:`~Command.checks` attribute. This also checks whether the command is disabled."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:7
+msgid "The ctx of the command currently being invoked."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:10
+msgid "Any command error that was raised during a check call will be propagated     by this function."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:12
+msgid "A boolean indicating if the command can be invoked."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.can_run:13
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:27
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:49
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.responded:5
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.deferred:6
+msgid ":class:`bool`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.to_dict:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.to_dict:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.to_dict:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.to_dict:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ApplicationCommand.to_dict:1
+msgid ":class:`dict`: A discord API friendly dictionary that can be submitted to the API."
+msgstr ""
+
+#: ../../ext/app/api.rst:33
+msgid "ContextMenuApplication"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:1
+msgid "A class that implements an application command that can be invoked by opening Discord context menu."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:4
+msgid "Currently implement message context and user context."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:59
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:83
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:61
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:60
+msgid "A ordered dictionary of parameters that the command callback takes. This also includes the ``self`` parameter, which is the first parameter if you have cogs attached. And ``ctx`` which can be the first/second argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication:63
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:87
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:65
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:64
+msgid "OrderedDict[:class:`str`, :class:`~inspect.Parameter`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.walk_commands:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:1
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:1
+msgid "An iterator that recursively walks through all commands and subcommands."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.walk_commands:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:0
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:0
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:0
+msgid "Yields"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.ContextMenuApplication.walk_commands:3
+msgid ":class:`.ContextMenuApplication` -- A command or group from the internal list of commands."
+msgstr ""
+
+#: ../../ext/app/api.rst:52
+msgid "SlashCommand"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:1
+msgid "A class that implements an application command that can be invoked through a via Discord /slash command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:22
+msgid "The description of the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:34
+msgid "A list of options that the user can set for the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:36
+msgid "List[:class:`.Option`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:57
+msgid "The parent command of this one if there is one. Usually used for the child of a subcommand or subcommand group."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:60
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:55
+msgid "Optional[:class:`.SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:70
+msgid "The type of the slash command, can only be :attr:`SlashCommandOptionType.sub_command` or :attr:`SlashCommandOptionType.sub_command_group`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand:73
+msgid ":class:`SlashCommandOptionType`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.command:1
+msgid "A decorator that would add a new subcommand to the parent command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.command:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.group:3
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:17
+msgid "A decorator that converts the provided method into a :class:`.SlashCommand`, adds it to the bot, then returns it."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.command:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.group:5
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:19
+msgid "Callable[..., :class:`.SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.group:1
+msgid "A decorator that would add a new subcommand group to the parent command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.children:1
+msgid "A list of children"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.children:3
+msgid "Dict[:class:`str`, :class:`SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.has_parent:1
+msgid ":class:`bool`: Check if the command have parent or not."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:1
+msgid "Adds a :class:`.SlashCommand` into the internal list of commands."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:3
+msgid "This is usually not called, instead the :meth:`~.ApplicationCommand.command` or :meth:`~.ApplicationCommand.group` shortcut decorators are used instead."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:6
+msgid "The command to add."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:9
+msgid "If the command or its alias is already registered by different command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:10
+msgid "If the command parent already reach the maximum depth of 2 nested child."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:11
+msgid "If the parent command contains options other than :attr:`~.SlashCommandOptionType.sub_command`     or :attr:`~.SlashCommandOptionType.sub_command_group`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.add_command:12
+msgid "If the command passed is not a subclass of :class:`.SlashCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.commands:1
+msgid "A unique set of commands without aliases that are registered."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.SlashCommand.commands:3
+msgid "Set[:class:`.SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.SlashCommand.walk_commands:3
+msgid ":class:`SlashCommand` -- A command or group from the internal list of commands."
+msgstr ""
+
+#: ../../ext/app/api.rst:77
+msgid "UserCommand"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:1
+msgid "A class that implements the context menu application. This will be used to implement user command where someone can right click someone username to execute an application command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.UserCommand:5
+msgid "This class will pass Union[:class:`~discord.User`, :class:`~discord.Member`] to the callback."
+msgstr ""
+
+#: ../../ext/app/api.rst:96
+msgid "MessageCommand"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:1
+msgid "A class that implements the context menu application. This will be used to implement message command where someone can right click someone message to execute an application command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.MessageCommand:5
+msgid "This class will pass :class:`~discord.Message` to the callback."
+msgstr ""
+
+#: ../../ext/app/api.rst:115
+msgid "Options"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:1
+msgid "A class that implement a single option for an :class:`.SlashCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:3
+msgid "These can be used as type-hints for your arguments or created by decorator."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:7
+msgid "The name of the argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:13
+msgid "The description of the argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:19
+msgid "The type of the argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:21
+msgid ":class:`.SlashCommandOptionType`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:25
+msgid "Indicates if the argument is required."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:31
+msgid "The default value of the argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:33
+msgid "Optional[:class:`Any`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:37
+msgid "A list of valid options for the argument."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:39
+msgid "List[:class:`.OptionChoice`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:43
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:17
+msgid "A list of channel types that the option is valid for. If provided, the user can only use the defined channel type for the option."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.Option:46
+msgid "Optional[List[:class:`.ChannelType`]]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:1
+msgid "A class that implement an option choice for :class:`.Option`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:3
+msgid "You can pass this directly to the ``choices`` arguments in :class:`.Option`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:7
+msgid "The name of the argument that will be passed to the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.OptionChoice:13
+msgid "The value that will be showed to the user."
+msgstr ""
+
+#: ../../ext/app/api.rst:128
+msgid "Decorators"
+msgstr ""
+
+#: ../../ext/app/api.rst:130
+msgid "This is all available decorators that user can use to create application command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:1
+msgid "A decorator that transforms a function into an :class:`.ApplicationCommand`. More specifically, usually one of :class:`.SlashCommand`, :class:`.UserCommand`, or :class:`.MessageCommand`. The exact class depends on the ``cls`` parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:5
+msgid "By default the ``description`` attribute is received automatically from the docstring of the function and is cleaned up with the use of ``inspect.cleandoc``. If the docstring is ``bytes``, then it is decoded into :class:`str` using utf-8 encoding."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:10
+msgid "The ``name`` attribute also defaults to the function name unchanged."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:14
+msgid "The class to construct with. By default this is :class:`.SlashCommand`. You usually do not change this."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:17
+msgid "Keyword arguments to pass into the construction of the class denoted by ``cls``."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.application_command:20
+msgid "If the function is not a coroutine or is already a command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:1
+msgid "Decorator for slash commands that invokes :func:`application_command`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:5
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:5
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:7
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:7
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:7
+msgid "The name of the command. Defaults to the name of the method."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:7
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:9
+msgid "A short description of the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:7
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:7
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:11
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:9
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:9
+msgid "Guild IDs where the command can be run on. Setting this will make the command only usable from this guild."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:10
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:10
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:14
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:12
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:12
+msgid "A list of predicates that must be true for the command to be invoked."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:15
+msgid "A decorator that converts the provided method into a :class:`.SlashCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.slash_command:16
+msgid "Callable[..., :class:`SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:1
+msgid "Decorator for user commands that invokes :func:`application_command`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:13
+msgid "A decorator that converts the provided method into a :class:`.UserCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.user_command:14
+msgid "Callable[..., :class:`UserCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:1
+msgid "Decorator for message commands that invokes :func:`application_command`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:13
+msgid "A decorator that converts the provided method into a :class:`.MessageCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.message_command:14
+msgid "Callable[..., :class:`MessageCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.command:1
+msgid "This is an alias for :func:`.application_command`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.command:5
+msgid "A decorator that converts the provided method into an :class:`.ApplicationCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.command:6
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:8
+msgid "Callable[..., :class:`ApplicationCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:1
+msgid "A decorator that can be used instead of typehinting :class:`.Option`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:3
+msgid "The name of the option in the arguments."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:5
+msgid "The type of the option, default to string if not defined. You can pass something like :class:`str` and it will automatically converted to proper type. You can also give a number and it will try to find that enum."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:9
+msgid "The description of the option."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:11
+msgid "Whether the option is required or not."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:13
+msgid "A list of valid choices for the option."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.option:15
+msgid "The default value of the option."
+msgstr ""
+
+#: ../../ext/app/api.rst:154
+msgid "Mixins"
+msgstr ""
+
+#: ../../ext/app/api.rst:156
+msgid "This is information for Mixins created to help load applications into the Bot or Client."
+msgstr ""
+
+#: ../../ext/app/api.rst:160
+msgid "You should not create all of this mixins manually if you don't know what you're doing."
+msgstr ""
+
+#: ../../ext/app/api.rst:163
+msgid "ApplicationCommandMixin"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:1
+msgid "A mixin that provides application commands to the bot."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:3
+msgid "These mixin should not be created manually, this will be used by :class:`.Client` or by :class:`~discord.ext.commands.Bot`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:10
+msgid "A collection of registered commands that the bot knows."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:12
+msgid ":class:`.ApplicationCommandFactory`"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin:16
+msgid "Get the list of guilds that are being used for debugging purpose."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:1
+msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.application_command:6
+msgid "A decorator that converts the provided method into an :class:`.ApplicationCommand`, adds it to the bot, then returns it."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.slash_command:1
+msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.SlashCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:1
+msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.UserCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:15
+msgid "A decorator that converts the provided method into a :class:`.UserCommand`, adds it to the bot, then returns it."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.user_command:17
+msgid "Callable[..., :class:`.UserCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:1
+msgid "A shortcut decorator that invokes :func:`~discord.ext.app.command` and adds it to the internal command list via :meth:`~.ApplicationCommandMixin.add_application`. This shortcut is made specifically for :class:`.MessageCommand`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:15
+msgid "A decorator that converts the provided method into a :class:`.MessageCommand`, adds it to the bot, then returns it."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.message_command:17
+msgid "Callable[..., :class:`.MessageCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.add_application:1
+msgid "Register a new application command."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.add_application:3
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.remove_application:3
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.register_application:4
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:5
+msgid "The command to register."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.remove_application:1
+msgid "Remove command from the list of registered commands."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.register_application:1
+msgid "Register the command to the factories and remove from pending section. Please make sure the app already been registered to Discord."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:3
+msgid "This function processes the commands that have been registered to the bot and other groups. Without this coroutine, none of the commands will be triggered."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:7
+msgid "By default, this coroutine is called inside the :func:`.on_interaction` event. If you choose to override the :func:`.on_interaction` event, then you should invoke this coroutine as well."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:11
+msgid "This function finds a registered command matching the interaction id from :meth:`ApplicationCommandMixin.application_command` and runs :meth:`ApplicationCommand.invoke` on it. If no matching command was found, it replies to the interaction with a default message."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.process_application_commands:17
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:9
+msgid "The interaction to process"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:3
+msgid "Returns the invocation context from the interaction. This is a more low-level counter-part for :meth:`.process_application_commands` to allow users more fine grained control over the processing."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:7
+msgid "The interaction to get the invocation context from."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:9
+msgid "The factory class that will be used to create the context. By default, this is :class:`.ApplicationContext`. Should a custom class be provided, it must be similar enough to :class:`.ApplicationContext`\\'s interface."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:14
+msgid "The invocation context. The type of this can change via the ``cls`` parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.get_application_context:16
+msgid ":class:`.ApplicationContext`"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:3
+msgid "This event handle should handle all interaction coming from Discord. This would pass the information into :meth:`.process_application_commands`"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_interaction:6
+msgid "If you're overriding this, please dont forget to call the :meth:`.process_application_commands` or the application wont work."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_application_error:3
+msgid "The default command error handler provided by the bot."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_application_error:5
+msgid "By default this prints to :data:`sys.stderr` however it could be overridden to have a different implementation."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandMixin.on_application_error:8
+msgid "This only fires if you do not specify any listeners for command error."
+msgstr ""
+
+#: ../../ext/app/api.rst:184
+msgid "ApplicationCommandFactory"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:1
+msgid "A \"factory\" or collector of application commands."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:3
+msgid "These factory should not be created manually, it will be called from :class:`.ApplicationCommandMixin`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:8
+msgid "All slash commands registered with this factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:10
+msgid "Dict[:class:`str`, :class:`.SlashCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:14
+msgid "All user commands registered with this factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:16
+msgid "Dict[:class:`str`, :class:`.UserCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:20
+msgid "All message commands registered with this factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory:22
+msgid "Dict[:class:`str`, :class:`.MessageCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.all_commands:1
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.all_commands:1
+msgid "List[:class:`.ApplicationCommand`]: Get all commands from this factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:1
+msgid "Add a new command to the factories."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:3
+msgid "If the command already exist, it will raise an :exc:`.ApplicationRegistrationError`."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.add_command:8
+msgid "Raised when you're trying to register a command with the same name     as other command that already been registered."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:1
+msgid "Get a command from the factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:3
+msgid "The command name to search"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:5
+msgid "The type of command to search for."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:8
+msgid "The command that was requested, or ``None`` if not found."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.get_command:9
+msgid "Optional[:class:`.ApplicationCommand`] derived"
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:1
+msgid "Remove a command from the factory."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:3
+msgid "The command to search for, it will try to match by name. If you provide a string, it will try to guess where the command is."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:7
+msgid "The command that was removed, if ``None`` it means the command doesn't exist."
+msgstr ""
+
+#: ../../../discord/ext/app/mixins.py:docstring of discord.ext.app.mixins.ApplicationCommandFactory.remove_command:8
+msgid "Optional[:class:`.ApplicationCommand`]"
+msgstr ""
+
+#: ../../ext/app/api.rst:195
+msgid "Event Reference"
+msgstr ""
+
+#: ../../ext/app/api.rst:197
+msgid "These events function similar to :ref:`the regular events <discord-api-events>`, except they are custom to the app extension module."
+msgstr ""
+
+#: ../../ext/app/api.rst:202
+msgid "An error handler that is called when an error is raised inside a command either through user input error, check failure, or an error in your own code."
+msgstr ""
+
+#: ../../ext/app/api.rst:208
+msgid "The error that was raised."
+msgstr ""
+
+#: ../../ext/app/api.rst:213
+msgid "An event that is called when a command is found and is about to be invoked."
+msgstr ""
+
+#: ../../ext/app/api.rst:215
+msgid "This event is called regardless of whether the command itself succeeds via error or completes."
+msgstr ""
+
+#: ../../ext/app/api.rst:223
+msgid "An event that is called when a command has completed its invocation."
+msgstr ""
+
+#: ../../ext/app/api.rst:225
+msgid "This event is called only if the command succeeded, i.e. all checks have passed and the user input it correctly."
+msgstr ""
+
+#: ../../ext/app/api.rst:233
+msgid "An event that is called if an unknown command is invoked."
+msgstr ""
+
+#: ../../ext/app/api.rst:235
+msgid "This event is called just after the Bot try to find matching command."
+msgstr ""
+
+#: ../../ext/app/api.rst:237
+msgid "The interaction context."
+msgstr ""
+
+#: ../../ext/app/api.rst:242
+msgid "Enums"
+msgstr ""
+
+#: ../../ext/app/api.rst:247
+msgid "Specifies a type of bucket for, e.g. a cooldown."
+msgstr ""
+
+#: ../../ext/app/api.rst:251
+msgid "The default bucket operates on a global basis."
+msgstr ""
+
+#: ../../ext/app/api.rst:254
+msgid "The user bucket operates on a per-user basis."
+msgstr ""
+
+#: ../../ext/app/api.rst:257
+msgid "The guild bucket operates on a per-guild basis."
+msgstr ""
+
+#: ../../ext/app/api.rst:260
+msgid "The channel bucket operates on a per-channel basis."
+msgstr ""
+
+#: ../../ext/app/api.rst:263
+msgid "The member bucket operates on a per-member basis."
+msgstr ""
+
+#: ../../ext/app/api.rst:268
+msgid "Checks"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:1
+msgid "A decorator that adds a check to the :class:`.ApplicationCommand` or its subclasses. These checks could be accessed via :attr:`.ApplicationCommand.checks`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:4
+msgid "These checks should be predicates that take in a single parameter taking a :class:`.ApplicationContext`. If the check returns a ``False``\\-like value then during invocation a :exc:`.ApplicationCheckFailure` exception is raised and sent to the :func:`.on_application_error` event."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:9
+msgid "If an exception should be thrown in the predicate then it should be a subclass of :exc:`.ApplicationCommandError`. Any exception not subclassed from it will be propagated while those subclassed will be sent to :func:`.on_application_error`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:14
+msgid "A special attribute named ``predicate`` is bound to the value returned by this decorator to retrieve the predicate passed to the decorator. This allows the following introspection and chaining to be done:"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:30
+msgid "The function returned by ``predicate`` is **always** a coroutine, even if the original function was not a coroutine."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:34
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:18
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:6
+msgid "Examples"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:35
+msgid "Creating a basic check to see if the command invoker is you."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:47
+msgid "Transforming common checks into its own decorator:"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check:61
+msgid "The predicate to check if the command should be invoked."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:1
+msgid "A :func:`check` that is added that checks if any of the checks passed will pass, i.e. using logical OR."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:4
+msgid "If all checks fail then :exc:`.ApplicationCheckAnyFailure` is raised to signal the failure. It inherits from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:9
+msgid "The ``predicate`` attribute for this function **is** a coroutine."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:11
+msgid "An argument list of checks that have been decorated with the :func:`check` decorator."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:15
+msgid "A check passed has not been decorated with the :func:`check`     decorator."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.check_any:19
+msgid "Creating a basic check to see if it's the bot owner or the server owner:"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:1
+msgid "A :func:`.check` that is added that checks if the member invoking the command has the role specified via the name or ID specified."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:4
+msgid "If a string is specified, you must give the exact name of the role, including caps and spelling."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:7
+msgid "If an integer is specified, you must give the exact snowflake ID of the role."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:9
+msgid "If the message is invoked in a private message context then the check will return ``False``."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:12
+msgid "This check raises one of two special exceptions, :exc:`.ApplicationMissingRole` if the user is missing a role, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message. Both inherit from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_role:16
+msgid "The name or ID of the role to check."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_role:1
+msgid "Similar to :func:`.has_role` except checks if the bot itself has the role."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_role:4
+msgid "This check raises one of two special exceptions, :exc:`.ApplicationBotMissingRole` if the bot is missing the role, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message. Both inherit from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:1
+msgid "A :func:`.check` that is added that checks if the member invoking the command has **any** of the roles specified. This means that if they have one out of the three roles specified, then this check will return `True`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:5
+msgid "Similar to :func:`.has_role`\\, the names or IDs passed in must be exact."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:7
+msgid "This check raises one of two special exceptions, :exc:`.ApplicationMissingAnyRole` if the user is missing all roles, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message. Both inherit from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:11
+msgid "Raise :exc:`.ApplicationMissingAnyRole` or :exc:`.ApplicationNoPrivateMessage` instead of generic :exc:`.ApplicationCheckFailure`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:14
+msgid "An argument list of names or IDs to check that the member has roles wise."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_any_role:18
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:16
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.before_invoke:7
+msgid "Example"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_any_role:1
+msgid "Similar to :func:`.has_any_role` except checks if the bot itself has any of the roles listed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_any_role:4
+msgid "This check raises one of two special exceptions, :exc:`.ApplicationBotMissingAnyRole` if the bot is missing all roles, or :exc:`.ApplicationNoPrivateMessage` if it is used in a private message. Both inherit from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:1
+msgid "A decorator that adds a cooldown to a :class:`.ApplicationCommand`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:3
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:8
+msgid "A cooldown allows a command to only be used a specific amount of times in a specific time frame. These cooldowns can be based either on a per-guild, per-channel, per-user or global basis. Denoted by the third argument of ``type`` which must be of enum type :class:`.ApplicationBucketType`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:9
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:14
+msgid "If a cooldown is triggered, then :exc:`.ApplicationCommandOnCooldown` is triggered in :func:`.on_application_error` and the local error handler."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:12
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:17
+msgid "A command can only have a single cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:14
+msgid "The number of times a command can be used before triggering a cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:16
+msgid "The amount of seconds to wait for a cooldown when it's been triggered."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.cooldown:18
+msgid "The type of cooldown to have. If callable, should return a key for the mapping."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:1
+msgid "A decorator that adds a dynamic cooldown to a :class:`.ApplicationCommand`"
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:3
+msgid "This differs from :func:`.cooldown` in that it takes a function that accepts a single parameter of type :class:`~discord.Interaction` and must return a :class:`.ApplicationCooldown` or ``None``. If ``None`` is returned then that cooldown is effectively bypassed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:19
+msgid "A function that takes a interaction and returns a cooldown that will apply to this invocation or ``None`` if the cooldown should be bypassed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dynamic_cooldown:22
+msgid "The type of cooldown to have."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:1
+msgid "A decorator that adds a maximum concurrency to a :class:`.ApplicationCommand` or its subclasses."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:3
+msgid "This enables you to only allow a certain number of command invocations at the same time, for example if a command takes too long or if only one user can use it at a time. This differs from a cooldown in that there is no set waiting period or token bucket -- only a set number of people can run the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:8
+msgid "The maximum number of invocations of this command that can be running at the same time."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:10
+msgid "The bucket that this concurrency is based on, e.g. :attr:`.ApplicationBucketType.guild` would allow it to be used up to ``number`` times per guild."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.max_concurrency:13
+msgid "Whether the command should wait for the queue to be over. If this is set to ``False`` then instead of waiting until the command can run again, the command raises :exc:`.ApplicationMaxConcurrencyReached` to its error handler. If this is set to ``True`` then the command waits until it can be executed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:1
+msgid "A :func:`.check` that is added that checks if the member has all of the permissions necessary."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:4
+msgid "Note that this check operates on the current channel permissions, not the guild wide permissions."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:7
+msgid "The permissions passed in must be exactly like the properties shown under :class:`.discord.Permissions`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:10
+msgid "This check raises a special exception, :exc:`.ApplicationMissingPermissions` that is inherited from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_permissions:13
+msgid "An argument list of permissions to check for."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_permissions:1
+msgid "Similar to :func:`.has_permissions` except checks if the bot itself has the permissions listed."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_permissions:4
+msgid "This check raises a special exception, :exc:`.ApplicationBotMissingPermissions` that is inherited from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_guild_permissions:1
+msgid "Similar to :func:`.has_permissions`, but operates on guild wide permissions instead of the current channel permissions."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.has_guild_permissions:4
+msgid "If this check is called in a DM context, it will raise an exception, :exc:`.ApplicationNoPrivateMessage`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.bot_has_guild_permissions:1
+msgid "Similar to :func:`.has_guild_permissions`, but checks the bot members guild permissions."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dm_only:1
+msgid "A :func:`.check` that indicates this command must only be used in a DM context. Only private messages are allowed when using the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.dm_only:5
+msgid "This check raises a special exception, :exc:`.ApplicationPrivateMessageOnly` that is inherited from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.guild_only:1
+msgid "A :func:`.check` that indicates this command must only be used in a guild context only. Basically, no private messages are allowed when using the command."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.guild_only:5
+msgid "This check raises a special exception, :exc:`.ApplicationNoPrivateMessage` that is inherited from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_owner:1
+msgid "A :func:`.check` that checks if the person invoking this command is the owner of the bot."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_owner:4
+msgid "This is powered by :meth:`.Bot.is_owner`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_owner:6
+msgid "This check raises a special exception, :exc:`.ApplicationNotOwner` that is derived from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_nsfw:1
+msgid "A :func:`.check` that checks if the channel is a NSFW channel."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_nsfw:3
+msgid "This check raises a special exception, :exc:`.ApplicationNSFWChannelRequired` that is derived from :exc:`.ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.is_nsfw:8
+msgid "Raise :exc:`.ApplicationNSFWChannelRequired` instead of generic :exc:`.ApplicationCheckFailure`. DM channels will also now pass this check."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.before_invoke:3
+msgid "This allows you to refer to one before invoke hook for several commands that do not have to be within the same cog."
+msgstr ""
+
+#: ../../../discord/ext/app/core.py:docstring of discord.ext.app.core.after_invoke:3
+msgid "This allows you to refer to one after invoke hook for several commands that do not have to be within the same cog."
+msgstr ""
+
+#: ../../ext/app/api.rst:330
+msgid "Cooldown"
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:1
+msgid "Represents a cooldown for an application."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:5
+msgid "The total number of tokens available per :attr:`per` seconds."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:7
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:9
+msgid ":class:`int`"
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:11
+msgid "The length of the cooldown period in seconds."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown:13
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:22
+msgid ":class:`float`"
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:1
+msgid "Returns the number of available tokens before rate limiting is applied."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:3
+msgid "The time in seconds since Unix epoch to calculate tokens at. If not supplied then :func:`time.time()` is used."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_tokens:7
+msgid "The number of tokens available before the cooldown is to be applied."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:1
+msgid "Returns the time in seconds until the cooldown will be reset."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:3
+msgid "The current time in seconds since Unix epoch. If not supplied, then :func:`time.time()` is used."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.get_retry_after:7
+msgid "The number of seconds to wait before this cooldown will be reset."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:1
+msgid "Updates the cooldown rate limit."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:3
+msgid "The time in seconds since Unix epoch to update the rate limit at. If not supplied, then :func:`time.time()` is used."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:7
+msgid "The retry-after time in seconds if rate limited."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.update_rate_limit:8
+msgid "Optional[:class:`float`]"
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.reset:1
+msgid "Reset the cooldown to its initial state."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.copy:1
+msgid "Creates a copy of this cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.copy:3
+msgid "A new instance of this cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/cooldowns.py:docstring of discord.ext.app.cooldowns.ApplicationCooldown.copy:4
+msgid ":class:`ApplicationCooldown`"
+msgstr ""
+
+#: ../../ext/app/api.rst:338
+msgid "Context"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:1
+msgid "Represents the context in which a application command is being invoked under."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:3
+msgid "This class contains a lot of meta data to help you understand more about the invocation context. This class is not created manually and is instead passed around to commands as the first parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:7
+msgid "This class implements the :class:`~discord.abc.Messageable` ABC."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:11
+msgid "The bot which is invoking the command."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:13
+msgid ":class:`Bot`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:17
+msgid "The interaction object which is used to interact with the user."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:19
+msgid ":class:`.Interaction`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:23
+msgid "The list of transformed arguments that were passed into the command. If this is accessed during the :func:`.on_application_error` event then this list could be incomplete."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:27
+msgid ":class:`list`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:31
+msgid "A dictionary of transformed arguments that were passed into the command. Similar to :attr:`args`, if this is accessed in the :func:`.on_application_error` event then this dict could be incomplete."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:35
+msgid ":class:`dict`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:39
+msgid "The command or application command that are being executed. If it's not passed yet, it will be None."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:42
+msgid "Union[:class:`.SlashCommand`, :class:`.UserCommand`, :class:`.MessageCommand`]"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:46
+msgid "A boolean that indicates if this command failed to be parsed, checked, or invoked."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext:53
+msgid "The subcommand that was invoked, if any."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:1
+msgid "Returns an :class:`~discord.AsyncIterator` that enables receiving the destination's message history."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:3
+msgid "You must have :attr:`~discord.Permissions.read_message_history` permissions to use this."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:7
+msgid "Usage ::"
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:14
+msgid "Flattening into a list: ::"
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:19
+msgid "All parameters are optional."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:21
+msgid "The number of messages to retrieve. If ``None``, retrieves every message in the channel. Note, however, that this would make it a slow operation."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:25
+msgid "Retrieve messages before this date or message. If a datetime is provided, it is recommended to use a UTC aware datetime. If the datetime is naive, it is assumed to be local time."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:29
+msgid "Retrieve messages after this date or message. If a datetime is provided, it is recommended to use a UTC aware datetime. If the datetime is naive, it is assumed to be local time."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:33
+msgid "Retrieve messages around this date or message. If a datetime is provided, it is recommended to use a UTC aware datetime. If the datetime is naive, it is assumed to be local time. When using this argument, the maximum limit is 101. Note that if the limit is an even number then this will return at most limit + 1 messages."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:39
+msgid "If set to ``True``, return messages in oldest->newest order. Defaults to ``True`` if ``after`` is specified, otherwise ``False``."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:43
+msgid "You do not have permissions to get channel message history."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:44
+msgid "The request to get message history failed."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.history:46
+msgid ":class:`~discord.Message` -- The message with the message data parsed."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.typing:1
+msgid "Returns a context manager that allows you to type for an indefinite period of time."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.typing:3
+msgid "This is useful for denoting long computations in your bot."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.typing:7
+msgid "This is both a regular context manager and an async context manager. This means that both ``with`` and ``async with`` work with this."
+msgstr ""
+
+#: ../../../discord/abc.py:docstring of discord.abc.Messageable.typing:10
+msgid "Example Usage: ::"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.cog:1
+msgid "Returns the cog associated with this context's command. None if it does not exist."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.cog:4
+msgid "Optional[:class:`.Cog`]"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.invoked_with:1
+msgid "The original string that the user used to invoke the command. Might be none if the command is context menu."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.invoked_with:4
+msgid "invoked_with"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.responded:1
+msgid "Indicates whether an interaction response has been done before."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.responded:3
+msgid "An interaction can only be responded to once."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.deferred:1
+msgid "Indicates if the interaction already been deferred."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.deferred:3
+msgid "If it's already deferred, when user use :meth:`.respond` or :meth:`.send` it will use :meth:`.edit` to edit the response instead."
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.guild:1
+msgid "Returns the guild associated with this context's command. None if not available."
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.guild:4
+msgid "Optional[:class:`.Guild`]"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.channel:1
+msgid "Returns the channel associated with this context's command. None if not available."
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.channel:4
+msgid "Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.author:1
+msgid "Returns the author associated with this context's command. Shorthand for :attr:`.Message.author`"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.author:4
+msgid "Optional[Union[:class:`~discord.User`, :class:`.Member`]]"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.me:1
+msgid "Similar to :attr:`.Guild.me` except it may return the :class:`.ClientUser` in private message contexts."
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.me:4
+msgid "Union[:class:`.Member`, :class:`.ClientUser`]"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.voice_client:1
+msgid "A shortcut to :attr:`.Guild.voice_client`\\, if applicable."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.voice_client:3
+msgid "Optional[:class:`.VoiceProtocol`]"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.response:1
+msgid "Shortcut for :attr:`.Interaction.response`"
+msgstr ""
+
+#: ../../docstring of discord.ext.app.ApplicationContext.response:3
+msgid ":class:`.InteractionResponse`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.followup:1
+msgid "Returns the follow up webhook for follow up interactions."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.ApplicationContext.followup:3
+msgid ":class:`.Webhook`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:3
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:3
+msgid "Respond to the interaction."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:5
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:5
+msgid "This property is a shortcut for :attr:`.Webhook.send`, :meth:`~.InteractionResponse.send_message`, or :attr:`~.Interaction.edit_original_message`."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:8
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:8
+msgid "It will automatically selected the appropriate method based on the current state of the interaction."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:11
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.respond:11
+msgid "If the interaction already deferred, it will use :meth:`.edit` to edit the response instead. If the interaction is already responded, it will use :meth:`~.Webhook.send` to respond while if it haven't it will use :attr:`.InteractionResponse.send_message` to respond."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:3
+msgid "Edits the original interaction response message."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:5
+msgid "This is a lower level interface to :meth:`InteractionMessage.edit` in case you do not want to fetch the message and save an HTTP request."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:8
+msgid "This method is also the only way to edit the original message if the message sent was ephemeral."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:11
+msgid "The content to edit the message with or ``None`` to clear it."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:13
+msgid "A list of embeds to edit the message with."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:15
+msgid "The embed to edit the message with. ``None`` suppresses the embeds. This should not be mixed with the ``embeds`` parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:18
+msgid "The file to upload. This cannot be mixed with ``files`` parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:20
+msgid "A list of files to send with the content. This cannot be mixed with the ``file`` parameter."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:23
+msgid "Controls the mentions being processed in this message. See :meth:`.abc.Messageable.send` for more information."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:26
+msgid "The updated view to update this message with. If ``None`` is passed then the view is removed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:30
+msgid "Editing the message failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:31
+msgid "Edited a message that is not yours."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:32
+msgid "You specified both ``embed`` and ``embeds`` or ``file`` and ``files``"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:33
+msgid "The length of ``embeds`` was invalid."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:35
+msgid "The newly edited message."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.edit:36
+msgid ":class:`InteractionMessage`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:3
+msgid "Defers the interaction response."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:5
+msgid "This is typically used when the interaction is acknowledged and a secondary action will be done later."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:8
+msgid "Indicates whether the deferred message will eventually be ephemeral. This only applies for interactions of type :attr:`InteractionType.application_command`."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:12
+msgid "Deferring the interaction failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.defer:13
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:8
+msgid "This interaction has already been responded to before."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:3
+msgid "Deletes the original interaction response message."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:5
+msgid "This is a lower level interface to :meth:`InteractionMessage.delete` in case you do not want to fetch the message and save an HTTP request."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:8
+msgid "Deleting the message failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.delete:9
+msgid "Deleted a message that is not yours."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:3
+msgid "Pongs the ping interaction."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:5
+msgid "This should rarely be used."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.ext.app.context.ApplicationContext.pong:7
+msgid "Ponging the interaction failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:3
+msgid "Retrieves a single :class:`~discord.Message` from the destination."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:5
+msgid "The message ID to look for."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:8
+msgid "The specified message was not found."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:9
+msgid "You do not have the permissions required to get a message."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:10
+msgid "Retrieving the message failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:12
+msgid "The message asked for."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.fetch_message:13
+msgid ":class:`~discord.Message`"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:3
+msgid "Retrieves all messages that are currently pinned in the channel."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:7
+msgid "Due to a limitation with the Discord API, the :class:`.Message` objects returned by this method do not contain complete :attr:`.Message.reactions` data."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:11
+msgid "Retrieving the pinned messages failed."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:13
+msgid "The messages that are currently pinned."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.pins:14
+msgid "List[:class:`~discord.Message`]"
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.trigger_typing:3
+msgid "Triggers a *typing* indicator to the destination."
+msgstr ""
+
+#: ../../../discord/ext/app/context.py:docstring of discord.abc.Messageable.trigger_typing:5
+msgid "*Typing* indicator will go away after 10 seconds, or after a message is sent."
+msgstr ""
+
+#: ../../ext/app/api.rst:356
+msgid "Exceptions"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandError:1
+msgid "The base exception type for all command related errors."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandError:3
+msgid "This inherits from :exc:`discord.DiscordException`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandError:5
+msgid "This exception and exceptions inherited from it are handled in a special way as they are caught and passed into a special event from :class:`.Bot`\\, :func:`.on_application_error`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandInvokeError:1
+msgid "Exception raised when the application command being invoked raised an exception."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandInvokeError:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:3
+msgid "This inherits from :exc:`ApplicationCommandError`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandInvokeError:8
+msgid "The original exception that was raised. You can also get this via the ``__cause__`` attribute."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandInvokeError:11
+msgid ":exc:`Exception`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationError:1
+msgid "An exception raised when the command can't be added because the name is already taken by a different command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationError:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:5
+msgid "This inherits from :exc:`discord.ClientException`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationError:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:9
+msgid "The command name that had the error."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:1
+msgid "An exception raised when the command can't be added because the parent reach the maximum depth for more child."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationMaxDepthError:14
+msgid "The parent command name."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:1
+msgid "An exception raise when the command can't be added because the parent command contains and options that cannot be used if the child is a subcommand or group."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:15
+msgid "The option that is not allowed."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationRegistrationExistingParentOptions:17
+msgid ":class:`Option`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserInputError:1
+msgid "The base exception type for errors that involve errors regarding user input."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserInputError:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:3
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckFailure:3
+msgid "This inherits from :exc:`ApplicationCommandError`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRequiredArgument:1
+msgid "Exception raised when parsing a command and a parameter that is required is not encountered."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRequiredArgument:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationTooManyArguments:3
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBadArgument:4
+msgid "This inherits from :exc:`ApplicationUserInputError`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRequiredArgument:8
+msgid "The argument that is missing."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRequiredArgument:10
+msgid ":class:`inspect.Parameter`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationTooManyArguments:1
+msgid "Exception raised when the command was passed too many arguments."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBadArgument:1
+msgid "Exception raised when a parsing or conversion failure is encountered on an argument to pass into a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserNotFound:1
+msgid "Exception raised when the user provided was not found in the bot's cache."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserNotFound:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:4
+msgid "This inherits from :exc:`ApplicationBadArgument`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationUserNotFound:10
+msgid "The user supplied by the caller that was not found"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:1
+msgid "Exception raised when the member provided was not found in the bot's cache."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMemberNotFound:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:8
+msgid "The member supplied by the caller that was not found"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMentionableNotFound:1
+msgid "Exception raised when the mentionable provided was not found in the bot's cache."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:1
+msgid "Exception raised when the command being invoked is on cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:7
+msgid "A class with attributes ``rate`` and ``per`` similar to the :func:`.cooldown` decorator."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:10
+msgid ":class:`.ApplicationCooldown`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:14
+msgid "The type associated with the cooldown."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:16
+msgid ":class:`ApplicationBucketType`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCommandOnCooldown:20
+msgid "The amount of seconds to wait before you can retry again."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:1
+msgid "Exception raised when the command being invoked has reached its maximum concurrency."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:7
+msgid "The maximum number of concurrent invokers allowed."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:13
+msgid "The bucket type passed to the :func:`.max_concurrency` decorator."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMaxConcurrencyReached:15
+msgid ":class:`.ApplicationBucketType`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckFailure:1
+msgid "Exception raised when a invoked check fails."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:1
+msgid "Exception raised when all predicates in :func:`check_any` fail."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:3
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNSFWChannelRequired:3
+msgid "This inherits from :exc:`ApplicationCheckFailure`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:9
+msgid "A list of errors that were caught during execution."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:11
+msgid "List[:class:`ApplicationCheckFailure`]"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:15
+msgid "A list of check predicates that failed."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationCheckAnyFailure:17
+msgid "List[Callable[[:class:`ApplicationContext`], :class:`bool`]]"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationPrivateMessageOnly:1
+msgid "Exception raised when an operation does not work outside of private message contexts."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationPrivateMessageOnly:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNoPrivateMessage:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRole:3
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingRole:3
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingAnyRole:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingAnyRole:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:4
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNotOwner:3
+msgid "This inherits from :exc:`ApplicationCheckFailure`"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNoPrivateMessage:1
+msgid "Exception raised when an operation does not work in private message contexts."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRole:1
+msgid "Exception raised when the command invoker lacks a role to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRole:7
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingRole:7
+msgid "The required role that is missing. This is the parameter passed to :func:`~.app.has_role`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingRole:10
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingRole:10
+msgid "Union[:class:`str`, :class:`int`]"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingRole:1
+msgid "Exception raised when the bot's member lacks a role to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingAnyRole:1
+msgid "Exception raised when the command invoker lacks any of the roles specified to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingAnyRole:10
+msgid "The roles that the invoker is missing. These are the parameters passed to :func:`~.app.has_any_role`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingAnyRole:13
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingAnyRole:13
+msgid "List[Union[:class:`str`, :class:`int`]]"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingAnyRole:1
+msgid "Exception raised when the bot's member lacks any of the roles specified to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingAnyRole:10
+msgid "The roles that the bot's member is missing. These are the parameters passed to :func:`~.app.has_any_role`."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:1
+msgid "Exception raised when the command invoker lacks permissions to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:8
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:8
+msgid "The required permissions that are missing."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationMissingPermissions:10
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:10
+msgid "List[:class:`str`]"
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationBotMissingPermissions:1
+msgid "Exception raised when the bot's member lacks permissions to run a command."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNSFWChannelRequired:1
+msgid "Exception raised when a channel does not have the required NSFW setting."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNSFWChannelRequired:7
+msgid "The channel that does not have NSFW enabled."
+msgstr ""
+
+#: ../../../discord/ext/app/errors.py:docstring of discord.ext.app.errors.ApplicationNotOwner:1
+msgid "Exception raised when the message author is not the owner of the bot."
+msgstr ""
+
+#: ../../ext/app/api.rst:437
+msgid "Exception Hierarchy"
+msgstr ""
+
+#: ../../ext/app/api.rst:463
+msgid ":exc:`~.DiscordException`"
+msgstr ""
+
+#: ../../ext/app/api.rst:463
+msgid ":exc:`~.app.ApplicationCommandError`"
+msgstr ""
+
+#: ../../ext/app/api.rst:443
+msgid ":exc:`~.app.ApplicationCommandInvokeError`"
+msgstr ""
+
+#: ../../ext/app/api.rst:449
+msgid ":exc:`~.app.ApplicationUserInputError`"
+msgstr ""
+
+#: ../../ext/app/api.rst:445
+msgid ":exc:`~.app.ApplicationMissingRequiredArgument`"
+msgstr ""
+
+#: ../../ext/app/api.rst:446
+msgid ":exc:`~.app.ApplicationTooManyArguments`"
+msgstr ""
+
+#: ../../ext/app/api.rst:449
+msgid ":exc:`~.app.ApplicationBadArgument`"
+msgstr ""
+
+#: ../../ext/app/api.rst:448
+msgid ":exc:`~.app.ApplicationMemberNotFound`"
+msgstr ""
+
+#: ../../ext/app/api.rst:449
+msgid ":exc:`~.app.ApplicationMentionableNotFound`"
+msgstr ""
+
+#: ../../ext/app/api.rst:450
+msgid ":exc:`~.app.ApplicationUserNotFound`"
+msgstr ""
+
+#: ../../ext/app/api.rst:461
+msgid ":exc:`~.app.ApplicationCheckFailure`"
+msgstr ""
+
+#: ../../ext/app/api.rst:452
+msgid ":exc:`~.app.ApplicationCheckAnyFailure`"
+msgstr ""
+
+#: ../../ext/app/api.rst:453
+msgid ":exc:`~.app.ApplicationPrivateMessageOnly`"
+msgstr ""
+
+#: ../../ext/app/api.rst:454
+msgid ":exc:`~.app.ApplicationNoPrivateMessage`"
+msgstr ""
+
+#: ../../ext/app/api.rst:455
+msgid ":exc:`~.app.ApplicationMissingRole`"
+msgstr ""
+
+#: ../../ext/app/api.rst:456
+msgid ":exc:`~.app.ApplicationBotMissingRole`"
+msgstr ""
+
+#: ../../ext/app/api.rst:457
+msgid ":exc:`~.app.ApplicationMissingAnyRole`"
+msgstr ""
+
+#: ../../ext/app/api.rst:458
+msgid ":exc:`~.app.ApplicationBotMissingAnyRole`"
+msgstr ""
+
+#: ../../ext/app/api.rst:459
+msgid ":exc:`~.app.ApplicationMissingPermissions`"
+msgstr ""
+
+#: ../../ext/app/api.rst:460
+msgid ":exc:`~.app.ApplicationBotMissingPermissions`"
+msgstr ""
+
+#: ../../ext/app/api.rst:461
+msgid ":exc:`~.app.ApplicationNSFWChannelRequired`"
+msgstr ""
+
+#: ../../ext/app/api.rst:462
+msgid ":exc:`~.app.ApplicationNotOwner`"
+msgstr ""
+
+#: ../../ext/app/api.rst:463
+msgid ":exc:`~.app.ApplicationCommandOnCooldown`"
+msgstr ""
+
+#: ../../ext/app/api.rst:464
+msgid ":exc:`~.app.ApplicationMaxConcurrencyReached`"
+msgstr ""
+
+#: ../../ext/app/api.rst:467
+msgid ":exc:`~.ClientException`"
+msgstr ""
+
+#: ../../ext/app/api.rst:466
+msgid ":exc:`~.app.ApplicationRegistrationError`"
+msgstr ""
+
+#: ../../ext/app/api.rst:467
+msgid ":exc:`~.app.ApplicationRegistrationMaxDepthError`"
+msgstr ""
+
+#: ../../ext/app/api.rst:468
+msgid ":exc:`~.app.ApplicationRegistrationExistingParentOptions`"
+msgstr ""
+

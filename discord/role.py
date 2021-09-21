@@ -26,11 +26,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
 
+from .asset import Asset
 from .colour import Colour
 from .errors import InvalidArgument
 from .mixins import Hashable
 from .permissions import Permissions
-from .utils import MISSING, _get_as_snowflake, snowflake_time
+from .utils import MISSING, _bytes_to_base64_data, _get_as_snowflake, snowflake_time
 
 __all__ = (
     "RoleTags",
@@ -176,6 +177,7 @@ class Role(Hashable):
         "id",
         "name",
         "_permissions",
+        "_icon",
         "_colour",
         "position",
         "managed",
@@ -242,6 +244,7 @@ class Role(Hashable):
         self.hoist: bool = data.get("hoist", False)
         self.managed: bool = data.get("managed", False)
         self.mentionable: bool = data.get("mentionable", False)
+        self._icon: str = data.get("icon", None)
         self.tags: Optional[RoleTags]
 
         try:
@@ -317,6 +320,20 @@ class Role(Hashable):
         role_id = self.id
         return [member for member in all_members if member._roles.has(role_id)]
 
+    @property
+    def icon(self) -> Optional[Asset]:
+        """Optional[:class:`Asset`]: Returns the icon asset associated with this role, can be ``None``.
+
+        .. versionadded: 2.0
+
+        .. note::
+
+            The guild needs to have the ``ROLE_ICONS`` features to have this enabled.
+        """
+        if not self._icon:
+            return None
+        return Asset._from_icon(self._state, self.id, self._icon, "role")
+
     async def _move(self, position: int, reason: Optional[str]) -> None:
         if position <= 0:
             raise InvalidArgument("Cannot move role to position 0 or below")
@@ -347,6 +364,7 @@ class Role(Hashable):
         permissions: Permissions = MISSING,
         colour: Union[Colour, int] = MISSING,
         color: Union[Colour, int] = MISSING,
+        icon: Optional[bytes] = MISSING,
         hoist: bool = MISSING,
         mentionable: bool = MISSING,
         position: int = MISSING,
@@ -366,6 +384,7 @@ class Role(Hashable):
 
         .. versionchanged:: 2.0
             Edits are no longer in-place, the newly edited role is returned instead.
+            Also added a new ``icon`` parameter to change role icons.
 
         Parameters
         -----------
@@ -375,6 +394,8 @@ class Role(Hashable):
             The new permissions to change to.
         colour: Union[:class:`Colour`, :class:`int`]
             The new colour to change to. (aliased to color as well)
+        icon: :class:`bytes`
+            A bytes object representing the role icon.
         hoist: :class:`bool`
             Indicates if the role should be shown separately in the member list.
         mentionable: :class:`bool`
@@ -418,6 +439,12 @@ class Role(Hashable):
 
         if permissions is not MISSING:
             payload["permissions"] = permissions.value
+
+        if icon is not MISSING:
+            if icon is None:
+                payload["icon"] = icon
+            else:
+                payload["icon"] = _bytes_to_base64_data(icon)
 
         if hoist is not MISSING:
             payload["hoist"] = hoist

@@ -1,0 +1,165 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 09:34+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/discord.pot\n"
+"X-Crowdin-File-ID: 53\n"
+"Language: id_ID\n"
+
+#: ../../discord.rst:6
+msgid "Creating a Bot Account"
+msgstr "Membuat akun Bot baru"
+
+#: ../../discord.rst:8
+msgid "In order to work with the library and the Discord API in general, we must first create a Discord Bot account."
+msgstr "Agar kita dapat menggunakan modul dan API Discord, pertama-tama kita harus membuat akun Bot Discord."
+
+#: ../../discord.rst:10
+msgid "Creating a Bot account is a pretty straightforward process."
+msgstr "Membuat akun Bot sangatlah mudah."
+
+#: ../../discord.rst:12
+#: ../../discord.rst:66
+msgid "Make sure you're logged on to the `Discord website <https://discord.com>`_."
+msgstr "Pastikan anda masuk ke `Website Discord <https://discord.com>`_."
+
+#: ../../discord.rst:13
+#: ../../discord.rst:67
+msgid "Navigate to the `application page <https://discord.com/developers/applications>`_"
+msgstr "Lalu pilih `application page <https://discord.com/developers/applications>`_"
+
+#: ../../discord.rst:14
+msgid "Click on the \"New Application\" button."
+msgstr "Klik tombol \"New Application\"."
+
+#: ../../discord.rst:0
+msgid "The new application button."
+msgstr "Tombol \"New application\"."
+
+#: ../../discord.rst:19
+msgid "Give the application a name and click \"Create\"."
+msgstr "Berikan nama untuk aplikasi anda dan klik \"Create\"."
+
+#: ../../discord.rst:0
+msgid "The new application form filled in."
+msgstr "Form aplikasi baru yang sudah terisi."
+
+#: ../../discord.rst:24
+msgid "Create a Bot User by navigating to the \"Bot\" tab and clicking \"Add Bot\"."
+msgstr "Buat akun bot dengan menuju ke laman \"Bot\" dan mengeklik \"Add Bot\"."
+
+#: ../../discord.rst:26
+msgid "Click \"Yes, do it!\" to continue."
+msgstr "Klik \"Yes, do it!\" untuk melanjutkan."
+
+#: ../../discord.rst:0
+msgid "The Add Bot button."
+msgstr "Tombol \"Add Bot\"."
+
+#: ../../discord.rst:30
+msgid "Make sure that **Public Bot** is ticked if you want others to invite your bot."
+msgstr "Pastikan boks **Public Bot** dicentang jika anda ingin orang lain menambah bot anda."
+
+#: ../../discord.rst:32
+msgid "You should also make sure that **Require OAuth2 Code Grant** is unchecked unless you are developing a service that needs it. If you're unsure, then **leave it unchecked**."
+msgstr "Jika bisa, pastikan **Require OAuth2 Code Grant** tidak dicentang jika anda tidak membuat layanan yang membutuhkannya. Jika anda tidak yakin, **biarkan tidak dicentang**."
+
+#: ../../discord.rst:0
+msgid "How the Bot User options should look like for most people."
+msgstr "Bagaimana opsi akun Bot terlihat untuk kebanyakan orang."
+
+#: ../../discord.rst:38
+msgid "Copy the token using the \"Copy\" button."
+msgstr "Salin token bot dengan mengeklik tombol \"Copy\"."
+
+#: ../../discord.rst:40
+msgid "**This is not the Client Secret at the General Information page.**"
+msgstr "**Ini bukanlah \"Client Secret\" pada laman \"General Information\".**"
+
+#: ../../discord.rst:44
+msgid "It should be worth noting that this token is essentially your bot's password. You should **never** share this with someone else. In doing so, someone can log in to your bot and do malicious things, such as leaving servers, ban all members inside a server, or pinging everyone maliciously."
+msgstr "Perlu dicatat bahwa token anda esensinya adalah password Bot anda. Pastikan anda **tidak** menyebarkannya kepada orang lain. Jika dilakukan, orang tersebut dapat mengakses Bot anda dan melakukan hal yang tidak-tidak, seperti keluar dari peladen, mem-ban semua pengguna didalam peladen, atau menggunakan @everyone."
+
+#: ../../discord.rst:49
+msgid "The possibilities are endless, so **do not share this token.**"
+msgstr "Banyak sekali kemungkinan yang tidak diinginkan, jadi **jangan sebarkan token anda!**"
+
+#: ../../discord.rst:51
+msgid "If you accidentally leaked your token, click the \"Regenerate\" button as soon as possible. This revokes your old token and re-generates a new one. Now you need to use the new token to login."
+msgstr "Jika anda tidak sengaja menyebarkan token anda, klik tombol \"Regenerate\" secepat mungkin. Ini akan menghapus token lama anda dan membuat token baru. Sekarang anda dapat menggunakan token baru untuk masuk ke akun Bot anda."
+
+#: ../../discord.rst:55
+msgid "And that's it. You now have a bot account and you can login with that token."
+msgstr "Selesai. Anda sekarang dapat masuk ke akun Bot dengan token."
+
+#: ../../discord.rst:60
+msgid "Inviting Your Bot"
+msgstr "Menambah Bot Anda"
+
+#: ../../discord.rst:62
+msgid "So you've made a Bot User but it's not actually in any server."
+msgstr "Jadi anda sudah membuat akun Bot tapi bot-nya tidak ada di peladen manapun."
+
+#: ../../discord.rst:64
+msgid "If you want to invite your bot you must create an invite URL for it."
+msgstr "Jika anda ingin menambah bot, anda harus membuat \"Invite URL\" terlebih dahulu."
+
+#: ../../discord.rst:68
+msgid "Click on your bot's page."
+msgstr "Klik laman bot anda."
+
+#: ../../discord.rst:69
+msgid "Go to the \"OAuth2\" tab."
+msgstr "Klik laman \"OAuth2\"."
+
+#: ../../discord.rst:0
+msgid "How the OAuth2 page should look like."
+msgstr "Bagaimana laman OAuth2 terlihat."
+
+#: ../../discord.rst:74
+msgid "Tick the \"bot\" checkbox under \"scopes\"."
+msgstr "Centang \"bot\" dibagian \"scopes\"."
+
+#: ../../discord.rst:0
+msgid "The scopes checkbox with \"bot\" ticked."
+msgstr "Boks \"bot\" pada bagian scopes harusnya tercentang."
+
+#: ../../discord.rst:79
+msgid "Tick the permissions required for your bot to function under \"Bot Permissions\"."
+msgstr "Centang semua permissions yang dibutuhkan agar bot anda dapat berfungsi di bagian \"Bot Permissions\"."
+
+#: ../../discord.rst:81
+msgid "Please be aware of the consequences of requiring your bot to have the \"Administrator\" permission."
+msgstr "Mohon hati-hati jika anda memberikan akses \"Administrator\" untuk bot anda."
+
+#: ../../discord.rst:83
+msgid "Bot owners must have 2FA enabled for certain actions and permissions when added in servers that have Server-Wide 2FA enabled. Check the `2FA support page <https://support.discord.com/hc/en-us/articles/219576828-Setting-up-Two-Factor-Authentication>`_ for more information."
+msgstr "Pemilik Bot harus mengaktifkan 2FA untuk aksi dan hak tertentu ketika menambah bot ke peladen di mana dibutuhkan akses 2FA. Mohon kunjungi `laman bantuan 2FA <https://support.discord.com/hc/en-us/articles/219576828-Setting-up-Two-Factor-Authentication>`_ untuk info lebih lanjut."
+
+#: ../../discord.rst:0
+msgid "The permission checkboxes with some permissions checked."
+msgstr "Pengaturan permission dengan beberapa hal yang dicentang."
+
+#: ../../discord.rst:88
+msgid "Now the resulting URL can be used to add your bot to a server. Copy and paste the URL into your browser, choose a server to invite the bot to, and click \"Authorize\"."
+msgstr "Harusnya anda mendapatkan URL di mana anda dapat menggunakannya untuk menambah Bot ke peladen anda. Salin dan timpa URL ke browser anda, pilih peladen, lalu klik \"Authorize\"."
+
+#: ../../discord.rst:93
+msgid "The person adding the bot needs \"Manage Server\" permissions to do so."
+msgstr "Orang yang menambahkan bot harus memiliki hak \"Manage Server\" di peladen tersebut."
+
+#: ../../discord.rst:95
+msgid "If you want to generate this URL dynamically at run-time inside your bot and using the :class:`discord.Permissions` interface, you can use :func:`discord.utils.oauth_url`."
+msgstr "Jika anda ingin membuat URL ini secara dinamik saat bot sudah jalan dengan menggunakan :class:`discord.Permissions`, anda dapat menggunakan :func:`discord.utils.oauth_url`."
+

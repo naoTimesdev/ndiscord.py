@@ -209,6 +209,7 @@ class Guild(Hashable):
         - ``PARTNERED``: Guild is a partnered server.
         - ``PREVIEW_ENABLED``: Guild can be viewed before being accepted via Membership Screening.
         - ``PRIVATE_THREADS``: Guild has access to create private threads.
+        - ``ROLE_ICONS``: Guild has access to set icon for roles.
         - ``SEVEN_DAY_THREAD_ARCHIVE``: Guild has access to the seven day archive time for threads.
         - ``THREE_DAY_THREAD_ARCHIVE``: Guild has access to the three day archive time for threads.
         - ``TICKETED_EVENTS_ENABLED``: Guild has enabled ticketed events.
@@ -2523,6 +2524,7 @@ class Guild(Hashable):
         name: str = ...,
         permissions: Permissions = ...,
         colour: Union[Colour, int] = ...,
+        icon: Optional[bytes] = ...,
         hoist: bool = ...,
         mentionable: bool = ...,
     ) -> Role:
@@ -2536,6 +2538,7 @@ class Guild(Hashable):
         name: str = ...,
         permissions: Permissions = ...,
         color: Union[Colour, int] = ...,
+        icon: Optional[bytes] = ...,
         hoist: bool = ...,
         mentionable: bool = ...,
     ) -> Role:
@@ -2548,6 +2551,7 @@ class Guild(Hashable):
         permissions: Permissions = MISSING,
         color: Union[Colour, int] = MISSING,
         colour: Union[Colour, int] = MISSING,
+        icon: Optional[bytes] = MISSING,
         hoist: bool = MISSING,
         mentionable: bool = MISSING,
         reason: Optional[str] = None,
@@ -2564,6 +2568,9 @@ class Guild(Hashable):
         .. versionchanged:: 1.6
             Can now pass ``int`` to ``colour`` keyword-only parameter.
 
+        .. versionchanged:: 2.0
+            Added ``icon`` parameter.
+
         Parameters
         -----------
         name: :class:`str`
@@ -2573,6 +2580,8 @@ class Guild(Hashable):
         colour: Union[:class:`Colour`, :class:`int`]
             The colour for the role. Defaults to :meth:`Colour.default`.
             This is aliased to ``color`` as well.
+        icon: Optional[:class:`bytes`]
+            The raw bytes for the role icon.
         hoist: :class:`bool`
             Indicates if the role should be shown separately in the member list.
             Defaults to ``False``.
@@ -2607,6 +2616,12 @@ class Guild(Hashable):
             fields["color"] = actual_colour
         else:
             fields["color"] = actual_colour.value
+
+        if icon is not MISSING:
+            if icon is None:
+                fields["icon"] = icon
+            else:
+                fields["icon"] = utils._bytes_to_base64_data(icon)
 
         if hoist is not MISSING:
             fields["hoist"] = hoist

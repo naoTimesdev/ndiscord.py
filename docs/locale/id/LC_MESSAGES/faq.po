@@ -1,0 +1,428 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/faq.pot\n"
+"X-Crowdin-File-ID: 57\n"
+"Language: id_ID\n"
+
+#: ../../faq.rst:7
+msgid "Frequently Asked Questions"
+msgstr "Pertanyaan Yang Sering Diajukan"
+
+#: ../../faq.rst:9
+msgid "This is a list of Frequently Asked Questions regarding using ``ndiscord.py`` and its extension modules. Feel free to suggest a new question or submit one via pull requests."
+msgstr "Di halaman ini anda dapat melihat berbagai macam pertanyaan seputar ``ndiscord.py`` dan semua ekstensinya. Jangan ragu untuk membuat saran baru atau membuat pull request."
+
+#: ../../faq.rst:13
+msgid "Questions"
+msgstr "Pertanyaan"
+
+#: ../../faq.rst:16
+msgid "Coroutines"
+msgstr "Coroutines"
+
+#: ../../faq.rst:18
+msgid "Questions regarding coroutines and asyncio belong here."
+msgstr "Pertanyaan tentang coroutines dan asyncio akan dijelaskan di sini."
+
+#: ../../faq.rst:21
+msgid "What is a coroutine?"
+msgstr "Apa itu coroutine?"
+
+#: ../../faq.rst:23
+msgid "A |coroutine_link|_ is a function that must be invoked with ``await`` or ``yield from``. When Python encounters an ``await`` it stops the function's execution at that point and works on other things until it comes back to that point and finishes off its work. This allows for your program to be doing multiple things at the same time without using threads or complicated multiprocessing."
+msgstr "|coroutine_link|_ merupakan fungsi yang harus dipakai dengan kata ``await`` atau ``yield from``. Ketika Python menemukan ``await`` eksekusi fungsi tersebut akan dihentikan sementara dan melakukan hal lain dan kembali ke fungsi tersebut dan membereskan tugasnya. Ini memungkinkan program anda untuk melakukan berbagai hal secara bersamaan tanpa menggunakan ``threads`` atau ``multiprocessing``."
+
+#: ../../faq.rst:28
+msgid "**If you forget to await a coroutine then the coroutine will not run. Never forget to await a coroutine.**"
+msgstr "**Jika anda melupakan await, maka coroutine tidak akan jalan. Jangan lupakan await untuk coroutine.**"
+
+#: ../../faq.rst:31
+msgid "Where can I use ``await``\\?"
+msgstr "Di mana saya bisa menggunakan ``await``?"
+
+#: ../../faq.rst:33
+msgid "You can only use ``await`` inside ``async def`` functions and nowhere else."
+msgstr "Anda hanya dapat menggunakan ``await`` di dalam fungsi ``async def`` saja."
+
+#: ../../faq.rst:36
+msgid "What does \"blocking\" mean?"
+msgstr "Maksudnya \"blocking\" itu apa?"
+
+#: ../../faq.rst:38
+msgid "In asynchronous programming a blocking call is essentially all the parts of the function that are not ``await``. Do not despair however, because not all forms of blocking are bad! Using blocking calls is inevitable, but you must work to make sure that you don't excessively block functions. Remember, if you block for too long then your bot will freeze since it has not stopped the function's execution at that point to do other things."
+msgstr "Di asynchronous programming, panggilan blocking intinya adalah semua bagian fungsi yang tidak ``await``. Jangan hilang harapan dulu, soalnya tidak semua blocking itu buruk! Menggunakan blocking itu tidak dapat dihindari, tapi anda harus dapat membuat fungsi itu tidak terlalu ngeblokir fungsi lain. Ingat, jika anda ngeblock terlalu lama bot anda akan berhenti berfungsi dikarenakan belum selesai mengeksekusi fungsi yang anda gunakan dan tidak bisa melakukan hal lain."
+
+#: ../../faq.rst:43
+msgid "If logging is enabled, this library will attempt to warn you that blocking is occurring with the message: ``Heartbeat blocked for more than N seconds.`` See :ref:`logging_setup` for details on enabling logging."
+msgstr "Jika logging diaktifkan, modul ini akan mengingatkan anda kalau sedang terjadi blocking dengan pesan: ``Heartbeat blocked for more than N seconds.`` Lihat :ref:`logging_setup` untuk info lebih lanjut."
+
+#: ../../faq.rst:47
+msgid "A common source of blocking for too long is something like :func:`time.sleep`. Don't do that. Use :func:`asyncio.sleep` instead. Similar to this example: ::"
+msgstr "Salah satu contoh blocking yang terlalu lama adalah :func:`time.sleep`. Jangan lakukan itu. Gunakan :func:`asyncio.sleep`. Kurang lebih seperti ini: ::"
+
+#: ../../faq.rst:56
+msgid "Another common source of blocking for too long is using HTTP requests with the famous module :doc:`req:index`. While :doc:`req:index` is an amazing module for non-asynchronous programming, it is not a good choice for :mod:`asyncio` because certain requests can block the event loop too long. Instead, use the :doc:`aiohttp <aio:index>` library which is installed on the side with this library."
+msgstr "Salah satu contoh blocking lain adalah HTTP requests yang terlalu lama dengan modul :doc:`req:index`. Walaupun modul :doc:`req:index` itu bagus untuk modul non-asynchronous, modul tersebut tidak cocok untuk :mod:`asyncio` karena beberapa request akan ngeblock event loop terlalu lama. Jadi, gunakan modul :doc:`aiohttp <aio:index>` yang harusnya terinstall bersama dengan modul ``ndiscord.py``."
+
+#: ../../faq.rst:61
+msgid "Consider the following example: ::"
+msgstr "Perhatikan contoh berikut: ::"
+
+#: ../../faq.rst:77
+msgid "General"
+msgstr "Pertanyaan Umum"
+
+#: ../../faq.rst:79
+msgid "General questions regarding library usage belong here."
+msgstr "Pertanyaan umum tentang penggunaan modul akan dijelaskan di sini."
+
+#: ../../faq.rst:82
+msgid "Where can I find usage examples?"
+msgstr "Di mana saya bisa menemukan contoh penggunaan?"
+
+#: ../../faq.rst:84
+msgid "Example code can be found in the `examples folder <https://github.com/naoTimesdev/ndiscord.py/tree/master/examples>`_ in the repository."
+msgstr "Contoh dapat anda temukan di `folder examples <https://github.com/naoTimesdev/ndiscord.py/tree/master/examples>`_ di repository."
+
+#: ../../faq.rst:88
+msgid "How do I set the \"Playing\" status?"
+msgstr "Bagaimana saya mengatur status \"Playing\"?"
+
+#: ../../faq.rst:90
+msgid "The ``activity`` keyword argument may be passed in the :class:`Client` constructor or :meth:`Client.change_presence`, given an :class:`Activity` object."
+msgstr "Argumen ``activity`` dapat anda berikan ke :class:`Client` atau :meth:`Client.change_presence`, dengan memberikan obyek :class:`Activity`."
+
+#: ../../faq.rst:92
+msgid "The constructor may be used for static activities, while :meth:`Client.change_presence` may be used to update the activity at runtime."
+msgstr "``Client`` hanya dapat digunakan pas awal-awal, sementara :meth:`Client.change_presence` dapat digunakan saat bot sudah aktif."
+
+#: ../../faq.rst:96
+msgid "It is highly discouraged to use :meth:`Client.change_presence` or API calls in :func:`on_ready` as this event may be called many times while running, not just once."
+msgstr "Tidak disarankan untuk menggunakan :meth:`Client.change_presence` atau memanggil API lain di :func:`on_ready` dikarenakan event ini dapat dipanggil berkali-kali saat bot aktif, bukan sekali saja."
+
+#: ../../faq.rst:98
+msgid "There is a high chance of disconnecting if presences are changed right after connecting."
+msgstr "Ada kemungkinan tinggi bot anda akan terputus dari Discord jika presence diubah saat bot sedang menyala."
+
+#: ../../faq.rst:100
+msgid "The status type (playing, listening, streaming, watching) can be set using the :class:`ActivityType` enum. For memory optimisation purposes, some activities are offered in slimmed-down versions:"
+msgstr "Tipe status (playing, listening, streaming, watching) dapat diatur dengan enum :class:`ActivityType`. Untuk optimisasi memori, beberapa aktivitas dibuat versi simpelnya:"
+
+#: ../../faq.rst:103
+msgid ":class:`Game`"
+msgstr ":class:`Game`"
+
+#: ../../faq.rst:104
+msgid ":class:`Streaming`"
+msgstr ":class:`Streaming`"
+
+#: ../../faq.rst:106
+msgid "Putting both of these pieces of info together, you get the following: ::"
+msgstr "Menggunakan keduanya bersama, anda akan melihat hal seperti ini: ::"
+
+#: ../../faq.rst:115
+msgid "How do I send a message to a specific channel?"
+msgstr "Bagaimana saya mengirim pesan ke kanal tertentu?"
+
+#: ../../faq.rst:117
+msgid "You must fetch the channel directly and then call the appropriate method. Example: ::"
+msgstr "Anda harus mengambil kanalnya terlebih dahulu dengan metode yang benar. Contoh: ::"
+
+#: ../../faq.rst:123
+msgid "How do I send a DM?"
+msgstr "Bagaimana saya mengirim DM?"
+
+#: ../../faq.rst:125
+msgid "Get the :class:`User` or :class:`Member` object and call :meth:`abc.Messageable.send`. For example: ::"
+msgstr "Gunakan obyek :class:`User` atau :class:`Member` dan panggil :meth:`abc.Messageable.send`. Contohnya: ::"
+
+#: ../../faq.rst:130
+msgid "If you are responding to an event, such as :func:`on_message`, you already have the :class:`User` object via :attr:`Message.author`: ::"
+msgstr "Jika anda merespon sebuah event, seperti :func:`on_message`, anda harusnya mendapatkan obyek :class:`User` melalui :attr:`Message.author`: ::"
+
+#: ../../faq.rst:135
+msgid "How do I get the ID of a sent message?"
+msgstr "Bagaimana saya mendapatkan ID pesan?"
+
+#: ../../faq.rst:137
+msgid ":meth:`abc.Messageable.send` returns the :class:`Message` that was sent. The ID of a message can be accessed via :attr:`Message.id`: ::"
+msgstr ":meth:`abc.Messageable.send` memberikan obyek :class:`Message` saat pesan terkirim. ID pesan dapat diakses dengan :attr:`Message.id`: ::"
+
+#: ../../faq.rst:144
+msgid "How do I upload an image?"
+msgstr "Bagaimana saya mengunggah gambar?"
+
+#: ../../faq.rst:146
+msgid "To upload something to Discord you have to use the :class:`File` object."
+msgstr "Untuk mengunggah sesuatu ke Discord, anda harus menggunakan obyek :class:`File`."
+
+#: ../../faq.rst:148
+msgid "A :class:`File` accepts two parameters, the file-like object (or file path) and the filename to pass to Discord when uploading."
+msgstr "Obyek :class:`File` menerima 2 parameter, obyek file-like (atau path file) dan nama file untuk diberikan ke Discord saat diunggah."
+
+#: ../../faq.rst:151
+msgid "If you want to upload an image it's as simple as: ::"
+msgstr "Jika anda ingin mengunggah gambar, contohnya seperti ini: ::"
+
+#: ../../faq.rst:155
+msgid "If you have a file-like object you can do as follows: ::"
+msgstr "Jika anda mempunyai obyek file-like, anda dapat mengikuti ini: ::"
+
+#: ../../faq.rst:160
+msgid "To upload multiple files, you can use the ``files`` keyword argument instead of ``file``\\: ::"
+msgstr "Untuk mengunggah file lebih dari satu, anda dapat menggunakan parameter ``files`` daripada ``file``: ::"
+
+#: ../../faq.rst:168
+msgid "If you want to upload something from a URL, you will have to use an HTTP request using :doc:`aiohttp <aio:index>` and then pass an :class:`io.BytesIO` instance to :class:`File` like so:"
+msgstr "Jika anda ingin mengunggah sesuatu dari URL, anda harus menggunakan HTTP request dengan modul :doc:`aiohttp <aio:index>` dan berikan obyek :class:`io.BytesIO` ke obyek :class:`File` seperti:"
+
+#: ../../faq.rst:185
+msgid "How can I add a reaction to a message?"
+msgstr "Bagaimana saya menambah reaksi ke sebuah pesan?"
+
+#: ../../faq.rst:187
+msgid "You use the :meth:`Message.add_reaction` method."
+msgstr "Anda dapat menggunakan metode :meth:`Message.add_reaction`."
+
+#: ../../faq.rst:189
+msgid "If you want to use unicode emoji, you must pass a valid unicode code point in a string. In your code, you can write this in a few different ways:"
+msgstr "Jika anda ingin menggunakan emoji, anda harus memberikan emoji code point sebagai string. Anda dapat menulis kodenya dengan berbagai cara:"
+
+#: ../../faq.rst:191
+msgid "``'👍'``"
+msgstr "``'👍'``"
+
+#: ../../faq.rst:192
+msgid "``'\\U0001F44D'``"
+msgstr "``'\\U0001F44D'``"
+
+#: ../../faq.rst:193
+msgid "``'\\N{THUMBS UP SIGN}'``"
+msgstr "``'\\N{THUMBS UP SIGN}'``"
+
+#: ../../faq.rst:195
+#: ../../faq.rst:211
+#: ../../faq.rst:286
+#: ../../faq.rst:302
+#: ../../faq.rst:322
+msgid "Quick example: ::"
+msgstr "Contoh: ::"
+
+#: ../../faq.rst:201
+msgid "In case you want to use emoji that come from a message, you already get their code points in the content without needing to do anything special. You **cannot** send ``':thumbsup:'`` style shorthands."
+msgstr "Jika anda ingin menggunakan emoji dari pesan, anda sudah mendapatkan code point di bagian konten tanpa harus melakukan hal macam-macam. Anda **tidak dapat** menggunakan ``:thumbsup:``."
+
+#: ../../faq.rst:204
+msgid "For custom emoji, you should pass an instance of :class:`Emoji`. You can also pass a ``'<:name:id>'`` string, but if you can use said emoji, you should be able to use :meth:`Client.get_emoji` to get an emoji via ID or use :func:`utils.find`/ :func:`utils.get` on :attr:`Client.emojis` or :attr:`Guild.emojis` collections."
+msgstr "Untuk emoji kustom, anda harus menggunakan obyek :class:`Emoji`. Anda juga dapat menggunakan string ``<:name:id>``, tapi jika anda dapat mengapatkan emoji yang diinginkan, anda harusnya dapat menggunakan :meth:`Client.get_emoji` untuk mendapatkan emoji melalui ID atau gunakan metode :func:`utils.find`/ :func:`utils.get` pada :attr:`Client.emojis` atau :attr:`Guild.emojis`."
+
+#: ../../faq.rst:208
+msgid "The name and ID of a custom emoji can be found with the client by prefixing ``:custom_emoji:`` with a backslash. For example, sending the message ``\\:python3:`` with the client will result in ``<:python3:232720527448342530>``."
+msgstr "Nama dan ID emoji kustom dapat ditemukan di klien Discord dengan menambah backslash ke teks ``:custom_emoji:``. Contohnya, mengirim pesan ``\\:python3:`` akan mengubahnya menjadi ``<:python3:232720527448342530>``."
+
+#: ../../faq.rst:228
+msgid "How do I pass a coroutine to the player's \"after\" function?"
+msgstr "Bagaimana saya memberikan coroutine setelah fungsi \"after\"?"
+
+#: ../../faq.rst:230
+msgid "The library's music player launches on a separate thread, ergo it does not execute inside a coroutine. This does not mean that it is not possible to call a coroutine in the ``after`` parameter. To do so you must pass a callable that wraps up a couple of aspects."
+msgstr "Modul penyetel musik jalan di thread lain, modulnya tidak jalan di dalam coroutine. Ini bukan berarti tidak mungkin untuk memberikan coroutine ke parameter ``after``. Untuk melakukan hal tersebut anda harus memberikan sebuah fungsi dan \"membungkusnya\" dengan beberapa aspek."
+
+#: ../../faq.rst:234
+msgid "The first gotcha that you must be aware of is that calling a coroutine is not a thread-safe operation. Since we are technically in another thread, we must take caution in calling thread-safe operations so things do not bug out. Luckily for us, :mod:`asyncio` comes with a :func:`asyncio.run_coroutine_threadsafe` function that allows us to call a coroutine from another thread."
+msgstr "Hal pertama yang harus anda perhatikan adalah, coroutine tidak \"thread-safe\". Secara teknis modul voice berjalan di thread lain, jadi kita harus berhati-hati memanggil fungsi thread-safe agar tidak terjadi kesalahan. Untungnya, :mod:`asyncio` memiliki fungsi :func:`asyncio.run_coroutine_threadsafe` yang dapat kita gunakan untuk memanggil coroutine di thread lain."
+
+#: ../../faq.rst:239
+msgid "However, this function returns a :class:`~concurrent.futures.Future` and to actually call it we have to fetch its result. Putting all of this together we can do the following: ::"
+msgstr "Tetapi, fungsi ini mengembalikan obyek :class:`~concurrent.futures.Future` dan untuk memanggilnya kita harus mengambil hasilnya terlebih dahulu, Setelah menggabungkan semuanya menjadi satu, kita dapat melakukan ini: ::"
+
+#: ../../faq.rst:254
+msgid "How do I run something in the background?"
+msgstr "Bagaimana saya menjalankan sesuatu di background?"
+
+#: ../../faq.rst:256
+msgid "`Check the background_task.py example. <https://github.com/naoTimesdev/ndiscord.py/blob/master/examples/background_task.py>`_"
+msgstr "Coba periksa `contoh background_task.py <https://github.com/naoTimesdev/ndiscord.py/blob/master/examples/background_task.py>_"
+
+#: ../../faq.rst:259
+msgid "How do I get a specific model?"
+msgstr "Bagaimana saya mengambil obyek tertentu?"
+
+#: ../../faq.rst:261
+msgid "There are multiple ways of doing this. If you have a specific model's ID then you can use one of the following functions:"
+msgstr "Ada berbagai cara untuk melakukannya. Jika anda memiliki ID obyek tertentu, anda dapat menggunakan fungsi ini:"
+
+#: ../../faq.rst:264
+msgid ":meth:`Client.get_channel`"
+msgstr ":meth:`Client.get_channel`"
+
+#: ../../faq.rst:265
+msgid ":meth:`Client.get_guild`"
+msgstr ":meth:`Client.get_guild`"
+
+#: ../../faq.rst:266
+msgid ":meth:`Client.get_user`"
+msgstr ":meth:`Client.get_user`"
+
+#: ../../faq.rst:267
+msgid ":meth:`Client.get_emoji`"
+msgstr ":meth:`Client.get_emoji`"
+
+#: ../../faq.rst:268
+msgid ":meth:`Guild.get_member`"
+msgstr ":meth:`Guild.get_member`"
+
+#: ../../faq.rst:269
+msgid ":meth:`Guild.get_channel`"
+msgstr ":meth:`Guild.get_channel`"
+
+#: ../../faq.rst:270
+msgid ":meth:`Guild.get_role`"
+msgstr ":meth:`Guild.get_role`"
+
+#: ../../faq.rst:272
+msgid "The following use an HTTP request:"
+msgstr "Untuk yang ini menggunakan HTTP request:"
+
+#: ../../faq.rst:274
+msgid ":meth:`abc.Messageable.fetch_message`"
+msgstr ":meth:`abc.Messageable.fetch_message`"
+
+#: ../../faq.rst:275
+msgid ":meth:`Client.fetch_user`"
+msgstr ":meth:`Client.fetch_user`"
+
+#: ../../faq.rst:276
+msgid ":meth:`Client.fetch_guilds`"
+msgstr ":meth:`Client.fetch_guilds`"
+
+#: ../../faq.rst:277
+msgid ":meth:`Client.fetch_guild`"
+msgstr ":meth:`Client.fetch_guild`"
+
+#: ../../faq.rst:278
+msgid ":meth:`Guild.fetch_emoji`"
+msgstr ":meth:`Guild.fetch_emoji`"
+
+#: ../../faq.rst:279
+msgid ":meth:`Guild.fetch_emojis`"
+msgstr ":meth:`Guild.fetch_emojis`"
+
+#: ../../faq.rst:280
+msgid ":meth:`Guild.fetch_member`"
+msgstr ":meth:`Guild.fetch_member`"
+
+#: ../../faq.rst:283
+msgid "If the functions above do not help you, then use of :func:`utils.find` or :func:`utils.get` would serve some use in finding specific models."
+msgstr "Jika fungsi diatas tidak dapat membantu, anda dapat mencoba fungsi :func:`utils.find` atau :func:`utils.get` yang mungkin dapat membantu mencari kelas tertentu."
+
+#: ../../faq.rst:297
+msgid "How do I make a web request?"
+msgstr "Bagaimana saya melakukan web request?"
+
+#: ../../faq.rst:299
+msgid "To make a request, you should use a non-blocking library. This library already uses and requires a 3rd party library for making requests, :doc:`aiohttp <aio:index>`."
+msgstr "Untuk melakukan request, disarankan menggunakan modul non-blocking. Modul ini sudah menggunakan modul 3rd-party untuk melakukan requests, :doc:`aiohttp <aio:index>`."
+
+#: ../../faq.rst:309
+msgid "See `aiohttp's full documentation <http://aiohttp.readthedocs.io/en/stable/>`_ for more information."
+msgstr "Mohon kunjungi `dokumentasi penuh aiohttp <http://aiohttp.readthedocs.io/en/stable/>`_ untuk info lebih lanjut."
+
+#: ../../faq.rst:312
+msgid "How do I use a local image file for an embed image?"
+msgstr "Bagaimana saya menggunakan gambar lokal untuk dimasukan ke embed?"
+
+#: ../../faq.rst:314
+msgid "Discord special-cases uploading an image attachment and using it within an embed so that it will not display separately, but instead in the embed's thumbnail, image, footer or author icon."
+msgstr "Discord memiliki cara khusus untuk mengunggah gambar dan menggunkannya di dalam embed agar tidak ditampilkan terpisah, tetapi di dalam embed thumbnail, image, footer, atau author icon."
+
+#: ../../faq.rst:317
+msgid "To do so, upload the image normally with :meth:`abc.Messageable.send`, and set the embed's image URL to ``attachment://image.png``, where ``image.png`` is the filename of the image you will send."
+msgstr "Untuk melakukannya, unggah gambar seperti biasa dengan :meth:`abc.Messageable.send`, dan atur URL gambar di embed ke ``attachment://image.png``, di mana ``image.png`` merupakan nama file yang anda kirim."
+
+#: ../../faq.rst:331
+msgid "Due to a Discord limitation, filenames may not include underscores."
+msgstr "Dikarenakan limitasi Discord, nama file tidak dapat mengandung garis bawah."
+
+#: ../../faq.rst:334
+msgid "Is there an event for audit log entries being created?"
+msgstr "Apakah ada event untuk entri audit log baru?"
+
+#: ../../faq.rst:336
+msgid "Since Discord does not dispatch this information in the gateway, the library cannot provide this information. This is currently a Discord limitation."
+msgstr "Dikarenakan Discord tidak memberikan informasi ini lewat gateway mereka, modul ini tidak dapat memberikan informasi ini. Untuk sekarang ini adalah limitasi Discord."
+
+#: ../../faq.rst:340
+msgid "Commands Extension"
+msgstr "Ekstensi Perintah"
+
+#: ../../faq.rst:342
+msgid "Questions regarding ``discord.ext.commands`` belong here."
+msgstr "Pertanyaan tentang ``discord.ext.commands`` akan dijelaskan di sini."
+
+#: ../../faq.rst:345
+msgid "Why does ``on_message`` make my commands stop working?"
+msgstr "Kenapa ``on_message`` membuat semua perintah saya berhenti bekerja?"
+
+#: ../../faq.rst:347
+msgid "Overriding the default provided ``on_message`` forbids any extra commands from running. To fix this, add a ``bot.process_commands(message)`` line at the end of your ``on_message``. For example: ::"
+msgstr "Melakukan override fungsi default ``on_message`` berarti membuat bot tidak dapat menjalankan perintah lain yang ada didalamnya. Untuk memperbaiki ini, mohon tambahkan ``bot.process_commands(message)`` diakhir fungsi ``on_message`` anda. Sebagai contoh: ::"
+
+#: ../../faq.rst:356
+msgid "Alternatively, you can place your ``on_message`` logic into a **listener**. In this setup, you should not manually call ``bot.process_commands()``. This also allows you to do multiple things asynchronously in response to a message. Example::"
+msgstr "Cara lainnya, anda dapat menaruh ``on_message`` menjadi **listener**. Jika anda melakukan ini, anda tidak perlu memanggil fungsi ``bot.process_commands()``. Ini juga memungkinkan anda untuk melakukan berbagai hal dengan asynchronously untuk menjawab semua pesan. Contoh::"
+
+#: ../../faq.rst:366
+msgid "Why do my arguments require quotes?"
+msgstr "Kenapa argument saya membutuhkan kutip?"
+
+#: ../../faq.rst:368
+msgid "In a simple command defined as: ::"
+msgstr "Sebuah perintah simpel yang didefinisasikan seperti ini: ::"
+
+#: ../../faq.rst:374
+msgid "Calling it via ``?echo a b c`` will only fetch the first argument and disregard the rest. To fix this you should either call it via ``?echo \"a b c\"`` or change the signature to have \"consume rest\" behaviour. Example: ::"
+msgstr "Memanggilnya dengan cara ``?echo a b c`` hanya akan memakai argumen pertama dan membuang argumen lainnya. Untuk memperbaikinya anda harus memanggilnya dengan cara ``?echo \"a b c\"`` atau mengganti signature perintah untuk *memproses* hal lainnya. Contoh: ::"
+
+#: ../../faq.rst:381
+msgid "This will allow you to use ``?echo a b c`` without needing the quotes."
+msgstr "Ini akan membuat anda dapat menggunakan ``?echo a b c`` tanpa membutuhkan kutip."
+
+#: ../../faq.rst:384
+msgid "How do I get the original ``message``\\?"
+msgstr "Bagaimana saya mendapatkan ``pesan`` asli?"
+
+#: ../../faq.rst:386
+msgid "The :class:`~ext.commands.Context` contains an attribute, :attr:`~.Context.message` to get the original message."
+msgstr "Kelas :class:`~ext.commands.Context` terdapat attribut, :attr:`~.Context.message` untuk mengambil pesan asli."
+
+#: ../../faq.rst:389
+#: ../../faq.rst:401
+msgid "Example: ::"
+msgstr "Contoh: ::"
+
+#: ../../faq.rst:396
+msgid "How do I make a subcommand?"
+msgstr "Bagaimana saya membuat subperintah?"
+
+#: ../../faq.rst:398
+msgid "Use the :func:`~ext.commands.group` decorator. This will transform the callback into a :class:`~ext.commands.Group` which will allow you to add commands into the group operating as \"subcommands\". These groups can be arbitrarily nested as well."
+msgstr "Gunakan decorator :func:`~ext.commands.group`. Ini akan mengubah fungsi callback menjadi :class:`~ext.commands.Group` yang akan membuat anda bisa menambah perintah ke sebuah grup, membuatnya sebagai \"subcommands\"."
+
+#: ../../faq.rst:412
+msgid "This could then be used as ``?git push origin master``."
+msgstr "Ini dapat digunakan seperti ``?git push origin master``."
+
