@@ -708,6 +708,8 @@ class Option:
             if kwargs["default"] is None:
                 self._is_default_nonetype = True
         self.default: Optional[Any] = kwargs.pop("default", None)
+        if self.default is not None:
+            self.required = False
         self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
 
     def to_dict(self):
@@ -717,7 +719,6 @@ class Option:
             "type": self.input_type.value,
             "required": self.required,
             "choices": [c.to_dict() for c in self.choices],
-            "default": self.default,
         }
         if self.channel_types:
             data["channel_types"] = [c.value for c in self.channel_types]
@@ -976,6 +977,12 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
                 elif op.default is not None:
                     arg = op.default
             kwargs[op.name] = arg
+        for opts in self.options:
+            if opts.name not in kwargs:
+                if opts._is_default_nonetype:
+                    kwargs[opts.name] = None
+                elif opts.default is not None:
+                    kwargs[opts.name] = opts.default
 
         params = iter(self.params.items())
 
@@ -992,7 +999,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
 
         for name, param in params:
             if name not in kwargs and param.default == inspect.Parameter.empty:
-                raise ApplicationMissingRequiredArgument(param)
+                raise ApplicationMissingRequiredArgument(name, param)
 
         ctx.args = args
         ctx.kwargs = kwargs

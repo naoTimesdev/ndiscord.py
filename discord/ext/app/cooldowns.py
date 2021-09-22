@@ -68,6 +68,9 @@ class ApplicationBucketType(Enum):
         elif self is ApplicationBucketType.member:
             return ((inter.guild and inter.guild.id), inter.user.id)
 
+    def __call__(self, msg: Interaction) -> Any:
+        return self.get_key(msg)
+
 
 class ApplicationCooldown:
     """Represents a cooldown for an application.
