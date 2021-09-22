@@ -2101,6 +2101,9 @@ of :class:`enum.Enum`.
         When this is the action, the type of :attr:`~AuditLogEntry.target` is
         the :class:`Role` or a :class:`Object` with the ID.
 
+        .. versionchanged:: 2.0
+            Added :attr:`~AuditLogDiff.icon` and :attr:`~AuditLogDiff.unicode_emoji`.
+
         Possible attributes for :class:`AuditLogDiff`:
 
         - :attr:`~AuditLogDiff.colour`
@@ -2108,6 +2111,8 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.hoist`
         - :attr:`~AuditLogDiff.name`
         - :attr:`~AuditLogDiff.permissions`
+        - :attr:`~AuditLogDiff.icon`
+        - :attr:`~AuditLogDiff.unicode_emoji`
 
     .. attribute:: role_update
 
@@ -2121,6 +2126,9 @@ of :class:`enum.Enum`.
         When this is the action, the type of :attr:`~AuditLogEntry.target` is
         the :class:`Role` or a :class:`Object` with the ID.
 
+        .. versionchanged:: 2.0
+            Added :attr:`~AuditLogDiff.icon` and :attr:`~AuditLogDiff.unicode_emoji`.
+
         Possible attributes for :class:`AuditLogDiff`:
 
         - :attr:`~AuditLogDiff.colour`
@@ -2128,6 +2136,8 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.hoist`
         - :attr:`~AuditLogDiff.name`
         - :attr:`~AuditLogDiff.permissions`
+        - :attr:`~AuditLogDiff.icon`
+        - :attr:`~AuditLogDiff.unicode_emoji`
 
     .. attribute:: role_delete
 
@@ -2136,6 +2146,9 @@ of :class:`enum.Enum`.
         When this is the action, the type of :attr:`~AuditLogEntry.target` is
         the :class:`Role` or a :class:`Object` with the ID.
 
+        .. versionchanged:: 2.0
+            Added :attr:`~AuditLogDiff.icon` and :attr:`~AuditLogDiff.unicode_emoji`.
+
         Possible attributes for :class:`AuditLogDiff`:
 
         - :attr:`~AuditLogDiff.colour`
@@ -2143,6 +2156,8 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.hoist`
         - :attr:`~AuditLogDiff.name`
         - :attr:`~AuditLogDiff.permissions`
+        - :attr:`~AuditLogDiff.icon`
+        - :attr:`~AuditLogDiff.unicode_emoji`
 
     .. attribute:: invite_create
 
@@ -2940,7 +2955,9 @@ AuditLogDiff
 
     .. attribute:: icon
 
-        A guild's icon. See also :attr:`Guild.icon`.
+        Depending on the action type, this may be a guild's icon or a role's icon.
+
+        See also :attr:`Guild.icon` or :attr:`Role.icon`.
 
         :type: :class:`Asset`
 
@@ -3359,6 +3376,12 @@ AuditLogDiff
         The default auto archive duration for newly created threads being changed.
 
         :type: :class:`int`
+
+    .. attribute:: unicode_emoji
+
+        The unicode emoji that represents when role got changed.
+
+        :type: :class:`str`
 
 .. this is currently missing the following keys: reason and application_id
    I'm not sure how to about porting these
