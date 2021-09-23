@@ -370,6 +370,12 @@ Exceptions
 .. autoexception:: discord.ext.app.ApplicationRegistrationExistingParentOptions
     :members:
 
+.. autoexception:: discord.ext.app.ApplicationAutocompleteError
+    :members:
+
+.. autoexception:: discord.ext.app.ApplicationNoAutocomplete
+    :members:
+
 .. autoexception:: discord.ext.app.ApplicationUserInputError
     :members:
 
@@ -460,6 +466,8 @@ Exception Hierarchy
                 - :exc:`~.app.ApplicationBotMissingPermissions`
                 - :exc:`~.app.ApplicationNSFWChannelRequired`
                 - :exc:`~.app.ApplicationNotOwner`
+            - :exc:`~.app.ApplicationAutocompleteError`
+                - :exc:`~.app.ApplicationNoAutocomplete`
             - :exc:`~.app.ApplicationCommandOnCooldown`
             - :exc:`~.app.ApplicationMaxConcurrencyReached`
     - :exc:`~.ClientException`
