@@ -179,6 +179,7 @@ class Role(Hashable):
         "name",
         "_permissions",
         "_icon",
+        "_emoji_unicode",
         "_colour",
         "position",
         "managed",
