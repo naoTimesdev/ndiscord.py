@@ -293,3 +293,8 @@ For example, to block all DMs we could do the following:
 .. warning::
 
     Be careful on how you write your global checks, as it could also lock you out of your own bot.
+
+Autocompletion
+---------------
+
+You can read more about autocompletion support for :class:`.Option` here: :ref:`ext_app_autocomplete`.
