@@ -2399,6 +2399,7 @@ class Guild(Hashable):
         permissions: Permissions = ...,
         colour: Union[Colour, int] = ...,
         icon: Optional[bytes] = ...,
+        emoji_unicode: Optional[str] = ...,
         hoist: bool = ...,
         mentionable: bool = ...,
     ) -> Role:
@@ -2413,6 +2414,7 @@ class Guild(Hashable):
         permissions: Permissions = ...,
         color: Union[Colour, int] = ...,
         icon: Optional[bytes] = ...,
+        emoji_unicode: Optional[str] = ...,
         hoist: bool = ...,
         mentionable: bool = ...,
     ) -> Role:
@@ -2426,6 +2428,7 @@ class Guild(Hashable):
         color: Union[Colour, int] = MISSING,
         colour: Union[Colour, int] = MISSING,
         icon: Optional[bytes] = MISSING,
+        emoji_unicode: Optional[str] = MISSING,
         hoist: bool = MISSING,
         mentionable: bool = MISSING,
         reason: Optional[str] = None,
@@ -2443,7 +2446,7 @@ class Guild(Hashable):
             Can now pass ``int`` to ``colour`` keyword-only parameter.
 
         .. versionchanged:: 2.0
-            Added ``icon`` parameter.
+            Added ``icon`` and ``emoji_unicode`` parameter.
 
         Parameters
         -----------
@@ -2455,7 +2458,14 @@ class Guild(Hashable):
             The colour for the role. Defaults to :meth:`Colour.default`.
             This is aliased to ``color`` as well.
         icon: Optional[:class:`bytes`]
-            The raw bytes for the role icon.
+            A bytes object representing the role icon.
+
+            .. versionadded:: 2.0
+
+        emoji_unicode: Optional[:class:`str`]
+            The unicode value of the new role to change to.
+
+            .. versionadded:: 2.0
         hoist: :class:`bool`
             Indicates if the role should be shown separately in the member list.
             Defaults to ``False``.
@@ -2505,6 +2515,9 @@ class Guild(Hashable):
 
         if name is not MISSING:
             fields["name"] = name
+
+        if emoji_unicode is not MISSING:
+            fields["unicode_emoji"] = emoji_unicode
 
         data = await self._state.http.create_role(self.id, reason=reason, **fields)
         role = Role(guild=self, data=data, state=self._state)
