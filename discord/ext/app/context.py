@@ -26,8 +26,8 @@ from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
 import discord.abc
 import discord.utils
+from discord.enums import InteractionResponseType, InteractionType
 from discord.errors import InteractionResponded
-from discord.enums import InteractionType, InteractionResponseType
 from discord.guild import Guild
 from discord.interactions import Interaction, InteractionResponse
 from discord.member import Member
