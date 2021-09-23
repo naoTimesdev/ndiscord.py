@@ -189,6 +189,9 @@ class Role(Hashable):
         "_state",
     )
 
+    if TYPE_CHECKING:
+        tags: Optional[RoleTags]
+
     def __init__(self, *, guild: Guild, state: ConnectionState, data: RolePayload):
         self.guild: Guild = guild
         self._state: ConnectionState = state

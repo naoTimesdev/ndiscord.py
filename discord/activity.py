@@ -93,6 +93,7 @@ t.ActivityFlags = {
 if TYPE_CHECKING:
     from .types.activity import Activity as ActivityPayload
     from .types.activity import ActivityAssets, ActivityButton, ActivityParty, ActivityTimestamps
+    from .types.emoji import PartialEmoji as PartialEmojiPayload
 
 
 class BaseActivity:
@@ -210,6 +211,27 @@ class Activity(BaseActivity):
         "emoji",
         "buttons",
     )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[str] = None,
+        details: Optional[str] = None,
+        timestamps: Optional[ActivityTimestamps] = None,
+        assets: Optional[ActivityAssets] = None,
+        party: Optional[ActivityParty] = None,
+        application_id: Optional[int] = None,
+        name: Optional[str] = None,
+        url: Optional[str] = None,
+        flags: Optional[int] = None,
+        sync_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        buttons: List[ActivityButton] = [],
+        type: Optional[Union[ActivityType, int]] = None,
+        emoji: Optional[Union[PartialEmojiPayload, Dict[str, Any]]] = None,
+    ) -> None:
+        ...
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -356,6 +378,10 @@ class Game(BaseActivity):
 
     __slots__ = ("name", "_end", "_start")
 
+    @overload
+    def __init__(self, name: str, *, timestamps: Optional[ActivityTimestamps], created_at: Optional[float]) -> None:
+        ...
+
     def __init__(self, name: str, **extra):
         super().__init__(**extra)
         self.name: str = name
@@ -470,6 +496,19 @@ class Streaming(BaseActivity):
 
     __slots__ = ("platform", "name", "game", "url", "details", "assets")
 
+    @overload
+    def __init__(
+        self,
+        name: Optional[str],
+        url: str,
+        *,
+        details: Optional[str],
+        state: Optional[str],
+        assets: Optional[ActivityAssets],
+        created_at: Optional[float]
+    ) -> None:
+        ...
+
     def __init__(self, *, name: Optional[str], url: str, **extra: Any):
         super().__init__(**extra)
         self.platform: Optional[str] = name
@@ -555,6 +594,21 @@ class Spotify:
     """
 
     __slots__ = ("_state", "_details", "_timestamps", "_assets", "_party", "_sync_id", "_session_id", "_created_at")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        details: Optional[str],
+        state: Optional[str],
+        assets: Optional[ActivityAssets],
+        timestamps: Optional[ActivityTimestamps],
+        party: Optional[ActivityParty],
+        sync_id: Optional[str],
+        session_id: Optional[str],
+        created_at: Optional[float]
+    ) -> None:
+        ...
 
     def __init__(self, **data):
         self._state: str = data.pop("state", "")
@@ -734,6 +788,17 @@ class CustomActivity(BaseActivity):
     """
 
     __slots__ = ("name", "emoji", "state")
+
+    @overload
+    def __init__(
+        self,
+        name: Optional[str],
+        *,
+        emoji: Optional[PartialEmoji],
+        state: Optional[str],
+        created_at: Optional[float]
+    ) -> None:
+        ...
 
     def __init__(self, name: Optional[str], *, emoji: Optional[PartialEmoji] = None, **extra: Any):
         super().__init__(**extra)

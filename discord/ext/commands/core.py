@@ -293,6 +293,34 @@ class Command(_BaseCommand, Generic[CogT, P, T]):
         self.__original_kwargs__ = kwargs.copy()
         return self
 
+    @overload
+    def __init__(
+        self,
+        func: Union[
+            Callable[Concatenate[CogT, ContextT, P], Coro[T]],
+            Callable[Concatenate[ContextT, P], Coro[T]],
+        ],
+        *,
+        name: Optional[str] = None,
+        enabled: bool = True,
+        help: Optional[str] = None,
+        brief: Optional[str] = None,
+        usage: Optional[str] = None,
+        aliases: Union[List[str], Tuple[str]] = [],
+        rest_is_raw: bool = False,
+        description: Optional[str] = None,
+        hidden: bool = False,
+        checks: Optional[List[Check]] = None,
+        cooldown: Optional[CooldownMapping] = ...,
+        max_concurrency: Optional[MaxConcurrency] = ...,
+        require_var_positional: bool = False,
+        ignore_extra: bool = True,
+        cooldown_after_parsing: bool = False,
+        parent: Optional[GroupMixin] = None,
+        extras: Dict[str, Any] = {},
+    ) -> None:
+        ...
+
     def __init__(
         self,
         func: Union[
@@ -1144,6 +1172,14 @@ class GroupMixin(Generic[CogT]):
         Whether the commands should be case insensitive. Defaults to ``False``.
     """
 
+    @overload
+    def __init__(
+        self,
+        *,
+        case_insensitive: bool = False,
+    ) -> None:
+        ...
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         case_insensitive = kwargs.get("case_insensitive", False)
         self.all_commands: Dict[str, Command[CogT, Any, Any]] = _CaseInsensitiveDict() if case_insensitive else {}
@@ -1414,6 +1450,36 @@ class Group(GroupMixin[CogT], Command[CogT, P, T]):
         Indicates if the group's commands should be case insensitive.
         Defaults to ``False``.
     """
+
+    @overload
+    def __init__(
+        self,
+        func: Union[
+            Callable[Concatenate[CogT, ContextT, P], Coro[T]],
+            Callable[Concatenate[ContextT, P], Coro[T]],
+        ],
+        *,
+        invoke_without_command: bool = False,
+        case_insensitive: bool = False,
+        name: Optional[str] = None,
+        enabled: bool = True,
+        help: Optional[str] = None,
+        brief: Optional[str] = None,
+        usage: Optional[str] = None,
+        aliases: Union[List[str], Tuple[str]] = [],
+        rest_is_raw: bool = False,
+        description: Optional[str] = None,
+        hidden: bool = False,
+        checks: Optional[List[Check]] = None,
+        cooldown: Optional[CooldownMapping] = ...,
+        max_concurrency: Optional[MaxConcurrency] = ...,
+        require_var_positional: bool = False,
+        ignore_extra: bool = True,
+        cooldown_after_parsing: bool = False,
+        parent: Optional[GroupMixin] = None,
+        extras: Dict[str, Any] = {},
+    ) -> None:
+        ...
 
     def __init__(self, *args: Any, **attrs: Any) -> None:
         self.invoke_without_command: bool = attrs.pop("invoke_without_command", False)
