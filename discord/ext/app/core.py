@@ -686,7 +686,30 @@ class Option:
     channel_types: Optional[List[:class:`.ChannelType`]]
         A list of channel types that the option is valid for.
         If provided, the user can only use the defined channel type for the option.
+    autocomplete: Optional[:class:`bool`]
+        Indicates if the argument should be autocompleted.
+
+        .. warning::
+
+            ``choices`` cannot be present if this is ``True``. And it also only works for
+            :class:`.SlashCommandOptionType.string` only.
     """
+
+    @overload
+    def __init__(
+        self,
+        input_type: Type[Any],
+        /,
+        description: Optional[str] = ...,
+        *,
+        name: Optional[str] = ...,
+        required: bool = ...,
+        default: Optional[Any] = ...,
+        choices: Optional[List[OptionChoice]] = ...,
+        channel_types: Optional[List[ChannelType]] = ...,
+        autocomplete: Optional[bool] = ...,
+    ):
+        ...
 
     def __init__(
         self,
@@ -711,6 +734,12 @@ class Option:
         if self.default is not None:
             self.required = False
         self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
+        self.autocomplete: bool = kwargs.pop("autocomplete", False)
+
+        if self.autocomplete and self.choices:
+            raise ValueError("choices cannot be present if you set autocomplete to True.")
+        if self.autocomplete and self.input_type != SlashCommandOptionType.string:
+            raise ValueError("autocomplete only works for string input type.")
 
     def to_dict(self):
         data = {
@@ -951,6 +980,13 @@ class SlashCommand(ApplicationCommand[CogT, BotT, T]):
             # Copy of data
             _real_val = arg["value"]
             arg = arg["value"]
+            # Check if autocomplete, if it's just pass it and check what being focused
+            # a.k.a the one that need to be autocompleted.
+            has_focused = arg.get("focused", None)
+            if op.autocomplete and has_focused is not None:
+                kwargs[op.name] = arg
+                if has_focused:
+                    ctx.autocompleting = op.name
 
             if SlashCommandOptionType.user.value <= op.input_type.value <= SlashCommandOptionType.role.value:
                 name = "member" if op.input_type == "user" else op.input_type.name
