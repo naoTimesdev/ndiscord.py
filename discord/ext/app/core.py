@@ -692,7 +692,7 @@ class Option:
         .. warning::
 
             ``choices`` cannot be present if this is ``True``. And it also only works for
-            :class:`.SlashCommandOptionType.string` only.
+            :class:`SlashCommandOptionType.string` only.
     """
 
     @overload
