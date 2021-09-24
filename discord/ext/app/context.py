@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
 import discord.abc
@@ -36,7 +38,7 @@ from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
 from discord.webhook.async_ import async_context
 
-from ._types import AppCommandT, BotT, CogT
+from ._types import BotT, CogT
 from .errors import ApplicationNoAutocomplete
 
 if TYPE_CHECKING:
@@ -46,14 +48,15 @@ if TYPE_CHECKING:
     from discord.mentions import AllowedMentions
     from discord.ui import View
 
-    from .core import OptionChoice
+    from .core import MessageCommand, OptionChoice, SlashCommand, UserCommand
 
 __all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
+AppCommandT = Union["SlashCommand", "MessageCommand", "UserCommand"]
 
 
-class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommandT]):
+class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
     """Represents the context in which a application command is being invoked under.
 
     This class contains a lot of meta data to help you understand more about
@@ -159,7 +162,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         return self.interaction.guild
 
     @discord.utils.cached_property
-    def channel(self) -> Optional["InteractionChannel"]:
+    def channel(self) -> Optional[InteractionChannel]:
         """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns
         the channel associated with this context's command. None if not available.
         """

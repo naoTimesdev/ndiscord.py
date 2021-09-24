@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 from inspect import Parameter
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Union
 
@@ -158,9 +160,9 @@ class ApplicationRegistrationExistingParentOptions(ClientException):
         The option that is not allowed.
     """
 
-    def __init__(self, name: str, option: "Option") -> None:
+    def __init__(self, name: str, option: Option) -> None:
         self.name: str = name
-        self.option: str = option
+        self.option: Option = option
         super().__init__(
             f"The command '{name}' cannot be registered since the parent command contains option '{option.name}'"
             f" which is a type '{option.input_type.name}' (need to be subcommand or group)"
@@ -316,10 +318,10 @@ class ApplicationCheckAnyFailure(ApplicationCheckFailure):
     """
 
     def __init__(
-        self, checks: List[ApplicationCheckFailure], errors: List[Callable[["ApplicationContext"], bool]]
+        self, checks: List[ApplicationCheckFailure], errors: List[Callable[[ApplicationContext], bool]]
     ) -> None:
         self.checks: List[ApplicationCheckFailure] = checks
-        self.errors: List[Callable[["ApplicationContext"], bool]] = errors
+        self.errors: List[Callable[[ApplicationContext], bool]] = errors
         super().__init__("You do not have permission to run this command.")
 
 
@@ -357,8 +359,8 @@ class ApplicationMissingRole(ApplicationCheckFailure):
         This is the parameter passed to :func:`~.app.has_role`.
     """
 
-    def __init__(self, missing_role: "Snowflake") -> None:
-        self.missing_role: "Snowflake" = missing_role
+    def __init__(self, missing_role: Snowflake) -> None:
+        self.missing_role: Snowflake = missing_role
         message = f"Role {missing_role!r} is required to run this command."
         super().__init__(message)
 
@@ -375,8 +377,8 @@ class ApplicationBotMissingRole(ApplicationCheckFailure):
         This is the parameter passed to :func:`~.app.has_role`.
     """
 
-    def __init__(self, missing_role: "Snowflake") -> None:
-        self.missing_role: "Snowflake" = missing_role
+    def __init__(self, missing_role: Snowflake) -> None:
+        self.missing_role: Snowflake = missing_role
         message = f"Bot requires the role {missing_role!r} to run this command"
         super().__init__(message)
 
@@ -396,8 +398,8 @@ class ApplicationMissingAnyRole(ApplicationCheckFailure):
         These are the parameters passed to :func:`~.app.has_any_role`.
     """
 
-    def __init__(self, missing_roles: "SnowflakeList") -> None:
-        self.missing_roles: "SnowflakeList" = missing_roles
+    def __init__(self, missing_roles: SnowflakeList) -> None:
+        self.missing_roles: SnowflakeList = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
@@ -426,8 +428,8 @@ class ApplicationBotMissingAnyRole(ApplicationCheckFailure):
 
     """
 
-    def __init__(self, missing_roles: "SnowflakeList") -> None:
-        self.missing_roles: "SnowflakeList" = missing_roles
+    def __init__(self, missing_roles: SnowflakeList) -> None:
+        self.missing_roles: SnowflakeList = missing_roles
 
         missing = [f"'{role}'" for role in missing_roles]
 
@@ -503,8 +505,8 @@ class ApplicationNSFWChannelRequired(ApplicationCheckFailure):
         The channel that does not have NSFW enabled.
     """
 
-    def __init__(self, channel: Union["GuildChannel", "Thread"]) -> None:
-        self.channel: Union["GuildChannel", "Thread"] = channel
+    def __init__(self, channel: Union[GuildChannel, Thread]) -> None:
+        self.channel: Union[GuildChannel, Thread] = channel
         super().__init__(f"Channel '{channel}' needs to be NSFW for this command to work.")
 
 
@@ -536,10 +538,10 @@ class ApplicationCommandOnCooldown(ApplicationCommandError):
         The amount of seconds to wait before you can retry again.
     """
 
-    def __init__(self, cooldown: "ApplicationCooldown", retry_after: float, type: "ApplicationBucketType") -> None:
-        self.cooldown: "ApplicationCooldown" = cooldown
+    def __init__(self, cooldown: ApplicationCooldown, retry_after: float, type: ApplicationBucketType) -> None:
+        self.cooldown: ApplicationCooldown = cooldown
         self.retry_after: float = retry_after
-        self.type: "ApplicationBucketType" = type
+        self.type: ApplicationBucketType = type
         super().__init__(f"You are on cooldown. Try again in {retry_after:.2f}s")
 
 
@@ -556,9 +558,9 @@ class ApplicationMaxConcurrencyReached(ApplicationCommandError):
         The bucket type passed to the :func:`.max_concurrency` decorator.
     """
 
-    def __init__(self, number: int, per: "ApplicationBucketType"):
+    def __init__(self, number: int, per: ApplicationBucketType):
         self.number: int = number
-        self.per: "ApplicationBucketType" = per
+        self.per: ApplicationBucketType = per
         name = per.name
         suffix = "per %s" % name if per.name != "default" else "globally"
         plural = "%s times %s" if number > 1 else "%s time %s"

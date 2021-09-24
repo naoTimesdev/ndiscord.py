@@ -179,6 +179,7 @@ class Role(Hashable):
         "name",
         "_permissions",
         "_icon",
+        "_emoji_unicode",
         "_colour",
         "position",
         "managed",
@@ -188,6 +189,9 @@ class Role(Hashable):
         "tags",
         "_state",
     )
+
+    if TYPE_CHECKING:
+        tags: Optional[RoleTags]
 
     def __init__(self, *, guild: Guild, state: ConnectionState, data: RolePayload):
         self.guild: Guild = guild

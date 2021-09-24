@@ -181,7 +181,7 @@ class HTTPClient:
         self.proxy_auth: Optional[aiohttp.BasicAuth] = proxy_auth
         self.use_clock: bool = not unsync_clock
 
-        user_agent = "DiscordBot (https://github.com/Rapptz/discord.py {0}) Python/{1[0]}.{1[1]} aiohttp/{2}"
+        user_agent = "DiscordBot (https://github.com/naoTimesdev/ndiscord.py {0}) Python/{1[0]}.{1[1]} aiohttp/{2}"
         self.user_agent: str = user_agent.format(__version__, sys.version_info, aiohttp.__version__)
 
     def recreate(self) -> None:
@@ -189,6 +189,9 @@ class HTTPClient:
             self.__session = aiohttp.ClientSession(
                 connector=self.connector, ws_response_class=DiscordClientWebSocketResponse
             )
+
+    def _get_session(self) -> aiohttp.ClientSession:
+        return self.__session
 
     async def ws_connect(self, url: str, *, compress: int = 0) -> Any:
         kwargs = {
