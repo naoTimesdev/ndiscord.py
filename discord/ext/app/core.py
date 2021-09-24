@@ -1539,6 +1539,7 @@ def option(
     choices: List[Union[OptionChoice, str]] = [],
     default: Optional[Any] = ...,
     channel_types: Optional[List[ChannelType]] = ...,
+    autocomplete: bool = False,
 ) -> Option:
     ...
 
@@ -1565,6 +1566,13 @@ def option(name, type=None, **kwargs):
     channel_types: Optional[List[:class:`.ChannelType`]]
         A list of channel types that the option is valid for.
         If provided, the user can only use the defined channel type for the option.
+    autocomplete: Optional[:class:`bool`]
+        Indicates if the argument should be autocompleted.
+
+        .. warning::
+
+            ``choices`` cannot be present if this is ``True``. And it also only works for
+            :class:`SlashCommandOptionType.string` only.
     """  # noqa: E501
 
     def decor(func: ApplicationCallback):
