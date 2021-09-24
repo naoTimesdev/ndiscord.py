@@ -972,17 +972,17 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
 
-        for arg in ctx.interaction.data.get("options", []):
+        for raw_arg in ctx.interaction.data.get("options", []):
             # Skip if type is sub_command or sub_command_group
-            if arg["type"] in _INVALID_TYPE:
+            if raw_arg["type"] in _INVALID_TYPE:
                 continue
-            op = discord.utils.find(lambda o: o.name == arg["name"], self.options)
+            op = discord.utils.find(lambda o: o.name == raw_arg["name"], self.options)
             # Copy of data
-            _real_val = arg["value"]
-            arg = arg["value"]
+            _real_val = raw_arg["value"]
+            arg = raw_arg["value"]
             # Check if autocomplete, if it's just pass it and check what being focused
             # a.k.a the one that need to be autocompleted.
-            has_focused = arg.get("focused", None)
+            has_focused = raw_arg.get("focused", None)
             if op.autocomplete and has_focused is not None:
                 kwargs[op.name] = arg
                 if has_focused:
