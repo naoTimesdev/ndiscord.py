@@ -43,6 +43,10 @@ class DiscoveryCategory(TypedDict):
     is_primary: bool
 
 
+class DiscoverySearchTermValidation(TypedDict):
+    valid: bool
+
+
 # https://gist.github.com/noaione/61de9670d2e43193ded8984102fa1231
 # Last updated: 2021-09-26 10:25:00 GMT+8
 DiscoveryCategoryType = Literal[
@@ -96,6 +100,11 @@ DiscoveryCategoryType = Literal[
     48,
     49,
 ]
+
+
+class DiscoverySubcategory(TypedDict):
+    guild_id: Snowflake
+    category_id: DiscoveryCategoryType
 
 
 class DiscoveryMetadata(TypedDict):

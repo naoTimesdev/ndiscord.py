@@ -59,6 +59,7 @@ __all__ = (
     "ApplicationCommandType",
     "SlashCommandOptionType",
     "NSFWLevel",
+    "DiscoveryCategoryType",
 )
 
 
@@ -645,7 +646,7 @@ class NSFWLevel(Enum, comparable=True):
     age_restricted = 3
 
 
-class DiscoveryCategory(Enum):
+class DiscoveryCategoryType(Enum):
     general = 0
     gaming = 1
     music = 2
