@@ -645,6 +645,79 @@ class NSFWLevel(Enum, comparable=True):
     age_restricted = 3
 
 
+class DiscoveryCategory(Enum):
+    general = 0
+    gaming = 1
+    music = 2
+    entertainment = 3
+    creative_arts = 4
+    science = 5  # and technology
+    education = 6
+    sports = 7
+    fashion = 8
+    relationships = 9  # and identity
+    travel = 10  # and food
+    fitness = 11
+    finance = 12
+    other = 13
+    general_chatting = 14
+    esports = 15
+    anime = 16  # and manga
+    movies = 17  # and tv
+    books = 18
+    art = 19
+    writing = 20
+    crafts = 21  # and diy
+    programming = 22
+    podcasts = 23
+    tabletop_games = 24
+    memes = 25
+    news = 26  # and current events
+    cryptocurrency = 27
+    investing = 28
+    studying = 29  # and teaching
+    lfg = 30
+    customer_support = 31
+    theorycraft = 32
+    events = 33
+    roleplay = 34
+    content_creator = 35
+    business = 36
+    local_group = 37
+    collaboration = 38
+    fandom = 39
+    wiki = 40  # and guides
+    subreddit = 42
+    emoji = 43
+    comics = 44  # and cartoons
+    mobile = 45
+    console = 46
+    charity = 47  # and nonprofit
+    game_developer = 48
+    bots = 49
+
+    # Aliases (or the other side of "and")
+    technology = 5
+    beauty = 8
+    identity = 9
+    food = 10
+    health = 11
+    manga = 16
+    tv_shows = 17
+    diy = 21
+    current_events = 26
+    teaching = 29
+    guides = 40
+    cartoons = 44
+    nonprofit = 47
+
+    def __int__(self):
+        return self.value
+
+    def __str__(self):
+        return self.name
+
+
 T = TypeVar("T")
 
 
