@@ -1048,6 +1048,24 @@ class ConnectionState:
                 guild._add_member(member)
             _log.debug("GUILD_MEMBER_UPDATE referencing an unknown member ID: %s. Discarding.", user_id)
 
+    def parse_guild_join_request_delete(self, data) -> None:
+        guild = self._get_guild(int(data["guild_id"]))
+        if guild is None:
+            _log.debug("GUILD_JOIN_REQUEST_DELETE referencing an unknown guild ID: %s. Discarding.", data["guild_id"])
+            return
+        user_id = int(data["user_id"])
+        member = guild.get_member(user_id)
+        if member is None:
+            _log.debug("GUILD_JOIN_REQUEST_DELETE referencing an unknown member ID: %s. Discarding.", data["user_id"])
+            return
+
+        guild._remove_member(member)
+        try:
+            guild._member_count -= 1
+        except AttributeError:
+            pass
+        self.dispatch("member_remove", member)
+
     def parse_guild_emojis_update(self, data) -> None:
         guild = self._get_guild(int(data["guild_id"]))
         if guild is None:
