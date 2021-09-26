@@ -22,13 +22,12 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-import struct
 import logging
-
+import struct
 from math import ceil
-from enums import Enum
-
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence
+
+from enums import Enum
 
 log = logging.getLogger(__name__)
 
