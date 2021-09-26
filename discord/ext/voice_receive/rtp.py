@@ -24,10 +24,9 @@ DEALINGS IN THE SOFTWARE.
 
 import logging
 import struct
+from enum import Enum
 from math import ceil
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence
-
-from enum import Enum
 
 log = logging.getLogger(__name__)
 
