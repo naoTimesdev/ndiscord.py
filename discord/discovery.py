@@ -147,6 +147,16 @@ class DiscoveryMetadata:
         self.partner_actioned_timestamp: Optional[datetime] = parse_time(data.get("partner_actioned_timestamp"))
         self.partner_application_timestamp: Optional[datetime] = parse_time(data.get("partner_application_timestamp"))
 
+    def __repr__(self):
+        fields = (
+            ("keywords", self.keywords),
+            ("emoji_discoverability", self.emoji_discoverability),
+            ("category", self.primary_category_type.name),
+            ("subcategories", [x.name for x in self.subcategory_types]),
+        )
+        repr_field = " ".join(f"{k}={v!r}" for k, v in fields if v)
+        return f"<DiscoveryMetadata guild={self.guild.id!r} {repr_field}>"
+
     async def edit(
         self,
         *,
