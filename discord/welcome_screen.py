@@ -51,12 +51,6 @@ class WelcomeChannel:
 
     .. versionadded:: 2.0
 
-    .. container:: operations
-
-        .. describe:: str(x)
-
-            Returns the description of the welcome channel.
-
     Attributes
     -----------
     channel: :class:`abc.Snowflake`
@@ -76,9 +70,6 @@ class WelcomeChannel:
 
     def __repr__(self) -> str:
         return f"<WelcomeChannel channel={self.channel!r} description={self.description!r} emoji={self.emoji!r}>"
-
-    def __str__(self) -> str:
-        return self.description
 
     @classmethod
     def _from_dict(cls: Type[WelcomeChannel], *, data: WelcomeScreenChannelPayload, guild: Guild) -> WelcomeChannel:
@@ -118,12 +109,6 @@ class WelcomeScreen:
 
     .. versionadded:: 2.0
 
-    .. container:: operations
-
-        .. describe:: str(x)
-
-            Returns the description of the welcome channel.
-
     Attributes
     -----------
     guild: :class:`Guild`
@@ -157,9 +142,6 @@ class WelcomeScreen:
 
     def __repr__(self) -> str:
         return f"<WelcomeScreen guild={self.guild.id} description={self.description!r}>"
-
-    def __str__(self) -> str:
-        return self.description
 
     @property
     def enabled(self) -> bool:
