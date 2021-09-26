@@ -1,5 +1,5 @@
 """
-discord.ext.app
+discord.ext.voice_receive
 ~~~~~~~~~~~~~~~~~
 
 An extension module to add support for intercepting audio from Discord and saving it.
