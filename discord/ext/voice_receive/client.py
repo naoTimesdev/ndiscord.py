@@ -53,6 +53,7 @@ if TYPE_CHECKING:
 has_nacl: bool
 try:
     import nacl.secret  # noqa
+    import nacl.utils  # noqa
 
     has_nacl = True
 except ImportError:
@@ -140,6 +141,7 @@ class VoiceClientReceiver(VoiceProtocol):
         self.encoder: opus.Encoder = MISSING
         self._runner: asyncio.Task = MISSING
         self._reader = None
+        self._lite_nonce: int = 0
         self.ws: DiscordVoiceWebSocket = MISSING
         self._ssrcs = Bidict()
 
@@ -454,6 +456,28 @@ class VoiceClientReceiver(VoiceProtocol):
 
         encrypt_packet = getattr(self, "_encrypt_" + self._mode)
         return encrypt_packet(header, data)
+
+    def _encrypt_xsalsa20_poly1305(self, header: bytes, data) -> bytes:
+        box = nacl.secret.SecretBox(bytes(self.secret_key))
+        nonce = bytearray(24)
+        nonce[:12] = header
+
+        return header + box.encrypt(bytes(data), bytes(nonce)).ciphertext
+
+    def _encrypt_xsalsa20_poly1305_suffix(self, header: bytes, data) -> bytes:
+        box = nacl.secret.SecretBox(bytes(self.secret_key))
+        nonce = nacl.utils.random(nacl.secret.SecretBox.NONCE_SIZE)
+
+        return header + box.encrypt(bytes(data), nonce).ciphertext + nonce
+
+    def _encrypt_xsalsa20_poly1305_lite(self, header: bytes, data) -> bytes:
+        box = nacl.secret.SecretBox(bytes(self.secret_key))
+        nonce = bytearray(24)
+
+        nonce[:4] = struct.pack(">I", self._lite_nonce)
+        self.checked_add("_lite_nonce", 1, 4294967295)
+
+        return header + box.encrypt(bytes(data), bytes(nonce)).ciphertext + nonce[:4]
 
     def send_audio_packet(self, data: bytes, *, encode: bool = True) -> None:
         """Sends an audio packet composed of the data.
