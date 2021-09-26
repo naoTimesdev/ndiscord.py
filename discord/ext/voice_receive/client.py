@@ -34,6 +34,7 @@ from typing import TYPE_CHECKING, Any, List, Optional
 from discord import opus, utils
 from discord.backoff import ExponentialBackoff
 from discord.errors import ClientException, ConnectionClosed
+from discord.gateway import DiscordVoiceWebSocket
 from discord.voice_client import VoiceProtocol
 
 from .bidict import Bidict
@@ -42,7 +43,6 @@ from .reader import AudioReader, AudioSink
 if TYPE_CHECKING:
     from discord import abc
     from discord.client import Client
-    from discord.gateway import DiscordVoiceWebSocket
     from discord.guild import Guild
     from discord.state import ConnectionState
     from discord.types.voice import GuildVoiceState as GuildVoiceStatePayload
@@ -52,7 +52,7 @@ if TYPE_CHECKING:
 
 has_nacl: bool
 try:
-    import nacl.secret  # type: ignore
+    import nacl.secret  # noqa
 
     has_nacl = True
 except ImportError:
@@ -492,7 +492,7 @@ class VoiceClientReceiver(VoiceProtocol):
             _log.warning('A packet has been dropped (seq: %s, timestamp: %s)', self.sequence, self.timestamp)
 
         self.checked_add('timestamp', opus.Encoder.SAMPLES_PER_FRAME, 4294967295)
-    
+
     # receive api related
 
     def listen(self, sink: AudioSink):

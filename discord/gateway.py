@@ -1041,7 +1041,7 @@ class DiscordVoiceWebSocket:
         self._connection.send_audio_packet(b"\xF8\xFF\xFE", encode=False)
 
         # just so we don't have the speaking circle when we're not actually speaking
-        await self.speak(False)
+        await self.speak(SpeakingState.none)
 
     async def poll_event(self):
         # This exception is handled up the chain
