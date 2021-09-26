@@ -27,7 +27,7 @@ import struct
 from math import ceil
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence
 
-from enums import Enum
+from enum import Enum
 
 log = logging.getLogger(__name__)
 
