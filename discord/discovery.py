@@ -25,10 +25,10 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from discord.errors import InvalidArgument, InvalidData
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from .enums import DiscoveryCategoryType, try_enum
+from .errors import InvalidArgument, InvalidData
 from .mixins import EqualityComparable
 from .utils import find, parse_time
 
