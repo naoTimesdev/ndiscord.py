@@ -73,6 +73,7 @@ from .stage_instance import StageInstance
 from .sticker import GuildSticker
 from .threads import Thread, ThreadMember
 from .user import User
+from .welcome_screen import WelcomeChannel, WelcomeScreen
 from .widget import Widget
 
 __all__ = ("Guild",)
@@ -2715,6 +2716,92 @@ class Guild(Hashable):
         payload["max_age"] = 0
         payload["uses"] = payload.get("uses", 0)
         return Invite(state=self._state, data=payload, guild=self, channel=channel)
+
+    async def welcome_screen(self) -> WelcomeScreen:
+        """|coro|
+
+        Returns the guild's welcome screen.
+
+        The guild must have ``COMMUNITY`` in :attr:`~Guild.features`.
+
+        You must have the :attr:`~Permissions.manage_guild` permission to use
+        this as well.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        Forbidden
+            You do not have the proper permissions to get this.
+        HTTPException
+            Retrieving the vanity invite failed.
+
+        Returns
+        --------
+        :class:`WelcomeScreen`
+            The welcome screen.
+        """
+        data = await self._state.http.get_welcome_screen(self.id)
+        return WelcomeScreen(data=data, guild=self)
+
+    @overload
+    async def edit_welcome_screen(
+        enabled: bool = MISSING,
+        channels: List[WelcomeChannel] = MISSING,
+        description: str = MISSING,
+        reason: str = None,
+    ) -> Optional[WelcomeScreen]:
+        ...
+
+    async def edit_welcome_screen(self, **kwargs) -> WelcomeScreen:
+        """|coro|
+
+        A shorthand method of :attr:`WelcomeScreen.edit` without needing
+        to fetch the welcome screen beforehand.
+
+        You must have the :attr:`~Permissions.manage_guild` permission in the
+        guild to do this.
+
+        .. note::
+            Welcome channels can only accept custom emojis if :attr:`~Guild.premium_tier` is level 2 or above.
+
+        Parameters
+        -----------
+        enabled: :class:`bool`
+            Should we enable the welcome screen of not.
+        channels: List[:class:`.WelcomeChannel`]
+            The channels to use for the welcome screen.
+        description: :class:`str`
+            The description of the welcome screen.
+        reason: Optional[:class:`str`]
+            The reason for editing the welcome screen. Shows up on the audit log.
+
+        Raises
+        -------
+        InvalidArgument
+            If the welcome channels are not valid.
+        Forbidden
+            Not allowed to edit the welcome screen.
+        HTTPException
+            Editing the welcome screen failed.
+        """
+        fields: Dict[str, Any] = {}
+
+        fields["enabled"] = kwargs.get("enabled")
+        channels = kwargs.get("channels", [])
+        welcome_channels = []
+        for channel in channels:
+            if not isinstance(channel, WelcomeChannel):
+                raise InvalidArgument("channels must be of type WelcomeChannel")
+            welcome_channels.append(channel.to_dict())
+        fields["welcome_channels"] = welcome_channels
+        fields["description"] = kwargs.get("description")
+
+        reason = kwargs.get("reason")
+
+        if fields:
+            data = await self._state.http.edit_welcome_screen(self.id, reason=reason, **fields)
+            self._update(data)
 
     # TODO: use MISSING when async iterators get refactored
     def audit_logs(
