@@ -53,6 +53,7 @@ packages = [
     'discord.ext.app',
     'discord.ext.commands',
     'discord.ext.tasks',
+    'discord.ext.voice_receive'
 ]
 
 setup(
