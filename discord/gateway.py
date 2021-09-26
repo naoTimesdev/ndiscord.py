@@ -61,6 +61,7 @@ from .types.voice import VoiceReady, VoiceSessionDescription
 
 if TYPE_CHECKING:
     from .client import Client
+    from .ext.voice_receive import VoiceClientReceiver
     from .shard import AutoShardedClient
     from .state import AutoShardedConnectionState, ConnectionState
     from .voice_client import VoiceClient
@@ -80,7 +81,7 @@ DiscordWST = TypeVar("DiscordWST", bound="Union[DiscordWebSocket, DiscordVoiceWe
 DiscordKAT = TypeVar("DiscordKAT", bound="Union[KeepAliveHandler, VoiceKeepAliveHandler]")
 CStateT = TypeVar("CStateT", bound="Union[AutoShardedConnectionState, ConnectionState]")
 ClientT = TypeVar("ClientT", bound="Union[Client, AutoShardedClient]")
-VClientT = TypeVar("VClientT", bound="VoiceClient")
+VClientT = TypeVar("VClientT", bound="Union[VoiceClient, VoiceClientReceiver]")
 
 
 class ReconnectWebSocket(Exception):
@@ -253,7 +254,6 @@ class KeepAliveHandler(threading.Thread):
 
 
 class VoiceKeepAliveHandler(KeepAliveHandler):
-
     @overload
     def __init__(
         self,
@@ -457,12 +457,7 @@ class DiscordWebSocket:
         await ws.resume()
         return ws
 
-    def wait_for(
-        self,
-        event: str,
-        predicate: Callable[[T], bool],
-        result: Optional[Callable[[T], Any]] = None
-    ):
+    def wait_for(self, event: str, predicate: Callable[[T], bool], result: Optional[Callable[[T], Any]] = None):
         """Waits for a DISPATCH'd event that meets the predicate.
 
         Parameters
@@ -725,11 +720,7 @@ class DiscordWebSocket:
                 raise ConnectionClosed(self.socket, shard_id=self.shard_id) from exc
 
     async def change_presence(
-        self,
-        *,
-        activity: Optional[BaseActivity] = None,
-        status: Optional[str] = None,
-        since: float = 0.0
+        self, *, activity: Optional[BaseActivity] = None, status: Optional[str] = None, since: float = 0.0
     ):
         if activity is not None:
             if not isinstance(activity, BaseActivity):
@@ -755,7 +746,7 @@ class DiscordWebSocket:
         limit: Optional[int],
         user_ids: Optional[Union[Snowflake, List[Snowflake]]] = None,
         presences: bool = False,
-        nonce: Optional[str] = None
+        nonce: Optional[str] = None,
     ):
         payload = {"op": self.REQUEST_MEMBERS, "d": {"guild_id": guild_id, "presences": presences, "limit": limit}}
 
@@ -771,11 +762,7 @@ class DiscordWebSocket:
         await self.send_as_json(payload)
 
     async def voice_state(
-        self,
-        guild_id: Snowflake,
-        channel_id: Snowflake,
-        self_mute: bool = False,
-        self_deaf: bool = False
+        self, guild_id: Snowflake, channel_id: Snowflake, self_mute: bool = False, self_deaf: bool = False
     ):
         payload = {
             "op": self.VOICE_STATE,
@@ -859,7 +846,7 @@ class DiscordVoiceWebSocket:
         socket: aiohttp.ClientWebSocketResponse,
         loop: asyncio.AbstractEventLoop,
         *,
-        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None
+        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None,
     ):
         self.ws = socket
         self.loop = loop
@@ -905,7 +892,7 @@ class DiscordVoiceWebSocket:
         client: VClientT,
         *,
         resume: bool = False,
-        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None
+        hook: Optional[Callable[..., Coroutine[Any, Any, None]]] = None,
     ):
         """Creates a voice websocket for the :class:`VoiceClient`."""
         gateway = "wss://" + client.endpoint + "/?v=4"
@@ -947,6 +934,8 @@ class DiscordVoiceWebSocket:
         op = msg["op"]
         data = msg.get("d")
 
+        is_vc_receive = getattr(self._connection, "_client_type", None) == "receive"
+
         if op == self.READY:
             await self.initial_connection(data)
         elif op == self.HEARTBEAT_ACK:
@@ -954,12 +943,33 @@ class DiscordVoiceWebSocket:
         elif op == self.RESUMED:
             _log.info("Voice RESUME succeeded.")
         elif op == self.SESSION_DESCRIPTION:
-            self._connection.mode = data["mode"]
+            if is_vc_receive:
+                self._connection._mode = data["mode"]
+            else:
+                self._connection.mode = data["mode"]
             await self.load_secret_key(data)
+            await self._do_speaking_receive_hacks()
         elif op == self.HELLO:
             interval = data["heartbeat_interval"] / 1000.0
             self._keep_alive = VoiceKeepAliveHandler(ws=self, interval=min(interval, 5.0))
             self._keep_alive.start()
+        # Parse speaking data, but only do it if we're using
+        # VoiceReceiveClient.
+        elif op == self.SPEAKING and is_vc_receive:
+            user_id = int(data["user_id"])
+            vc = self._connection
+            vc._add_ssrc(user_id, data["ssrc"])
+
+            if vc.guild:
+                user = vc.guild.get_member(user_id)
+            else:
+                user = vc._state.get_user(user_id)
+
+            vc._state.dispatch("speaking_update", user, SpeakingState(data["speaking"]))
+        elif op == self.CLIENT_CONNECT and is_vc_receive:
+            self._connection._add_ssrc(int(data["user_id"]), data["audio_ssrc"])
+        elif op == self.CLIENT_DISCONNECT and is_vc_receive:
+            self._connection._remove_ssrc(user_id=int(data["user_id"]))
 
         await self._hook(self, msg)
 
@@ -1012,6 +1022,25 @@ class DiscordVoiceWebSocket:
         _log.info("received secret key for voice connection")
         self.secret_key = self._connection.secret_key = data.get("secret_key")
         await self.speak()
+        await self.speak(False)
+
+    async def _do_speaking_receive_hacks(self):
+        # Everything below this is a hack because discord keeps breaking things
+
+        # hack #1
+        # speaking needs to be set otherwise reconnecting makes you forget that the
+        # bot is playing audio and you wont hear it until the bot sets speaking again
+        await self.speak()
+
+        # hack #2:
+        # you need to wait for some indeterminate amount of time before sending silence
+        await asyncio.sleep(0.5)
+
+        # hack #3:
+        # sending a silence packet is required to be able to read from the socket
+        self._connection.send_audio_packet(b"\xF8\xFF\xFE", encode=False)
+
+        # just so we don't have the speaking circle when we're not actually speaking
         await self.speak(False)
 
     async def poll_event(self):

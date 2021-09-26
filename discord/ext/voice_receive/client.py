@@ -31,7 +31,7 @@ import struct
 import threading
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from discord import utils
+from discord import opus, utils
 from discord.backoff import ExponentialBackoff
 from discord.errors import ClientException, ConnectionClosed
 from discord.voice_client import VoiceProtocol
@@ -109,6 +109,9 @@ class VoiceClientReceiver(VoiceProtocol):
     ip: str
     port: int
 
+    # Some dirty hack for checking
+    _client_type = "receive"
+
     def __init__(self, client: Client, channel: abc.Connectable):
         if not has_nacl:
             raise RuntimeError("PyNaCl library needed in order to use voice")
@@ -134,6 +137,7 @@ class VoiceClientReceiver(VoiceProtocol):
         self.sequence: int = 0
         self.timestamp: int = 0
         self.timeout: float = 0
+        self.encoder: opus.Encoder = MISSING
         self._runner: asyncio.Task = MISSING
         self._reader = None
         self.ws: DiscordVoiceWebSocket = MISSING
@@ -451,6 +455,44 @@ class VoiceClientReceiver(VoiceProtocol):
         encrypt_packet = getattr(self, "_encrypt_" + self._mode)
         return encrypt_packet(header, data)
 
+    def send_audio_packet(self, data: bytes, *, encode: bool = True) -> None:
+        """Sends an audio packet composed of the data.
+
+        You must be connected to play audio.
+
+        Parameters
+        ----------
+        data: :class:`bytes`
+            The :term:`py:bytes-like object` denoting PCM or Opus voice data.
+        encode: :class:`bool`
+            Indicates if ``data`` should be encoded into Opus.
+
+        Raises
+        -------
+        ClientException
+            You are not connected.
+        opus.OpusError
+            Encoding the data failed.
+        """
+
+        self.checked_add('sequence', 1, 65535)
+        if encode:
+            if self.encoder is MISSING:
+                self.encoder = opus.Encoder()
+
+            encoded_data = self.encoder.encode(data, opus.Encoder.SAMPLES_PER_FRAME)
+        else:
+            encoded_data = data
+
+        packet = self._encrypt_voice_packet(encoded_data)
+
+        try:
+            self.socket.sendto(packet, (self.endpoint_ip, self.voice_port))
+        except BlockingIOError:
+            _log.warning('A packet has been dropped (seq: %s, timestamp: %s)', self.sequence, self.timestamp)
+
+        self.checked_add('timestamp', opus.Encoder.SAMPLES_PER_FRAME, 4294967295)
+    
     # receive api related
 
     def listen(self, sink: AudioSink):
