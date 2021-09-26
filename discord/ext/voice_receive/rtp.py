@@ -126,7 +126,7 @@ class SilencePacket(_PacketCmpMixin):
     decrypted_data = b"\xF8\xFF\xFE"
 
     def __init__(self, ssrc: int, timestamp: int):
-        self.srrc: int = ssrc
+        self.ssrc: int = ssrc
         self.timestamp: int = timestamp
 
     def __repr__(self) -> str:
