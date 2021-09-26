@@ -3946,6 +3946,22 @@ Widget
 .. autoclass:: Widget()
     :members:
 
+DiscoveryCategory
+~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: DiscoveryCategory
+
+.. autoclass:: DiscoveryCategory()
+    :members:
+
+DiscoveryMetadata
+~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: DiscoveryMetadata
+
+.. autoclass:: DiscoveryMetadata()
+    :members:
+
 StickerPack
 ~~~~~~~~~~~~~
 

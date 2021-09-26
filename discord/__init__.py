@@ -31,6 +31,7 @@ from .channel import *
 from .client import *
 from .colour import *
 from .components import *
+from .discovery import *
 from .embeds import *
 from .emoji import *
 from .enums import *

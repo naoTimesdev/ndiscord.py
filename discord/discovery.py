@@ -59,6 +59,8 @@ class DiscoveryCategory(EqualityComparable):
 
             Returns the default name for the category.
 
+    .. versionadded:: 2.0
+
     Attributes
     ----------
     id: :class:`int`
@@ -95,9 +97,26 @@ class DiscoveryCategory(EqualityComparable):
 class DiscoveryMetadata:
     """Represents a discovery metadata for a guild.
 
+    .. versionadded:: 2.0
+
     Attributes
     -----------
-    TBW
+    guild: :class:`.Guild`
+        The guild the metadata belongs to.
+    primary_category_type: :class:`.DiscoveryCategoryType`
+        The primary category of the guild.
+    keywords: List[:class:`str`]
+        The keywords for the guild discovery.
+    emoji_discoverability: :class:`bool`
+        Whether the emoji discoverability are enabled.
+    subcategory_types: List[:class:`.DiscoveryCategoryType`]
+        The subcategories of the guild.
+    partner_actioned_timestamp: Optional[:class:`datetime.datetime`]
+        When the guild's partner application was accepted
+        or denied, for applications via Server Settings.
+    partner_application_timestamp: Optional[:class:`datetime.datetime`]
+        When the guild applied for partnership, if it has
+        a pending appplication.
     """
 
     __slots__ = (
@@ -105,7 +124,7 @@ class DiscoveryMetadata:
         "primary_category_type",
         "keywords",
         "emoji_discoverability",
-        "subcategories_type",
+        "subcategory_types",
         "partner_actioned_timestamp",
         "partner_application_timestamp",
         "_state",
@@ -121,7 +140,7 @@ class DiscoveryMetadata:
         self.primary_category_type: DiscoveryCategoryType = try_enum(DiscoveryCategoryType, data["primary_category_id"])
         self.keywords: List[str] = data.get("keywords", []) or []
         self.emoji_discoverability: bool = data["emoji_discoverability_enabled"]
-        self.subcategories_type: List[DiscoveryCategoryType] = [
+        self.subcategory_types: List[DiscoveryCategoryType] = [
             try_enum(DiscoveryCategoryType, x) for x in data.get("subcategories", [])
         ]
 
@@ -210,12 +229,12 @@ class DiscoveryMetadata:
         List[:class:`.DiscoveryCategory`]
             The subcategories of the guild.
         """
-        if len(self.subcategories_type) < 1:
+        if len(self.subcategory_types) < 1:
             return []
         categories = await self._state.http.get_discovery_categories()
 
         subcategories = filter(
-            lambda x: try_enum(DiscoveryCategoryType, x["id"]) in self.subcategories_type, categories
+            lambda x: try_enum(DiscoveryCategoryType, x["id"]) in self.subcategory_types, categories
         )
         return [DiscoveryCategory(data=category) for category in subcategories]
 
@@ -240,7 +259,7 @@ class DiscoveryMetadata:
         if not isinstance(subcategory_id):
             raise InvalidArgument(f"Invalid category ID {subcategory_id}.")
         subcategory = await self._state.http.add_guild_discovery_subcategory(self.guild.id, subcategory_id)
-        self.subcategories_type.append(try_enum(DiscoveryCategoryType, subcategory["category_id"]))
+        self.subcategory_types.append(try_enum(DiscoveryCategoryType, subcategory["category_id"]))
 
     async def remove_subcategory(self, category: Union[DiscoveryCategory, DiscoveryCategoryType]) -> None:
         """|coro|
@@ -264,6 +283,6 @@ class DiscoveryMetadata:
             raise InvalidArgument(f"Invalid category ID {subcategory_id}.")
         await self._state.http.remove_guild_discovory_subcategory(self.guild.id, subcategory_id)
         try:
-            self.subcategories_type.remove(try_enum(DiscoveryCategoryType, subcategory_id))
+            self.subcategory_types.remove(try_enum(DiscoveryCategoryType, subcategory_id))
         except Exception:
             pass
