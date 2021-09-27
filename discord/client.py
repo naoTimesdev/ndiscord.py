@@ -87,6 +87,7 @@ from .widget import Widget
 if TYPE_CHECKING:
     from .abc import GuildChannel, PrivateChannel, Snowflake, SnowflakeTime
     from .channel import DMChannel
+    from .guild import VocalGuildChannel
     from .member import Member
     from .message import Message
     from .types.interactions import ApplicationCommand as RawApplicationCommand
@@ -261,6 +262,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     ) -> None:
         ...
 
+    @overload
+    def __init__(self, *, loop: Optional[asyncio.AbstractEventLoop] = None) -> None:
+        ...
+
     def __init__(
         self,
         *,
@@ -304,21 +309,25 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
     def _get_websocket(self, guild_id: Optional[int] = None, *, shard_id: Optional[int] = None) -> DiscordWebSocket:
         return self.ws
 
-    if TYPE_CHECKING:
-        @overload
-        def _get_state(
-            self,
-            max_messages: int = 1000,
-            heartbeat_timeout: float = 60.0,
-            guild_ready_timeout: float = 2.0,
-            allowed_mentions: Optional[AllowedMentions] = None,
-            activity: Optional[BaseActivity] = None,
-            status: Optional[Status] = None,
-            intents: Optional[Intents] = None,
-            chunk_guilds_at_startup: bool = False,
-            member_cache_flags: Optional[MemberCacheFlags] = None,
-        ) -> ConnectionState:
-            ...
+    @overload
+    def _get_state(
+        self,
+        *,
+        max_messages: int = 1000,
+        heartbeat_timeout: float = 60.0,
+        guild_ready_timeout: float = 2.0,
+        allowed_mentions: Optional[AllowedMentions] = None,
+        activity: Optional[BaseActivity] = None,
+        status: Optional[Status] = None,
+        intents: Optional[Intents] = None,
+        chunk_guilds_at_startup: bool = False,
+        member_cache_flags: Optional[MemberCacheFlags] = None,
+    ) -> ConnectionState:
+        ...
+
+    @overload
+    def _get_state(self) -> ConnectionState:
+        ...
 
     def _get_state(self, **options: Any) -> ConnectionState:
         return ConnectionState(
@@ -800,6 +809,9 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         for guild_id, payloads in update_guild_commands.items():
             try:
+                payloads_send = []
+                for payload in payloads:
+                    payloads_send.append(payload.to_dict())
                 cmds = await self.http.bulk_upsert_guild_commands(
                     self._app_cmd_ids, guild_id, [p.to_dict() for p in payloads]
                 )
@@ -814,8 +826,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                     parsed_cmd = utils.get(
                         pending_registration,
                         name=cmd["name"],
-                        type=ApplicationCommandType(cmd["type"]),
+                        type=ApplicationCommandType(cmd["type"]),  # type: ignore
                     )
+                    if parsed_cmd is None:
+                        continue
                     parsed_cmd.id = int(cmd["id"])
                     self.register_application(parsed_cmd)
 
@@ -828,8 +842,10 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             parsed_cmd = utils.get(
                 pending_registration,
                 name=glb_payload["name"],
-                type=ApplicationCommandType(glb_payload["type"]),
+                type=ApplicationCommandType(glb_payload["type"]),  # type: ignore
             )
+            if parsed_cmd is None:
+                continue
             parsed_cmd.id = int(glb_payload["id"])
             self.register_application(parsed_cmd)
         self.dispatch("application_registered")
@@ -907,7 +923,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """List[:class:`~discord.User`]: Returns a list of all the users the bot can see."""
         return list(self._connection._users.values())
 
-    def get_channel(self, id: int, /) -> Optional[Union[GuildChannel, Thread, PrivateChannel]]:
+    def get_channel(self, id: int, /) -> Optional[Union[GuildChannel, VocalGuildChannel, Thread, PrivateChannel, PartialMessageable]]:
         """Returns a channel or thread with the given ID.
 
         Parameters
@@ -1959,13 +1975,13 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             The collection of guild command that registred on Discord.
         """
 
-        registered_commands = await self.http.get_guild_commands(self.user.id, guild_id)
+        registered_commands = await self.http.get_guild_commands(self.user.id, guild_id)  # type: ignore
 
         registered_command_sets = []
         unknown_registed_commands = []
         for command_set in registered_commands:
             _get_factory = self._app_factories.get_command(
-                command_set["name"], ApplicationCommandType(command_set["type"])
+                command_set["name"], ApplicationCommandType(command_set["type"])  # type: ignore
             )
             if _get_factory is not None:
                 registered_command_sets.append(command_set)
@@ -1974,18 +1990,18 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 _unregistred_cmd = utils.get(
                     self._pending_registration,
                     name=command_set["name"],
-                    type=ApplicationCommandType(command_set["type"]),
+                    type=ApplicationCommandType(command_set["type"]),  # type: ignore
                 )
                 if _unregistred_cmd is not None:
-                    _unregistred_cmd.id = command_set["id"]
+                    _unregistred_cmd.id = command_set["id"]  # type: ignore
                     try:
-                        self._app_factories.add_command(_unregistred_cmd)
+                        self._app_factories.add_command(_unregistred_cmd)  # type: ignore
                     except ApplicationRegistrationError:
                         pass
                 else:
                     unknown_registed_commands.append(command_set)
 
-        return [*registered_command_sets, *unknown_registed_commands]
+        return [*registered_command_sets, *unknown_registed_commands]  # type: ignore
 
     async def is_owner(self, user: User) -> bool:
         """|coro|

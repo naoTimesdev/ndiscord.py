@@ -795,7 +795,9 @@ class GuildChannel:
             await http.delete_channel_permissions(self.id, target.id, reason=reason)
         elif isinstance(overwrite, PermissionOverwrite):
             (allow, deny) = overwrite.pair()
-            await http.edit_channel_permissions(self.id, target.id, allow.value, deny.value, perm_type, reason=reason)
+            await http.edit_channel_permissions(
+                self.id, target.id, str(allow.value), str(deny.value), perm_type, reason=reason
+            )
         else:
             raise InvalidArgument("Invalid overwrite type provided.")
 
@@ -812,7 +814,7 @@ class GuildChannel:
         guild_id = self.guild.id
         cls = self.__class__
         data = await self._state.http.create_channel(guild_id, self.type.value, reason=reason, **base_attrs)
-        obj = cls(state=self._state, guild=self.guild, data=data)
+        obj = cls(state=self._state, guild=self.guild, data=data)  # type: ignore
 
         # temporarily add it to the cache
         self.guild._channels[obj.id] = obj  # type: ignore

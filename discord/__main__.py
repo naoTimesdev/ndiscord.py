@@ -172,7 +172,7 @@ _base_table = {
 }
 
 # NUL (0) and 1-31 are disallowed
-_base_table.update((chr(i), None) for i in range(32))
+_base_table.update((chr(i), None) for i in range(32))  # type: ignore
 
 _translation_table = str.maketrans(_base_table)
 

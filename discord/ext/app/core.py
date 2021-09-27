@@ -52,6 +52,9 @@ from discord.errors import ClientException, HTTPException
 from discord.member import Member
 from discord.message import Message
 from discord.user import User
+from discord.types.interactions import EditApplicationCommand as EditApplicationCommandPayload
+from discord.types.interactions import ApplicationCommandOption as ApplicationCommandOptionPayload
+from discord.types.interactions import ApplicationCommandOptionChoice as ApplicationCommandOptionChoicePayload
 
 from ._types import (
     AcceptedInputType,
@@ -115,6 +118,7 @@ T = TypeVar("T")
 ErrorT = TypeVar("ErrorT", bound="Error")
 HookT = TypeVar("HookT", bound="Hook")
 SubAppCommandT = TypeVar("SubAppCommandT")
+AppCommandXT = TypeVar("AppCommandXT", bound="ApplicationCommand")
 DecoApp = Callable[..., T]
 FuncT = TypeVar("FuncT", bound=Callable[..., Any])
 P = ParamSpec("P")
@@ -136,7 +140,7 @@ def get_signature_parameters(func: ApplicationCallback):
     return OrderedDict(inspect.signature(func).parameters)
 
 
-def wrap_callback(coro: Hook):
+def wrap_callback(coro: Union[Hook, Error]):
     @functools.wraps(coro)
     async def wrapped(*args, **kwargs):
         try:
@@ -152,11 +156,11 @@ def wrap_callback(coro: Hook):
     return wrapped
 
 
-def hooked_wrapped_callback(command: AppCommandT, ctx: ApplicationContext, coro: Coro[ApplicationCallback]):
-    @functools.wraps(coro)
+def hooked_wrapped_callback(command: ApplicationCommand, ctx: ApplicationContext, coro: Coro[ApplicationCallback]):
+    @functools.wraps(coro)  # type: ignore
     async def wrapped(*args, **kwargs):
         try:
-            ret = await coro(*args, **kwargs)
+            ret = await coro(*args, **kwargs)  # type: ignore
         except ApplicationCommandError:
             ctx.command_failed = True
             raise
@@ -202,26 +206,26 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
     cog: Optional[:class:`~discord.ext.commands.Cog`]
         The cog that this command belongs to. ``None`` if there isn't one.
     """
-    type: ClassVar[ApplicationCommandType]
+    type: ApplicationCommandType
     __original_kwargs__: Dict[str, Any]
-    cog: ClassVar[Optional[CogT]] = None
+    cog: Optional[CogT] = None
 
-    _id: ClassVar[str]
-    name: ClassVar[str]
-    guild_ids: ClassVar[List[int]]
+    _id: Optional[int]
+    name: str
+    guild_ids: List[int]
 
-    _before_invoke: ClassVar[Hook]
-    _after_invoke: ClassVar[Hook]
-    checks: ClassVar[List[Check]]
-    _callback: ClassVar[ApplicationCallback]
+    _before_invoke: Hook
+    _after_invoke: Hook
+    checks: List[Check]
+    _callback: ApplicationCallback
 
-    _buckets: ClassVar[ApplicationCooldownMapping]
-    _max_concurrency: ClassVar[ApplicationMaxConcurrency]
+    _buckets: ApplicationCooldownMapping
+    _max_concurrency: ApplicationMaxConcurrency
 
     # Error/checks handler, etc.
     on_error: Error
 
-    def __new__(cls: Type[AppCommandT], *args: Any, **kwargs: Any) -> AppCommandT:
+    def __new__(cls: Type[AppCommandXT], *args: Any, **kwargs: Any) -> AppCommandXT:
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs
         self.checks = []
@@ -231,7 +235,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
     def __repr__(self):
         return f"<discord.ext.app.{self.__class__.__name__} name={self.name}>"
 
-    def __eq__(self, other: AppCommandT):
+    def __eq__(self, other: ApplicationCommand):
         return isinstance(other, ApplicationCommand) and self.name == other.name and self.type == other.type
 
     @property
@@ -244,11 +248,11 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         self.params = get_signature_parameters(function)
 
     @property
-    def id(self) -> Optional[str]:
+    def id(self) -> Optional[int]:
         return getattr(self, "_id", None)
 
     @id.setter
-    def id(self, value: Optional[str]):
+    def id(self, value: Optional[int]):
         self._id = value
 
     @property
@@ -270,7 +274,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
             The context of the command.
         """
         if self.cog is not None:
-            return await self.callback(self.cog, ctx, *args, **kwargs)
+            return await self.callback(self.cog, ctx, *args, **kwargs)  # type: ignore
         else:
             return await self.callback(ctx, *args, **kwargs)
 
@@ -284,9 +288,9 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
     def _prepare_cooldowns(self, ctx: ApplicationContext[BotT, CogT]):
         if self._buckets.valid:
             current = discord.utils.snowflake_time(ctx.interaction.id)
-            bucket = self._buckets.get_bucket(ctx.interaction, current)
+            bucket = self._buckets.get_bucket(ctx.interaction, current.timestamp())
             if bucket is not None:
-                retry_after = bucket.update_rate_limit(current)
+                retry_after = bucket.update_rate_limit(current.timestamp())
                 if retry_after:
                     raise ApplicationCommandOnCooldown(bucket, retry_after, self._buckets.type)
 
@@ -456,7 +460,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
             if cog is not None:
                 local = self._get_overridden_method(cog.cog_command_error)
                 if local is not None:
-                    wrapped = wrap_callback(local)
+                    wrapped = wrap_callback(local)  # type: ignore
                     await wrapped(ctx, error)
         finally:
             ctx.bot.dispatch("application_error", ctx, error)
@@ -479,12 +483,12 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         if cog is not None:
             hook = self._get_overridden_method(cog.cog_before_invoke)
             if hook is not None:
-                await hook(ctx)
+                await hook(ctx)  # type: ignore
 
         # call the bot global hook if necessary
-        hook = ctx.bot._before_invoke
+        hook = ctx.bot._before_invoke  # type: ignore
         if hook is not None:
-            await hook(ctx)
+            await hook(ctx)  # type: ignore
 
     async def call_after_hooks(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         cog = self.cog
@@ -499,11 +503,11 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         if cog is not None:
             hook = self._get_overridden_method(cog.cog_after_invoke)
             if hook is not None:
-                await hook(ctx)
+                await hook(ctx)  # type: ignore
 
-        hook = ctx.bot._after_invoke
+        hook = ctx.bot._after_invoke  # type: ignore
         if hook is not None:
-            await hook(ctx)
+            await hook(ctx)  # type: ignore
 
     async def invoke(self, ctx: ApplicationContext[BotT, CogT]) -> None:
         """|coro|
@@ -540,7 +544,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
 
         await self.prepare(ctx)
 
-        injected = hooked_wrapped_callback(self, ctx, self.callback)
+        injected = hooked_wrapped_callback(self, ctx, self.callback)  # type: ignore
         await injected(*ctx.args, **ctx.kwargs)
 
     async def reinvoke(self, ctx: ApplicationContext[BotT, CogT], *, call_hooks: bool = False):
@@ -629,7 +633,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         ctx.command = self
 
         try:
-            if not await ctx.bot.can_run(ctx):
+            if not await ctx.bot.can_run(ctx):  # type: ignore
                 raise ApplicationCheckFailure(f"The global check functions for command {self.qualified_name} failed.")
 
             cog = self.cog
@@ -648,13 +652,14 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         finally:
             ctx.command = original
 
-    def to_dict(self):
+    def to_dict(self) -> EditApplicationCommandPayload:
         """:class:`dict`: A discord API friendly dictionary that can be submitted to the API."""
         _DEFAULT = "No description provided"
         options: Optional[List[Option]] = getattr(self, "options", None)
-        base_return = {
+        base_return: EditApplicationCommandPayload = {
             "name": self.name,
             "type": self.type.value,
+            "default_permission": True,
         }
         if options:
             base_return["options"] = [o.to_dict() for o in options]
@@ -712,9 +717,9 @@ class Option:
             self.required = False
         self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
 
-    def to_dict(self):
-        data = {
-            "name": self.name,
+    def to_dict(self) -> ApplicationCommandOptionPayload:
+        data: ApplicationCommandOptionPayload = {
+            "name": self.name,  # type: ignore
             "description": self.description,
             "type": self.input_type.value,
             "required": self.required,
@@ -745,7 +750,7 @@ class OptionChoice:
         self.name = name
         self.value = value or name
 
-    def to_dict(self):
+    def to_dict(self) -> ApplicationCommandOptionChoicePayload:
         return {"name": self.name, "value": self.value}
 
 
@@ -796,7 +801,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
 
     type = ApplicationCommandType.slash
     sub_type = SlashCommandOptionType.sub_command
-    parent: SlashCommand = None
+    parent: Optional[SlashCommand] = None
 
     description: ClassVar[str]
     options: List[Option]
@@ -820,6 +825,10 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
     ) -> None:
         ...
 
+    @overload
+    def __init__(self, callback: ApplicationCallback) -> None:
+        ...
+
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
         if not asyncio.iscoroutinefunction(callback):
             raise TypeError("Callback must be a coroutine.")
@@ -829,12 +838,12 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         fn_name = kwargs.get("name") or callback.__name__
         self.name = fn_name
 
-        description = kwargs.get("description") or (
+        description: str = kwargs.get("description") or (
             inspect.cleandoc(callback.__doc__).splitlines()[0]
             if callback.__doc__ is not None
             else "No description provided"
         )
-        self.description = description
+        self.description = description  # type: ignore
 
         self.params = get_signature_parameters(callback)
         self.options: List[Option] = self.parse_options()
@@ -917,16 +926,16 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
                 option = str
 
             if self._is_typing_optional(param):
-                option = Option(option.__args__[0], description=_NO_DESC, required=False)
+                option = Option(option.__args__[0], description=_NO_DESC, required=False)  # type: ignore
 
             option = slash_options.get(name, option)
 
             if not isinstance(option, Option):
                 option = Option(option, description=_NO_DESC)
-                if param.default != inspect.Parameter.empty:
+                if param.default != inspect.Parameter.empty:  # type: ignore
                     option.required = False
 
-            option.default = option.default or param.default
+            option.default = option.default or param.default  # type: ignore
             if option.default == inspect.Parameter.empty:
                 option.default = None
 
@@ -943,40 +952,44 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         args = [ctx] if self.cog is None else [self.cog, ctx]
         kwargs = {}
 
-        for arg in ctx.interaction.data.get("options", []):
+        for arg in ctx.interaction.data.get("options", []):  # type: ignore
             # Skip if type is sub_command or sub_command_group
             if arg["type"] in _INVALID_TYPE:
                 continue
-            op = discord.utils.find(lambda o: o.name == arg["name"], self.options)
+            op = discord.utils.find(lambda o: o.name == arg["name"], self.options)  # type: ignore
             # Copy of data
-            _real_val = arg["value"]
-            arg = arg["value"]
+            _real_val = arg["value"]  # type: ignore
+            arg = arg["value"]  # type: ignore
 
-            if SlashCommandOptionType.user.value <= op.input_type.value <= SlashCommandOptionType.role.value:
-                name = "member" if op.input_type == "user" else op.input_type.name
+            if (
+                SlashCommandOptionType.user.value
+                <= op.input_type.value  # type: ignore
+                <= SlashCommandOptionType.role.value
+            ):
+                name = "member" if op.input_type == "user" else op.input_type.name  # type: ignore
                 try:
                     arg = await discord.utils.get_or_fetch(ctx.guild, name, int(arg))
                 except HTTPException:
                     pass
-                if arg is None and op.default is None and not op._is_default_nonetype:
+                if arg is None and op.default is None and not op._is_default_nonetype:  # type: ignore
                     if arg == "member":
-                        raise ApplicationMemberNotFound(_real_val)
+                        raise ApplicationMemberNotFound(_real_val)  # type: ignore
                     else:
-                        raise ApplicationUserNotFound(_real_val)
-            elif op.input_type == SlashCommandOptionType.mentionable:
+                        raise ApplicationUserNotFound(_real_val)  # type: ignore
+            elif op.input_type == SlashCommandOptionType.mentionable:  # type: ignore
                 arg_id = int(arg)
                 arg = await discord.utils.get_or_fetch(ctx.guild, "member", arg_id)
                 if arg is None:
-                    arg = ctx.guild.get_role(arg_id)
-                    if arg is None and op.default is None and not op._is_default_nonetype:
-                        raise ApplicationMentionableNotFound(_real_val)
+                    arg = ctx.guild.get_role(arg_id)  # type: ignore
+                    if arg is None and op.default is None and not op._is_default_nonetype:  # type: ignore
+                        raise ApplicationMentionableNotFound(_real_val)  # type: ignore
             if arg is None:
                 # Determine if we should pass something.
-                if op._is_default_nonetype:
+                if op._is_default_nonetype:  # type: ignore
                     arg = None
-                elif op.default is not None:
-                    arg = op.default
-            kwargs[op.name] = arg
+                elif op.default is not None:  # type: ignore
+                    arg = op.default  # type: ignore
+            kwargs[op.name] = arg  # type: ignore
         for opts in self.options:
             if opts.name not in kwargs:
                 if opts._is_default_nonetype:
@@ -1032,6 +1045,8 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             # Exit fast if there's no child
             return
         data = ctx.interaction.data
+        if not data:
+            return
         options = data.get("options", [])
         if not options:
             return
@@ -1057,7 +1072,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             try:
                 await sub_command.invoke(ctx)
             except Exception as err:
-                sub_command.dispatch_error(ctx, err)
+                sub_command.dispatch_error(ctx, err)  # type: ignore
                 ctx.command_failed = True
                 raise err
 
@@ -1129,7 +1144,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         yield self
         for command in self.commands:
             if command.sub_type == SlashCommandOptionType.sub_command_group:
-                yield command.walk_commands()
+                yield command.walk_commands()  # type: ignore
             else:
                 yield command
 
@@ -1139,7 +1154,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             child_res = [child.to_dict() for child in self._children.values()]
             if "options" not in dict_res:
                 dict_res["options"] = []
-            dict_res["options"].extend(child_res)
+            dict_res["options"].extend(child_res)  # type: ignore
         if not self.has_parent() and "type" in dict_res:
             del dict_res["type"]
         elif self.has_parent():
@@ -1157,6 +1172,10 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
     ) -> DecoApp[SlashCommand[CogT, BotT]]:
         ...
 
+    @overload
+    def command(self) -> DecoApp[SlashCommand[CogT, BotT]]:
+        ...
+
     def command(self, *args, **kwargs):
         """A decorator that would add a new subcommand to the parent command.
 
@@ -1170,7 +1189,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         def decorator(func: Callable[Concatenate[ContextT, P], Coro[Any]]) -> SlashCommand:
             # Remove guild_ids
             kwargs.pop("guild_ids", None)
-            result = SlashCommand(func, *args, **kwargs)
+            result = SlashCommand(func, *args, **kwargs)  # type: ignore
             # Set parent
             setattr(result, "parent", self)
             self.add_command(result)
@@ -1188,6 +1207,10 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
     ) -> DecoApp[SlashCommand[CogT, BotT]]:
         ...
 
+    @overload
+    def group(self) -> DecoApp[SlashCommand[CogT, BotT]]:
+        ...
+
     def group(self, *args, **kwargs):
         """A decorator that would add a new subcommand group to the parent command.
 
@@ -1202,7 +1225,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             kwargs.setdefault("parent", self)
             # Remove guild_ids
             kwargs.pop("guild_ids", None)
-            result = SlashCommand(func, *args, **kwargs)
+            result = SlashCommand(func, *args, **kwargs)  # type: ignore
             # Set parent
             setattr(result, "parent", self)
             # Override the sub_type
@@ -1266,6 +1289,10 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT]):
         cooldown: Optional[ApplicationCooldownMapping] = ...,
         max_concurrency: Optional[ApplicationMaxConcurrency] = ...,
     ) -> None:
+        ...
+
+    @overload
+    def __init__(self, callback: ApplicationCallback) -> None:
         ...
 
     def __init__(self, callback: ApplicationCallback, *args, **kwargs) -> None:
@@ -1337,7 +1364,7 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT]):
         ctx.args = args
         ctx.kwargs = {}
 
-        resolved = ctx.interaction.data.get("resolved")
+        resolved = ctx.interaction.data.get("resolved")  # type: ignore
         if resolved is None:
             params = iter(self.params.items())
             if self.cog is not None:
@@ -1367,37 +1394,37 @@ class ContextMenuApplication(ApplicationCommand[CogT, BotT]):
             if "members" in resolved:
                 members = resolved["members"]
                 for member_id, member_data in members.items():
-                    member_data["id"] = int(member_id)
+                    member_data["id"] = int(member_id)  # type: ignore
                     member = member_data
-                users = resolved["users"]
+                users = resolved["users"]  # type: ignore
                 for user_id, user_data in users.items():
                     user_data["id"] = int(user_id)
                     user = user_data
-                member["user"] = user
+                member["user"] = user  # type: ignore
                 ctx.args.append(
                     Member(
-                        data=member,
-                        guild=ctx.interaction._state._get_guild(ctx.interaction.guild_id),
+                        data=member,  # type: ignore
+                        guild=ctx.interaction._state._get_guild(ctx.interaction.guild_id),  # type: ignore
                         state=ctx.interaction._state,
                     )
                 )
             else:
-                users = resolved.users
+                users = resolved.users  # type: ignore
                 for user_id, user_data in users.items():
                     user_data["id"] = int(user_id)
                     user = user_data
-                ctx.args.append(User(data=user, state=ctx.interaction._state))
+                ctx.args.append(User(data=user, state=ctx.interaction._state))  # type: ignore
         elif self.type == ApplicationCommandType.message:
-            messages = resolved["messages"]
+            messages = resolved["messages"]  # type: ignore
             for msg_id, msg_data in messages.items():
                 msg_data["id"] = int(msg_id)
                 msg = msg_data
-            channel = ctx.interaction._state.get_channel(int(msg["channel_id"]))
+            channel = ctx.interaction._state.get_channel(int(msg["channel_id"]))  # type: ignore
             if channel is None:
                 data = await ctx.interaction._state.http.start_private_message(int(messages["author"]["id"]))
                 channel = ctx.interaction._state.add_dm_channel(data)
 
-            ctx.args.append(Message(state=ctx.interaction._state, channel=channel, data=msg))
+            ctx.args.append(Message(state=ctx.interaction._state, channel=channel, data=msg))  # type: ignore
 
 
 class UserCommand(ContextMenuApplication[CogT, BotT]):

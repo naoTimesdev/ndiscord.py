@@ -62,19 +62,19 @@ __all__ = (
 )
 
 
-def _create_value_cls(name, comparable):
+def _create_value_cls(name: str, comparable: bool):
     cls = namedtuple("_EnumValue_" + name, "name value")
-    cls.__repr__ = lambda self: f"<{name}.{self.name}: {self.value!r}>"
-    cls.__str__ = lambda self: f"{name}.{self.name}"
+    cls.__repr__ = lambda self: f"<{name}.{self.name}: {self.value!r}>"  # type: ignore
+    cls.__str__ = lambda self: f"{name}.{self.name}"  # type: ignore
     if comparable:
-        cls.__le__ = lambda self, other: isinstance(other, self.__class__) and self.value <= other.value
-        cls.__ge__ = lambda self, other: isinstance(other, self.__class__) and self.value >= other.value
-        cls.__lt__ = lambda self, other: isinstance(other, self.__class__) and self.value < other.value
-        cls.__gt__ = lambda self, other: isinstance(other, self.__class__) and self.value > other.value
+        cls.__le__ = lambda self, other: isinstance(other, self.__class__) and self.value <= other.value  # type: ignore
+        cls.__ge__ = lambda self, other: isinstance(other, self.__class__) and self.value >= other.value  # type: ignore
+        cls.__lt__ = lambda self, other: isinstance(other, self.__class__) and self.value < other.value  # type: ignore
+        cls.__gt__ = lambda self, other: isinstance(other, self.__class__) and self.value > other.value  # type: ignore
     return cls
 
 
-def _is_descriptor(obj):
+def _is_descriptor(obj: object):
     return hasattr(obj, "__get__") or hasattr(obj, "__set__") or hasattr(obj, "__delete__")
 
 
@@ -570,8 +570,8 @@ class SlashCommandOptionType(Enum):
         if isinstance(datatype, cls):
             return datatype
         if isinstance(datatype, int):
-            enum_list = list(map(int, cls))
-            if datatype in enum_list:
+            all_base_enums = list(cls.__members__.values())
+            if datatype in all_base_enums:
                 return cls(datatype)
             return cls.integer
         if issubclass(datatype, str):

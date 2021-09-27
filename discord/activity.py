@@ -233,6 +233,10 @@ class Activity(BaseActivity):
     ) -> None:
         ...
 
+    @overload
+    def __init__(self) -> None:
+        ...
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.state: Optional[str] = kwargs.pop("state", None)
@@ -382,6 +386,10 @@ class Game(BaseActivity):
     def __init__(self, name: str, *, timestamps: Optional[ActivityTimestamps], created_at: Optional[float]) -> None:
         ...
 
+    @overload
+    def __init__(self, name: str) -> None:
+        ...
+
     def __init__(self, name: str, **extra):
         super().__init__(**extra)
         self.name: str = name
@@ -499,13 +507,22 @@ class Streaming(BaseActivity):
     @overload
     def __init__(
         self,
+        *,
         name: Optional[str],
         url: str,
-        *,
         details: Optional[str],
         state: Optional[str],
         assets: Optional[ActivityAssets],
         created_at: Optional[float]
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str],
+        url: str
     ) -> None:
         ...
 
@@ -608,6 +625,10 @@ class Spotify:
         session_id: Optional[str],
         created_at: Optional[float]
     ) -> None:
+        ...
+
+    @overload
+    def __init__(self) -> None:
         ...
 
     def __init__(self, **data):
@@ -800,6 +821,10 @@ class CustomActivity(BaseActivity):
     ) -> None:
         ...
 
+    @overload
+    def __init__(self, name: Optional[str], *, emoji: Optional[PartialEmoji]) -> None:
+        ...
+
     def __init__(self, name: Optional[str], *, emoji: Optional[PartialEmoji] = None, **extra: Any):
         super().__init__(**extra)
         self.name: Optional[str] = name
@@ -885,13 +910,13 @@ def create_activity(data: Optional[ActivityPayload]) -> Optional[ActivityTypes]:
     game_type = try_enum(ActivityType, data.get("type", -1))
     if game_type is ActivityType.playing:
         if "application_id" in data or "session_id" in data:
-            return Activity(**data)
-        return Game(**data)
+            return Activity(**data)  # type: ignore
+        return Game(**data)  # type: ignore
     elif game_type is ActivityType.custom:
         try:
             name = data.pop("name")
         except KeyError:
-            return Activity(**data)
+            return Activity(**data)  # type: ignore
         else:
             # we removed the name key from data already
             return CustomActivity(name=name, **data)  # type: ignore
@@ -899,7 +924,7 @@ def create_activity(data: Optional[ActivityPayload]) -> Optional[ActivityTypes]:
         if "url" in data:
             # the url won't be None here
             return Streaming(**data)  # type: ignore
-        return Activity(**data)
+        return Activity(**data)  # type: ignore
     elif game_type is ActivityType.listening and "sync_id" in data and "session_id" in data:
-        return Spotify(**data)
-    return Activity(**data)
+        return Spotify(**data)  # type: ignore
+    return Activity(**data)  # type: ignore

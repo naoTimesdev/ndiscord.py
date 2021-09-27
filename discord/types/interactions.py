@@ -56,6 +56,7 @@ class ApplicationCommand(_ApplicationCommandOptional):
 class _ApplicationCommandOptionOptional(TypedDict, total=False):
     choices: List[ApplicationCommandOptionChoice]
     options: List[ApplicationCommandOption]
+    channel_types: List[ChannelType]
 
 
 ApplicationCommandOptionType = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -70,7 +71,7 @@ class ApplicationCommandOption(_ApplicationCommandOptionOptional):
 
 class ApplicationCommandOptionChoice(TypedDict):
     name: str
-    value: Union[str, int]
+    value: Union[str, int, float]
 
 
 ApplicationCommandPermissionType = Literal[1, 2]

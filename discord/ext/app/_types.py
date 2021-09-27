@@ -59,15 +59,17 @@ Error = Union[
     Callable[["Cog", "ApplicationContext", "ApplicationCommandError"], Coro[Any]],
     Callable[["ApplicationContext", "ApplicationCommandError"], Coro[Any]],
 ]
+PT = TypeVar("PT", covariant=True)
 
 PythonInputType = Type[Union[str, int, float, bool]]
 Mentionable = TypeVar("Mentionable", bound="Union[Snowflake, GuildChannel, Member, Role]")
 AcceptedInputType = Union[PythonInputType, int, Mentionable]
 
 
-class ApplicationCallback(Protocol[T]):
+class ApplicationCallback(Protocol[PT]):
     """A callback that can be used by an :class:`ApplicationCommand`."""
 
+    __name__: str
     __commands_checks__: List[Check]
     __before_invoke__: Hook
     __after_invoke__: Hook
@@ -75,7 +77,7 @@ class ApplicationCallback(Protocol[T]):
     __commands_cooldown__: Union["ApplicationCooldownMapping", "ApplicationCooldown"]
     __commands_max_concurrency__: "ApplicationMaxConcurrency"
 
-    def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Coro[T]:
+    def __call__(self, ctx: "ApplicationContext", *args: Any, **kwargs: Any) -> Coro[PT]:
         ...
 
 

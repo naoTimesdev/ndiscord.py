@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
 
 import discord.abc
 import discord.utils
@@ -44,12 +44,12 @@ if TYPE_CHECKING:
     from discord.mentions import AllowedMentions
     from discord.ui import View
 
-    from .core import MessageCommand, SlashCommand, UserCommand
+    from .core import ApplicationCommand
 
 __all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
-AppCommandT = Union["SlashCommand", "MessageCommand", "UserCommand"]
+AppCommandT = TypeVar("AppCommandT", bound="ApplicationCommand")
 
 
 class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
@@ -100,10 +100,10 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         self.args: List[Any] = args
         self.kwargs: Dict[str, Any] = kwargs
         self.command_failed: bool = command_failed
-        self.command: AppCommandT = command
+        self.command: ApplicationCommand = command
 
         # Subcommand stuff for /slash command
-        self.invoked_subcommand: Optional[AppCommandT] = None
+        self.invoked_subcommand: Optional[ApplicationCommand] = None
 
         self._deferred: bool = False
         self._state: ConnectionState = self.interaction._state
@@ -122,6 +122,8 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         """invoked_with: Optional[:class:`str`]: The original string that the user used to invoke the command.
         Might be none if the command is context menu.
         """
+        if self.interaction.data is None:
+            return None
         return self.interaction.data.get("name")
 
     @property
@@ -241,4 +243,4 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
     def pong(self):
         return self.interaction.response.pong
 
-    send = respond
+    send = respond  # type: ignore

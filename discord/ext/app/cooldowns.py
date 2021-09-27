@@ -62,11 +62,11 @@ class ApplicationBucketType(Enum):
         if self is ApplicationBucketType.user:
             return inter
         elif self is ApplicationBucketType.guild:
-            return inter.guild.id
+            return inter.guild.id  # type: ignore
         elif self is ApplicationBucketType.channel:
-            return inter.channel.id
+            return inter.channel.id  # type: ignore
         elif self is ApplicationBucketType.member:
-            return ((inter.guild and inter.guild.id), inter.user.id)
+            return ((inter.guild and inter.guild.id), inter.user.id)  # type: ignore
 
     def __call__(self, msg: Interaction) -> Any:
         return self.get_key(msg)
