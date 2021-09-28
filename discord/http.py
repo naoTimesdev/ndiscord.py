@@ -110,7 +110,7 @@ async def json_or_text(response: aiohttp.ClientResponse) -> Union[Dict[str, Any]
 
 
 class Route:
-    BASE: ClassVar[str] = "https://discord.com/api/v8"
+    BASE: ClassVar[str] = "https://discord.com/api/v9"
 
     def __init__(self, method: str, path: str, **parameters: Any) -> None:
         self.path: str = path
@@ -772,7 +772,7 @@ class HTTPClient:
         *,
         reason: Optional[str] = None,
     ) -> Response[member.Nickname]:
-        r = Route("PATCH", "/guilds/{guild_id}/members/@me/nick", guild_id=guild_id)
+        r = Route("PATCH", "/guilds/{guild_id}/members/@me", guild_id=guild_id)
         payload = {
             "nick": nickname,
         }
