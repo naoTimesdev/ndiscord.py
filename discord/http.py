@@ -86,6 +86,7 @@ if TYPE_CHECKING:
         threads,
         user,
         webhook,
+        welcome_screen,
         widget,
     )
     from .types.snowflake import Snowflake, SnowflakeList
@@ -109,7 +110,7 @@ async def json_or_text(response: aiohttp.ClientResponse) -> Union[Dict[str, Any]
 
 
 class Route:
-    BASE: ClassVar[str] = "https://discord.com/api/v8"
+    BASE: ClassVar[str] = "https://discord.com/api/v9"
 
     def __init__(self, method: str, path: str, **parameters: Any) -> None:
         self.path: str = path
@@ -771,7 +772,7 @@ class HTTPClient:
         *,
         reason: Optional[str] = None,
     ) -> Response[member.Nickname]:
-        r = Route("PATCH", "/guilds/{guild_id}/members/@me/nick", guild_id=guild_id)
+        r = Route("PATCH", "/guilds/{guild_id}/members/@me", guild_id=guild_id)
         payload = {
             "nick": nickname,
         }
@@ -1309,6 +1310,31 @@ class HTTPClient:
         reason: Optional[str] = None,
     ) -> Response[emoji.Emoji]:
         r = Route("PATCH", "/guilds/{guild_id}/emojis/{emoji_id}", guild_id=guild_id, emoji_id=emoji_id)
+        return self.request(r, json=payload, reason=reason)
+
+    # Welcome screen stuff
+
+    def get_welcome_screen(self, guild_id: Snowflake):
+        r = Route("GET", "/guilds/{guild_id}/welcome-screen", guild_id=guild_id)
+        return self.request(r)
+
+    def edit_welcome_screen(
+        self,
+        guild_id: Snowflake,
+        *,
+        enabled: bool = None,
+        welcome_channels: List[welcome_screen.WelcomeScreenChannel] = None,
+        description: Optional[str] = None,
+        reason: str = None,
+    ) -> Response[welcome_screen.WelcomeScreen]:
+        payload = {}
+        if enabled is not None:
+            payload["enabled"] = enabled
+        if welcome_channels is not None:
+            payload["welcome_channels"] = welcome_channels
+        if description is not None:
+            payload["description"] = description
+        r = Route("PATCH", "/guilds/{guild_id}/welcome-screen", guild_id=guild_id)
         return self.request(r, json=payload, reason=reason)
 
     def get_all_integrations(self, guild_id: Snowflake) -> Response[List[integration.Integration]]:
