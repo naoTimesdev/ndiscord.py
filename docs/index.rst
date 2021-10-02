@@ -9,7 +9,7 @@ Welcome to ndiscord.py
 .. image:: /images/snake.svg
 .. image:: /images/snake_dark.svg
 
-discord.py is a modern, easy to use, feature-rich, and async ready API wrapper
+ndiscord.py is a modern, easy to use, feature-rich, and async ready API wrapper
 for Discord.
 
 **Features:**
@@ -62,7 +62,7 @@ These pages go into great detail about everything the API can do.
   api
   discord.ext.commands API Reference <ext/commands/api.rst>
   discord.ext.tasks API Reference <ext/tasks/index.rst>
-  discord.ext.api API Reference <ext/app/api.rst>
+  discord.ext.app API Reference <ext/app/api.rst>
 
 Meta
 ------

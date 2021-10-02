@@ -467,6 +467,14 @@ class Invite(Hashable):
         """:class:`str`: A property that retrieves the invite URL."""
         return self.BASE + "/" + self.code
 
+    @property
+    def friend_invite(self):
+        """:class:`bool`: Check if the Invite is friend invite.
+
+        .. versionadded:: 2.0
+        """
+        return self.channel is None or isinstance(self.channel, Object)
+
     async def delete(self, *, reason: Optional[str] = None):
         """|coro|
 

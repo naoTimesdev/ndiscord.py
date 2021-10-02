@@ -1,429 +1,299 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2015-present, Rapptz
-# This file is distributed under the same license as the discord.py package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: discord.py 1.5.1\n"
+"Project-Id-Version: ndiscordpy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-23 22:41-0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2021-09-20 09:34+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
-
-#: ../../intents.rst:6
-msgid "A Primer to Gateway Intents"
-msgstr ""
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /docs/_build/locale/intents.pot\n"
+"X-Crowdin-File-ID: 39\n"
+"Language: ja_JP\n"
 
 #: ../../intents.rst:8
-msgid ""
-"In version 1.5 comes the introduction of :class:`Intents`. This is a "
-"radical change in how bots are written. An intent basically allows a bot "
-"to subscribe into specific buckets of events. The events that correspond "
-"to each intent is documented in the individual attribute of the "
-":class:`Intents` documentation."
-msgstr ""
+msgid "A Primer to Gateway Intents"
+msgstr "ゲートウェイインテント入門"
 
 #: ../../intents.rst:10
-msgid ""
-"These intents are passed to the constructor of :class:`Client` or its "
-"subclasses (:class:`AutoShardedClient`, :class:`~.AutoShardedBot`, "
-":class:`~.Bot`) with the ``intents`` argument."
-msgstr ""
+msgid "In version 1.5 comes the introduction of :class:`Intents`. This is a radical change in how bots are written. An intent basically allows a bot to subscribe to specific buckets of events. The events that correspond to each intent is documented in the individual attribute of the :class:`Intents` documentation."
+msgstr "バージョン1.5では :class:`Intents` が導入されました。これにより、Botの書き方が根本的に変わります。基本的にインテントは、特定のイベント群をBotにサブスクライブさせるためのものです。各インテントに対応するイベントは、 :class:`Intents` のドキュメントに個別の属性として記載されています。"
 
 #: ../../intents.rst:12
-msgid ""
-"If intents are not passed, then the library defaults to every intent "
-"being enabled except the privileged intents, currently "
-":attr:`Intents.members` and :attr:`Intents.presences`."
-msgstr ""
+msgid "These intents are passed to the constructor of :class:`Client` or its subclasses (:class:`AutoShardedClient`, :class:`~.AutoShardedBot`, :class:`~.Bot`) with the ``intents`` argument."
+msgstr "インテントは ``intents`` 引数を介して :class:`Client` またはそのサブクラス(:class:`AutoShardedClient`, :class:`~.AutoShardedBot`, :class:`~.Bot`)のコンストラクタに渡されます。"
 
-#: ../../intents.rst:15
-msgid "What intents are needed?"
-msgstr ""
+#: ../../intents.rst:14
+msgid "If intents are not passed, then the library defaults to every intent being enabled except the privileged intents, currently :attr:`Intents.members` and :attr:`Intents.presences`."
+msgstr "インテントが渡されなかった場合、標準の設定が使用されます。標準の設定では現在特権インテントとされている :attr:`Intents.presences` と :attr:`Intents.presences` 以外のインテントが全て有効になります。"
 
 #: ../../intents.rst:17
-msgid ""
-"The intents that are necessary for your bot can only be dictated by "
-"yourself. Each attribute in the :class:`Intents` class documents what "
-":ref:`events <discord-api-events>` it corresponds to and what kind of "
-"cache it enables."
-msgstr ""
+msgid "What intents are needed?"
+msgstr "どのインテントが必要でしょうか？"
 
 #: ../../intents.rst:19
-msgid ""
-"For example, if you want a bot that functions without spammy events like "
-"presences or typing then we could do the following:"
-msgstr ""
+msgid "The intents that are necessary for your bot can only be dictated by yourself. Each attribute in the :class:`Intents` class documents what :ref:`events <discord-api-events>` it corresponds to and what kind of cache it enables."
+msgstr "あなたのBotに必要なインテントは、あなたにしかわかりません。 :class:`Intents` クラスのドキュメントの各属性欄には、どの :ref:`events <discord-api-events>` に対応し、どのようなキャッシュを有効化するのか記述されています。"
 
-#: ../../intents.rst:34
-msgid ""
-"Note that this doesn't enable :attr:`Intents.members` since it's a "
-"privileged intent."
-msgstr ""
+#: ../../intents.rst:21
+msgid "For example, if you want a bot that functions without spammy events like presences or typing then we could do the following:"
+msgstr "たとえば、プレゼンスやタイピングといったわずらわしいイベント抜きに動作するbotを書きたい場合、次のようにします。"
 
-#: ../../intents.rst:36
-msgid ""
-"Another example showing a bot that only deals with messages and guild "
-"information:"
-msgstr ""
+#: ../../intents.rst:37
+msgid "Note that this doesn't enable :attr:`Intents.members` since it's a privileged intent."
+msgstr "なお、特権インテントであるため、 :attr:`Intents.members` は有効になりません。"
 
-#: ../../intents.rst:54
-msgid "Privileged Intents"
-msgstr ""
-
-#: ../../intents.rst:56
-msgid ""
-"With the API change requiring bot authors to specify intents, some "
-"intents were restricted further and require more manual steps. These "
-"intents are called **privileged intents**."
-msgstr ""
+#: ../../intents.rst:39
+msgid "Another example showing a bot that only deals with messages and guild information:"
+msgstr "別の例: メッセージとギルド情報だけを扱うボット:"
 
 #: ../../intents.rst:58
-msgid ""
-"A privileged intent is one that requires you to go to the developer "
-"portal and manually enable it. To enable privileged intents do the "
-"following:"
-msgstr ""
+msgid "Privileged Intents"
+msgstr "特権インテント"
 
 #: ../../intents.rst:60
-msgid ""
-"Make sure you're logged on to the `Discord website "
-"<https://discord.com>`_."
-msgstr ""
-
-#: ../../intents.rst:61
-msgid ""
-"Navigate to the `application page "
-"<https://discord.com/developers/applications>`_"
-msgstr ""
+msgid "With the API change requiring bot authors to specify intents, some intents were restricted further and require more manual steps. These intents are called **privileged intents**."
+msgstr "API変更に伴い、Bot製作者がインテントを指定する必要が生じました。いくつかのインテントはより制約され、手動での設定を必要とするようになりました。これらのインテントを **特権インテント** と呼びます。"
 
 #: ../../intents.rst:62
+msgid "A privileged intent is one that requires you to go to the developer portal and manually enable it. To enable privileged intents do the following:"
+msgstr "特権インテントは、開発者ポータルで手動で有効にしなければならないインテントです。有効化の手順は以下のとおりです。"
+
+#: ../../intents.rst:64
+msgid "Make sure you're logged on to the `Discord website <https://discord.com>`_."
+msgstr "`Discordのウェブサイト <https://discord.com>`_ にログインできていることを確認してください。"
+
+#: ../../intents.rst:65
+msgid "Navigate to the `application page <https://discord.com/developers/applications>`_."
+msgstr "`アプリケーションページ <https://discord.com/developers/applications>`_ に移動します。"
+
+#: ../../intents.rst:66
 msgid "Click on the bot you want to enable privileged intents for."
-msgstr ""
+msgstr "特権インテントを有効にしたいBotをクリックします。"
 
-#: ../../intents.rst:63
+#: ../../intents.rst:67
 msgid "Navigate to the bot tab on the left side of the screen."
-msgstr ""
+msgstr "画面の左側にあるBotタブに移動します。"
 
-#: ../../intents.rst:68
-msgid ""
-"Scroll down to the \"Privileged Gateway Intents\" section and enable the "
-"ones you want."
-msgstr ""
+#: ../../intents.rst:0
+msgid "The bot tab in the application page."
+msgstr "アプリケーションページのボットタブ。"
 
-#: ../../intents.rst:75
-msgid ""
-"Enabling privileged intents when your bot is in over 100 guilds requires "
-"going through `bot verification <https://support.discord.com/hc/en-"
-"us/articles/360040720412>`_. If your bot is already verified and you "
-"would like to enable a privileged intent you must go through `discord "
-"support <https://dis.gd/contact>`_ and talk to them about it."
-msgstr ""
+#: ../../intents.rst:72
+msgid "Scroll down to the \"Privileged Gateway Intents\" section and enable the ones you want."
+msgstr "「Privileged Gateway Intents」セクションまでスクロールし、必要なものを有効にします。"
+
+#: ../../intents.rst:0
+msgid "The privileged gateway intents selector."
+msgstr "特権ゲートウェイのインテントセレクタ。"
 
 #: ../../intents.rst:79
-msgid ""
-"Even if you enable intents through the developer portal, you still have "
-"to enable the intents through code as well."
-msgstr ""
+msgid "Enabling privileged intents when your bot is in over 100 guilds requires going through `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_. If your bot is already verified and you would like to enable a privileged intent you must go through `Discord support <https://dis.gd/contact>`_ and talk to them about it."
+msgstr "もしあなたのBotが100以上のギルドで利用されているなら、特権インテントを有効化するために `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_ が必要です。すでに認証済みのBotで特権インテントを有効化したい場合、 `Discord support <https://dis.gd/contact>`_ で報告してください。"
 
 #: ../../intents.rst:83
+msgid "Even if you enable intents through the developer portal, you still have to enable the intents through code as well."
+msgstr "開発者ポータルでインテントを有効化した後は、コード内でインテントを有効化しましょう。"
+
+#: ../../intents.rst:87
 msgid "Do I need privileged intents?"
-msgstr ""
+msgstr "私には特権インテントが必要ですか？"
 
-#: ../../intents.rst:85
+#: ../../intents.rst:89
 msgid "This is a quick checklist to see if you need specific privileged intents."
-msgstr ""
+msgstr "ある特権インテントが必要かについての簡単なチェックリストを用意しました。"
 
-#: ../../intents.rst:90
+#: ../../intents.rst:94
 msgid "Presence Intent"
-msgstr ""
+msgstr "プレゼンスインテント"
 
-#: ../../intents.rst:92
+#: ../../intents.rst:96
 msgid "Whether you use :attr:`Member.status` at all to track member statuses."
-msgstr ""
+msgstr "メンバーのステータスを追跡するために :attr:`Member.status` を使用するか。"
 
-#: ../../intents.rst:93
-msgid ""
-"Whether you use :attr:`Member.activity` or :attr:`Member.activities` to "
-"check member's activities."
-msgstr ""
-
-#: ../../intents.rst:98
-msgid "Member Intent"
-msgstr ""
-
-#: ../../intents.rst:100
-msgid ""
-"Whether you track member joins or member leaves, corresponds to "
-":func:`on_member_join` and :func:`on_member_remove` events."
-msgstr ""
-
-#: ../../intents.rst:101
-msgid "Whether you want to track member updates such as nickname or role changes."
-msgstr ""
+#: ../../intents.rst:97
+msgid "Whether you use :attr:`Member.activity` or :attr:`Member.activities` to check member's activities."
+msgstr ":attr:`Member.activity` か :attr:`Member.activities` を使用してメンバーのアクティビティを確認するか。"
 
 #: ../../intents.rst:102
-msgid ""
-"Whether you want to track user updates such as usernames, avatars, "
-"discriminators, etc."
-msgstr ""
-
-#: ../../intents.rst:103
-msgid ""
-"Whether you want to request the guild member list through "
-":meth:`Guild.chunk` or :meth:`Guild.fetch_members`."
-msgstr ""
+msgid "Member Intent"
+msgstr "メンバーインテント"
 
 #: ../../intents.rst:104
+msgid "Whether you track member joins or member leaves, corresponds to :func:`on_member_join` and :func:`on_member_remove` events."
+msgstr "メンバーの参加や退出を追跡するか。それぞれ :func:`on_member_join` と :func:`on_member_remove` イベントが対応します。"
+
+#: ../../intents.rst:105
+msgid "Whether you want to track member updates such as nickname or role changes."
+msgstr "ニックネームやロールの変更など、メンバーの更新を追跡するか。"
+
+#: ../../intents.rst:106
+msgid "Whether you want to track user updates such as usernames, avatars, discriminators, etc."
+msgstr "ユーザー名、アバター、識別子などのユーザーの更新を追跡するか。"
+
+#: ../../intents.rst:107
+msgid "Whether you want to request the guild member list through :meth:`Guild.chunk` or :meth:`Guild.fetch_members`."
+msgstr ":meth:`Guild.chunk` か :meth:`Guild.fetch_members` でギルドメンバーリストをリクエストするか。"
+
+#: ../../intents.rst:108
 msgid "Whether you want high accuracy member cache under :attr:`Guild.members`."
-msgstr ""
-
-#: ../../intents.rst:109
-msgid "Member Cache"
-msgstr ""
-
-#: ../../intents.rst:111
-msgid ""
-"Along with intents, Discord now further restricts the ability to cache "
-"members and expects bot authors to cache as little as is necessary. "
-"However, to properly maintain a cache the :attr:`Intents.members` intent "
-"is required in order to track the members who left and properly evict "
-"them."
-msgstr ""
+msgstr ":attr:`Guild.members` で高精度メンバーキャッシュを使用するか。"
 
 #: ../../intents.rst:113
-msgid ""
-"To aid with member cache where we don't need members to be cached, the "
-"library now has a :class:`MemberCacheFlags` flag to control the member "
-"cache. The documentation page for the class goes over the specific "
-"policies that are possible."
-msgstr ""
+msgid "Member Cache"
+msgstr "メンバーキャッシュ"
 
 #: ../../intents.rst:115
-msgid ""
-"It should be noted that certain things do not need a member cache since "
-"Discord will provide full member information if possible. For example:"
-msgstr ""
+msgid "Along with intents, Discord now further restricts the ability to cache members and expects bot authors to cache as little as is necessary. However, to properly maintain a cache the :attr:`Intents.members` intent is required in order to track the members who left and properly evict them."
+msgstr "Discordは、インテントとともにメンバーをキャッシュする機能をさらに制限し、必要に応じてボット作成者がキャッシュできるようになりました。 しかし、適切にキャッシュを維持するには、退出したメンバーを追跡し、適切に退出させるために :attr:の Intents.members` インテントが必要です。"
 
 #: ../../intents.rst:117
-msgid ""
-":func:`on_message` will have :attr:`Message.author` be a member even if "
-"cache is disabled."
-msgstr ""
-
-#: ../../intents.rst:118
-msgid ""
-":func:`on_voice_state_update` will have the ``member`` parameter be a "
-"member even if cache is disabled."
-msgstr ""
+msgid "To aid with member cache where we don't need members to be cached, the library now has a :class:`MemberCacheFlags` flag to control the member cache. The documentation page for the class goes over the specific policies that are possible."
+msgstr "メンバーがキャッシュされる必要がないメンバーキャッシュを支援する ライブラリにメンバーキャッシュを制御するための :class:`MemberCacheFlags` フラグが追加されました。 クラスのドキュメンテーションページは、可能な特定のポリシーに行きます。"
 
 #: ../../intents.rst:119
-msgid ""
-":func:`on_reaction_add` will have the ``user`` parameter be a member even"
-" if cache is disabled."
-msgstr ""
-
-#: ../../intents.rst:120
-msgid ""
-":func:`on_raw_reaction_add` will have "
-":attr:`RawReactionActionEvent.member` be a member even if cache is "
-"disabled."
-msgstr ""
+msgid "It should be noted that certain things do not need a member cache since Discord will provide full member information if possible. For example:"
+msgstr "可能な場合、Discordがメンバー情報を提供するため、メンバーキャッシュを必要としないことがあります。例えば："
 
 #: ../../intents.rst:121
-msgid ""
-"The reaction removal events do not have the member information. This is a"
-" Discord limitation."
-msgstr ""
+msgid ":func:`on_message` will have :attr:`Message.author` be a member even if cache is disabled."
+msgstr "キャッシュが無効になっていても、:func:`on_message` は :attr:`Message.author` がメンバーになります。"
+
+#: ../../intents.rst:122
+msgid ":func:`on_voice_state_update` will have the ``member`` parameter be a member even if cache is disabled."
+msgstr "キャッシュが無効の場合でも、:func:`on_voice_state_update` は ``member`` パラメータをメンバーにします。"
 
 #: ../../intents.rst:123
-msgid ""
-"Other events that take a :class:`Member` will require the use of the "
-"member cache. If absolute accuracy over the member cache is desirable, "
-"then it is advisable to have the :attr:`Intents.members` intent enabled."
-msgstr ""
+msgid ":func:`on_reaction_add` will have the ``user`` parameter be a member when in a guild even if cache is disabled."
+msgstr ":func:`on_reaction_add` は、キャッシュが無効になっている場合でもギルド内の ``user`` パラメータをメンバーにします。"
+
+#: ../../intents.rst:124
+msgid ":func:`on_raw_reaction_add` will have :attr:`RawReactionActionEvent.member` be a member when in a guild even if cache is disabled."
+msgstr ":func:`on_raw_reaction_add` は、キャッシュが無効になっていてもギルド内にいるときに :attr:`RawReactionActionEvent.member` がメンバーになります。"
+
+#: ../../intents.rst:125
+msgid "The reaction add events do not contain additional information when in direct messages. This is a Discord limitation."
+msgstr "ダイレクトメッセージで追加されたリアクションは追加情報を含んでいません。これはDiscordの制限です。"
+
+#: ../../intents.rst:126
+msgid "The reaction removal events do not have member information. This is a Discord limitation."
+msgstr "リアクション削除イベントにメンバー情報がありません。これはDiscordの制限です。"
 
 #: ../../intents.rst:128
-msgid "Retrieving Members"
-msgstr ""
-
-#: ../../intents.rst:130
-msgid ""
-"If cache is disabled or you disable chunking guilds at startup, we might "
-"still need a way to load members. The library offers a few ways to do "
-"this:"
-msgstr ""
-
-#: ../../intents.rst:134
-msgid ":meth:`Guild.query_members`"
+msgid "Other events that take a :class:`Member` will require the use of the member cache. If absolute accuracy over the member cache is desirable, then it is advisable to have the :attr:`Intents.members` intent enabled."
 msgstr ""
 
 #: ../../intents.rst:133
-msgid "Used to query members by a prefix matching nickname or username."
-msgstr ""
-
-#: ../../intents.rst:134
-msgid "This can also be used to query members by their user ID."
-msgstr ""
+msgid "Retrieving Members"
+msgstr "メンバーを取得中"
 
 #: ../../intents.rst:135
-msgid "This uses the gateway and not the HTTP."
-msgstr ""
-
-#: ../../intents.rst:136
-msgid ":meth:`Guild.chunk`"
-msgstr ""
-
-#: ../../intents.rst:137
-msgid "This can be used to fetch the entire member list through the gateway."
-msgstr ""
-
-#: ../../intents.rst:138
-msgid ":meth:`Guild.fetch_member`"
-msgstr ""
+msgid "If the cache is disabled or you disable chunking guilds at startup, we might still need a way to load members. The library offers a few ways to do this:"
+msgstr "キャッシュが無効になっている場合、または起動時にチャンキングギルドを無効にしている場合でも、メンバーをロードする方法が必要になる場合があります。 ライブラリには、以下の方法があります。"
 
 #: ../../intents.rst:139
-msgid "Used to fetch a member by ID through the HTTP API."
-msgstr ""
+msgid ":meth:`Guild.query_members`"
+msgstr ":meth:`Guild.query_members`"
+
+#: ../../intents.rst:138
+msgid "Used to query members by a prefix matching nickname or username."
+msgstr "ニックネームまたはユーザー名に一致するプレフィックスによってメンバーを照会するために使用されます。"
+
+#: ../../intents.rst:139
+msgid "This can also be used to query members by their user ID."
+msgstr "これは、ユーザー ID によってメンバーを照会するためにも使用できます。"
+
+#: ../../intents.rst:140
+msgid "This uses the gateway and not the HTTP."
+msgstr "これは HTTP ではなくゲートウェイを使用します。"
 
 #: ../../intents.rst:141
-msgid ":meth:`Guild.fetch_members`"
-msgstr ""
+msgid ":meth:`Guild.chunk`"
+msgstr ":meth:`Guild.chunk`"
 
-#: ../../intents.rst:141
-msgid "used to fetch a large number of members through the HTTP API."
-msgstr ""
+#: ../../intents.rst:142
+msgid "This can be used to fetch the entire member list through the gateway."
+msgstr "これはゲートウェイからメンバーリスト全体を取得するために使用できます。"
 
 #: ../../intents.rst:143
-msgid ""
-"It should be noted that the gateway has a strict rate limit of 120 "
-"requests per 60 seconds."
-msgstr ""
+msgid ":meth:`Guild.fetch_member`"
+msgstr ":meth:`Guild.fetch_member`"
+
+#: ../../intents.rst:144
+msgid "Used to fetch a member by ID through the HTTP API."
+msgstr "HTTP APIを介してIDでメンバーを取得するために使用されます。"
 
 #: ../../intents.rst:146
-msgid "Troubleshooting"
-msgstr ""
+msgid ":meth:`Guild.fetch_members`"
+msgstr ":meth:`Guild.fetch_members`"
+
+#: ../../intents.rst:146
+msgid "used to fetch a large number of members through the HTTP API."
+msgstr "HTTP APIを介して多数のメンバーを取得するために使用されます。"
 
 #: ../../intents.rst:148
-msgid "Some common issues relating to the mandatory intent change."
-msgstr ""
+msgid "It should be noted that the gateway has a strict rate limit of 120 requests per 60 seconds."
+msgstr "ゲートウェイには、60秒あたり120リクエストの厳格なレート制限があることに注意してください。"
 
 #: ../../intents.rst:151
-msgid "Where'd my members go?"
-msgstr ""
+msgid "Troubleshooting"
+msgstr "トラブルシューティング"
 
 #: ../../intents.rst:153
-msgid ""
-"Due to an :ref:`API change <intents_member_cache>` Discord is now forcing"
-" developers who want member caching to explicitly opt-in to it. This is a"
-" Discord mandated change and there is no way to bypass it. In order to "
-"get members back you have to explicitly enable the :ref:`members "
-"privileged intent <privileged_intents>` and change the "
-":attr:`Intents.members` attribute to true."
+msgid "Some common issues relating to the mandatory intent change."
+msgstr "強制的な意図変更に関連するいくつかの一般的な問題。"
+
+#: ../../intents.rst:156
+msgid "Where'd my members go?"
+msgstr "私のメンバーはどこに行ったの？"
+
+#: ../../intents.rst:158
+msgid "Due to an :ref:`API change <intents_member_cache>` Discord is now forcing developers who want member caching to explicitly opt-in to it. This is a Discord mandated change and there is no way to bypass it. In order to get members back you have to explicitly enable the :ref:`members privileged intent <privileged_intents>` and change the :attr:`Intents.members` attribute to true."
 msgstr ""
 
-#: ../../intents.rst:155
+#: ../../intents.rst:160
 msgid "For example:"
-msgstr ""
+msgstr "例:"
 
-#: ../../intents.rst:170
+#: ../../intents.rst:176
 msgid "Why does ``on_ready`` take so long to fire?"
-msgstr ""
+msgstr "``on_ready`` を起動するのに時間がかかるのはなぜですか？"
 
-#: ../../intents.rst:172
-msgid ""
-"As part of the API change regarding intents, Discord also changed how "
-"members are loaded in the beginning. Originally the library could request"
-" 75 guilds at once and only request members from guilds that have the "
-":attr:`Guild.large` attribute set to ``True``. With the new intent "
-"changes, Discord mandates that we can only send 1 guild per request. This"
-" causes a 75x slowdown which is further compounded by the fact that *all*"
-" guilds, not just large guilds are being requested."
-msgstr ""
+#: ../../intents.rst:178
+msgid "As part of the API change regarding intents, Discord also changed how members are loaded in the beginning. Originally the library could request 75 guilds at once and only request members from guilds that have the :attr:`Guild.large` attribute set to ``True``. With the new intent changes, Discord mandates that we can only send 1 guild per request. This causes a 75x slowdown which is further compounded by the fact that *all* guilds, not just large guilds are being requested."
+msgstr "インテントに関するAPIの変更の一環として、Discordは最初のメンバーの読み込み方法も変更しました。 もともとライブラリは 75 個のギルドを一度にリクエストでき、 :attr:`Guild を持つギルドのメンバーのみをリクエストできます。 arge` 属性が ``True`` に設定されています。新しい意図が変更された場合、Discordはリクエストごとに1つのギルドしか送信できません。 これは75倍の減速を引き起こし、大規模なギルドだけでなく*すべての*ギルドが要求されているという事実によってさらに複雑になります。"
 
-#: ../../intents.rst:174
+#: ../../intents.rst:180
 msgid "There are a few solutions to fix this."
 msgstr ""
 
-#: ../../intents.rst:176
-msgid ""
-"The first solution is to request the privileged presences intent along "
-"with the privileged members intent and enable both of them. This allows "
-"the initial member list to contain online members just like the old "
-"gateway. Note that we're still limited to 1 guild per request but the "
-"number of guilds we request is significantly reduced."
-msgstr ""
-
-#: ../../intents.rst:178
-msgid ""
-"The second solution is to disable member chunking by setting "
-"``chunk_guilds_at_startup`` to ``False`` when constructing a client. "
-"Then, when chunking for a guild is necessary you can use the various "
-"techniques to :ref:`retrieve members <retrieving_members>`."
-msgstr ""
-
-#: ../../intents.rst:180
-msgid ""
-"To illustrate the slowdown caused the API change, take a bot who is in "
-"840 guilds and 95 of these guilds are \"large\" (over 250 members)."
-msgstr ""
-
 #: ../../intents.rst:182
-msgid ""
-"Under the original system this would result in 2 requests to fetch the "
-"member list (75 guilds, 20 guilds) roughly taking 60 seconds. With "
-":attr:`Intents.members` but not :attr:`Intents.presences` this requires "
-"840 requests, with a rate limit of 120 requests per 60 seconds means that"
-" due to waiting for the rate limit it totals to around 7 minutes of "
-"waiting for the rate limit to fetch all the members. With both "
-":attr:`Intents.members` and :attr:`Intents.presences` we mostly get the "
-"old behaviour so we're only required to request for the 95 guilds that "
-"are large, this is slightly less than our rate limit so it's close to the"
-" original timing to fetch the member list."
-msgstr ""
+msgid "The first solution is to request the privileged presences intent along with the privileged members intent and enable both of them. This allows the initial member list to contain online members just like the old gateway. Note that we're still limited to 1 guild per request but the number of guilds we request is significantly reduced."
+msgstr "最初の解決策は、特権メンバーの意図とともに、特権メンバーの意図を要求し、両方を有効にすることです。 これにより、初期メンバーリストに以前のゲートウェイと同様にオンラインメンバーを含めることができます。 我々はまだリクエストごとに1つのギルドに制限されていることに注意してください。しかし、我々がリクエストしたギルドの数は大幅に減少します。"
 
 #: ../../intents.rst:184
-msgid ""
-"Unfortunately due to this change being required from Discord there is "
-"nothing that the library can do to mitigate this."
+msgid "The second solution is to disable member chunking by setting ``chunk_guilds_at_startup`` to ``False`` when constructing a client. Then, when chunking for a guild is necessary you can use the various techniques to :ref:`retrieve members <retrieving_members>`."
+msgstr "二つ目の解決方法は、クライアントを構築する際に ``chunk_guilds_at_startup`` を ``False`` に設定することでメンバーのチャンクを無効にすることです。 ギルドのチャンキングが必要な場合は、 :ref:`メンバーを取得する <retrieving_members> `の様々なテクニックを使うことができます。"
+
+#: ../../intents.rst:186
+msgid "To illustrate the slowdown caused by the API change, take a bot who is in 840 guilds and 95 of these guilds are \"large\" (over 250 members)."
+msgstr "APIの変更によって引き起こされる減速を説明するために。 840ギルドに参加しているボットを取ると、そのギルドの95は「大」(250人以上のメンバー)です。"
+
+#: ../../intents.rst:188
+msgid "Under the original system this would result in 2 requests to fetch the member list (75 guilds, 20 guilds) roughly taking 60 seconds. With :attr:`Intents.members` but not :attr:`Intents.presences` this requires 840 requests, with a rate limit of 120 requests per 60 seconds means that due to waiting for the rate limit it totals to around 7 minutes of waiting for the rate limit to fetch all the members. With both :attr:`Intents.members` and :attr:`Intents.presences` we mostly get the old behaviour so we're only required to request for the 95 guilds that are large, this is slightly less than our rate limit so it's close to the original timing to fetch the member list."
 msgstr ""
 
-#: ../../intents.rst:187
-msgid "I don't like this, can I go back?"
-msgstr ""
+#: ../../intents.rst:190
+msgid "Unfortunately due to this change being required from Discord there is nothing that the library can do to mitigate this."
+msgstr "申し訳ありませんが、この変更がDiscordから要求されているため、ライブラリがこれを軽減するためにできることはありません。"
 
-#: ../../intents.rst:189
-msgid ""
-"For now, the old gateway will still work so downgrading to discord.py "
-"v1.4 is still possible and will continue to be supported until Discord "
-"officially kills the v6 gateway, which is imminent. However it is "
-"paramount that for the future of your bot that you upgrade your code to "
-"the new way things are done."
-msgstr ""
+#: ../../intents.rst:192
+msgid "If you truly dislike the direction Discord is going with their API, you can contact them via `support <https://dis.gd/contact>`_."
+msgstr "DiscordのAPIの方向性が本当に嫌いなら、`support <https://dis.gd/contact>`_ で連絡できます。"
 
-#: ../../intents.rst:191
-msgid "To downgrade you can do the following:"
-msgstr ""
-
-#: ../../intents.rst:197
-msgid "On Windows use ``py -3`` instead of ``python3``."
-msgstr ""
-
-#: ../../intents.rst:201
-msgid ""
-"There is no currently set date in which the old gateway will stop working"
-" so it is recommended to update your code instead."
-msgstr ""
-
-#: ../../intents.rst:203
-msgid ""
-"If you truly dislike the direction Discord is going with their API, you "
-"can contact them via `support <https://dis.gd/contact>`_"
-msgstr ""

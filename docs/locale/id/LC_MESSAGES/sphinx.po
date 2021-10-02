@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 09:34+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/sphinx.pot\n"
+"X-Crowdin-File-ID: 47\n"
+"Language: id_ID\n"
+
+#: ../../_templates/layout.html:36
+msgid "About these documents"
+msgstr "Mengenai dokumentasi ini"
+
+#: ../../_templates/layout.html:39
+msgid "Index"
+msgstr "Indeks"
+
+#: ../../_templates/layout.html:42
+#: ../../_templates/layout.html:65
+msgid "Search"
+msgstr "Pencarian"
+
+#: ../../_templates/layout.html:45
+msgid "Copyright"
+msgstr "Hak cipta"
+
+#: ../../_templates/layout.html:66
+msgid "Close"
+msgstr "Tutup"
+
+#: ../../_templates/layout.html:71
+#: ../../_templates/layout.html:94
+msgid "Search documentation"
+msgstr "Cari dokumentasi"
+
+#: ../../_templates/layout.html:81
+msgid "View Documentation For"
+msgstr "Lihat dokumentasi untuk"
+
+#: ../../_templates/layout.html:124
+msgid "&#169; <a href=\"%(path)s\">Copyright</a> %(copyright)s."
+msgstr "&#169; <a href=\"%(path)s\">Hak cipta</a> %(copyright)s."
+
+#: ../../_templates/layout.html:126
+msgid "&#169; Copyright %(copyright)s."
+msgstr "&#169; Hak cipta %(copyright)s."
+
+#: ../../_templates/layout.html:130
+msgid "Last updated on %(last_updated)s."
+msgstr "Diperbaharui pada %(last_updated)s."
+
+#: ../../_templates/layout.html:133
+msgid "Created using <a href=\"https://www.sphinx-doc.org/\">Sphinx</a> %(sphinx_version)s."
+msgstr "Dibuat menggunakan <a href=\"https://www.sphinx-doc.org/\">Sphinx</a> %(sphinx_version)s."
+
+#: ../../_templates/layout.html:154
+msgid "Settings"
+msgstr "Pengaturan"
+
+#: ../../_templates/layout.html:156
+msgid "Font"
+msgstr "Fonta"
+
+#: ../../_templates/layout.html:158
+msgid "Use a serif font:"
+msgstr "Gunakan fonta serif:"
+
+#: ../../_templates/layout.html:160
+msgid "Use a serif font? Your system font will be used, falling back to serif."
+msgstr "Gunakan font serif? Font sistem anda akan digunakan, kembali menggunakan serif."
+
+#: ../../_templates/layout.html:167
+msgid "Theme"
+msgstr "Tema"
+
+#: ../../_templates/layout.html:170
+msgid "Set your theme based on your system preferences"
+msgstr "Gunakan tema sesuai preferensi sistem"
+
+#: ../../_templates/layout.html:173
+msgid "Automatic"
+msgstr "Otomatis"
+
+#: ../../_templates/layout.html:176
+msgid "Set your theme to light theme"
+msgstr "Atur tema menjadi tema putih/cerah"
+
+#: ../../_templates/layout.html:179
+msgid "Light"
+msgstr "Putih"
+
+#: ../../_templates/layout.html:182
+msgid "Set your theme to dark theme"
+msgstr "Atur tema menjadi tema gelap"
+
+#: ../../_templates/layout.html:185
+msgid "Dark"
+msgstr "Gelap"
+

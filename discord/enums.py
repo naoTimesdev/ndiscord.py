@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+# flake8: noqa
+
 import types
 from collections import namedtuple
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Type, TypeVar

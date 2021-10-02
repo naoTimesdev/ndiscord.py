@@ -1,0 +1,123 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ndiscordpy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 11:18+0800\n"
+"PO-Revision-Date: 2021-09-20 09:40\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: ndiscordpy\n"
+"X-Crowdin-Project-ID: 476871\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /docs/_build/locale/intro.pot\n"
+"X-Crowdin-File-ID: 37\n"
+"Language: id_ID\n"
+
+#: ../../intro.rst:8
+msgid "Introduction"
+msgstr "Pengantar"
+
+#: ../../intro.rst:10
+msgid "This is the documentation for ndiscord.py, a library for Python to aid in creating applications that utilise the Discord API."
+msgstr "Ini merupakan dokumentasi untuk ndiscord.py, sebuah modul Python untuk membantu aplikasi yang ingin berkomunikasi dengan API Discord."
+
+#: ../../intro.rst:14
+msgid "Prerequisites"
+msgstr "Prasyarat"
+
+#: ../../intro.rst:16
+msgid "ndiscord.py works with Python 3.8 or higher. Support for earlier versions of Python is not provided. Python 2.7 or lower is not supported. Python 3.7 or lower is not supported."
+msgstr "ndiscord.py dapat digunakan dengan Python 3.8 keatas. Dukungan untuk versi lebih awal tidak diberikan. Python 2.7 atau lebih awal tidak didukung. Python 3.7 atau lebih awal juga tidak didukung."
+
+#: ../../intro.rst:23
+msgid "Installing"
+msgstr "Memasang"
+
+#: ../../intro.rst:25
+msgid "You can only install this library by using development version: ::"
+msgstr "Anda hanya dapat memasang versi development untuk modul ini: ::"
+
+#: ../../intro.rst:29
+msgid "or clone it manually: ::"
+msgstr "atau meng-klon secara manual: ::"
+
+#: ../../intro.rst:36
+msgid "To get voice support, you should use ``discord.py[voice]`` instead of ``discord.py``, e.g. ::"
+msgstr "Untuk mendapatkan fitur voice, anda harus menambah ``[voice]`` diakhir requirement, contoh: ::"
+
+#: ../../intro.rst:40
+msgid "On Linux environments, installing voice requires getting the following dependencies:"
+msgstr "Di linux, untuk menambah fitur suara anda harus menambah dependencies berikut:"
+
+#: ../../intro.rst:42
+msgid "`libffi <https://github.com/libffi/libffi>`_"
+msgstr "`libffi <https://github.com/libffi/libffi>`_"
+
+#: ../../intro.rst:43
+msgid "`libnacl <https://github.com/saltstack/libnacl>`_"
+msgstr "`libnacl <https://github.com/saltstack/libnacl>`_"
+
+#: ../../intro.rst:44
+msgid "`python3-dev <https://packages.debian.org/python3-dev>`_"
+msgstr "`python3-dev <https://packages.debian.org/python3-dev>`_"
+
+#: ../../intro.rst:46
+msgid "For a Debian-based system, the following command will get these dependencies:"
+msgstr "Untuk sistem Debian-based, anda dapat menggunakan perintah berikut:"
+
+#: ../../intro.rst:52
+msgid "Remember to check your permissions!"
+msgstr "Jangan lupa untuk memeriksa permission anda!"
+
+#: ../../intro.rst:55
+msgid "Virtual Environments"
+msgstr "Virtual Environments"
+
+#: ../../intro.rst:57
+msgid "Sometimes you want to keep libraries from polluting system installs or use a different version of libraries than the ones installed on the system. You might also not have permissions to install libraries system-wide. For this purpose, the standard library as of Python 3.3 comes with a concept called \"Virtual Environment\"s to help maintain these separate versions."
+msgstr "Terkadang anda tidak ingin modul memenuhi instalasi sistem atau menggunakan berbagai versi di satu sistem. Anda mungkin juga tidak ada hak untuk melakukan instalasi pada sistem. Maka, mulai dari Python 3.3 terdapat konsep bernama \"Virtual Environment\"s untuk membantu instalasi berbagai macam versi pada satu sistem."
+
+#: ../../intro.rst:62
+msgid "A more in-depth tutorial is found on :doc:`py:tutorial/venv`."
+msgstr "Tutorial lebih lanjut dapat anda liat pada :doc:`py:tutorial/venv`."
+
+#: ../../intro.rst:64
+msgid "However, for the quick and dirty:"
+msgstr "Tetapi, singkatnya adalah:"
+
+#: ../../intro.rst:66
+msgid "Go to your project's working directory:"
+msgstr "Buka folder proyek anda:"
+
+#: ../../intro.rst:73
+msgid "Activate the virtual environment:"
+msgstr "Aktifkan virtual environment:"
+
+#: ../../intro.rst:79
+msgid "On Windows you activate it with:"
+msgstr "Di Windows, anda dapat melakukannya dengan:"
+
+#: ../../intro.rst:85
+msgid "Use pip like usual:"
+msgstr "Lalu gunakan pip seperti biasa:"
+
+#: ../../intro.rst:91
+msgid "Congratulations. You now have a virtual environment all set up."
+msgstr "Selamat. Anda sekarang memiliki virtual environment yang siap dipakai."
+
+#: ../../intro.rst:94
+msgid "Basic Concepts"
+msgstr "Konsep Dasar"
+
+#: ../../intro.rst:96
+msgid "ndiscord.py revolves around the concept of :ref:`events <discord-api-events>`. An event is something you listen to and then respond to. For example, when a message happens, you will receive an event about it that you can respond to."
+msgstr "ndiscord.py berkisar pada konsep :ref:`events <discord-api-events>`. Sebuah event adalah sesuatu yang harus anda tangkap dan respon. Contohnya, ketika ada pesan baru, anda akan mendapatkan event tersebut dan anda dapat meresponnya."
+
+#: ../../intro.rst:100
+msgid "A quick example to showcase how events work:"
+msgstr "Contoh untuk memperlihatkan bagaimana event bekerja:"
+

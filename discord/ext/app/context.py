@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
 import discord.abc
@@ -33,17 +35,24 @@ from discord.state import ConnectionState
 from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
 
-from ._types import AppCommandT, BotT, CogT
+from ._types import BotT, CogT
 
 if TYPE_CHECKING:
+    from discord.embeds import Embed
+    from discord.file import File
     from discord.interactions import InteractionChannel
+    from discord.mentions import AllowedMentions
+    from discord.ui import View
+
+    from .core import MessageCommand, SlashCommand, UserCommand
 
 __all__ = ("ApplicationContext",)
 
 MISSING: Any = discord.utils.MISSING
+AppCommandT = Union["SlashCommand", "MessageCommand", "UserCommand"]
 
 
-class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommandT]):
+class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
     """Represents the context in which a application command is being invoked under.
 
     This class contains a lot of meta data to help you understand more about
@@ -140,7 +149,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         return self.interaction.guild
 
     @discord.utils.cached_property
-    def channel(self) -> Optional["InteractionChannel"]:
+    def channel(self) -> Optional[InteractionChannel]:
         """Optional[Union[:class:`~discord.abc.GuildChannel`, :class:`.PartialMessageable`, :class:`.Thread`]: Returns
         the channel associated with this context's command. None if not available.
         """
@@ -177,6 +186,7 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         """:class:`.Webhook`: Returns the follow up webhook for follow up interactions."""
         return self.interaction.followup
 
+    @property
     def respond(self):
         """|coro|
 
@@ -197,8 +207,26 @@ class ApplicationContext(discord.abc.Messageable, Generic[CogT, BotT, AppCommand
         return self.followup.send if self.response.is_done() else self.interaction.response.send_message
 
     @discord.utils.copy_doc(Interaction.edit_original_message)
-    def edit(self):
-        return self.interaction.edit_original_message
+    def edit(
+        self,
+        content: Optional[str] = MISSING,
+        *,
+        embeds: List["Embed"] = MISSING,
+        embed: Optional["Embed"] = MISSING,
+        file: "File" = MISSING,
+        files: List["File"] = MISSING,
+        view: Optional["View"] = MISSING,
+        allowed_mentions: Optional["AllowedMentions"] = None,
+    ):
+        return self.interaction.edit_original_message(
+            content=content,
+            embeds=embeds,
+            embed=embed,
+            file=file,
+            files=files,
+            view=view,
+            allowed_mentions=allowed_mentions,
+        )
 
     @discord.utils.copy_doc(InteractionResponse.defer)
     async def defer(self, *, ephemeral: bool = False):
