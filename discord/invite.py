@@ -465,6 +465,8 @@ class Invite(Hashable):
     @property
     def url(self) -> str:
         """:class:`str`: A property that retrieves the invite URL."""
+        if self.friend_invite:
+            return self.BASE + "/friend-invite/" + self.code
         return self.BASE + "/" + self.code
 
     @property
