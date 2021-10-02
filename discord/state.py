@@ -405,8 +405,6 @@ class ConnectionState:
 
     def _remove_guild_event(self, event: GuildScheduledEvent) -> None:
         self._guilds_events.pop(event.id, None)
-
-        # TODO: Remove event from guild.
         del event
 
     @property

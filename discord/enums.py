@@ -477,7 +477,7 @@ class GuildScheduledEventStatus(Enum):
 
 class GuildScheduledEventPrivacyLevel(Enum):
     public = 1
-    guild_only = 2
+    members_only = 2
 
 
 class UserFlags(Enum):

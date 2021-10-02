@@ -45,7 +45,6 @@ class _GuildScheduledEventOptional(TypedDict, total=False):
     user_count: int
 
 
-# TODO: Maybe change later if possible
 GuildEventPrivacyLevel = Literal[1, 2]
 GuildEventStatus = Literal[1, 2, 3, 4]
 GuildEventEntityType = Literal[0, 1, 2, 3]

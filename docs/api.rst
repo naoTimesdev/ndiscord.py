@@ -2870,9 +2870,9 @@ of :class:`enum.Enum`.
 
         The guild event is public and can be seen from discovery.
 
-    .. attribute:: guild_only
+    .. attribute:: members_only
 
-        The guild event is private and can only be seen if user is a member of the guild.
+        The guild event is only visible and can only be joined by the members of the guild
 
 
 Async Iterator
