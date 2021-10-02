@@ -123,6 +123,9 @@ def _transform_overwrites(
 def _transform_icon(entry: AuditLogEntry, data: Optional[str]) -> Optional[Asset]:
     if data is None:
         return None
+    # Check if role got changed, instead of guild icon.
+    if entry.action.name.startswith("role"):
+        return Asset._from_icon(entry._state, entry.id, data, "role")
     return Asset._from_guild_icon(entry._state, entry.guild.id, data)
 
 

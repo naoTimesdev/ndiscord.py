@@ -1204,6 +1204,7 @@ class Messageable:
     - :class:`~discord.User`
     - :class:`~discord.Member`
     - :class:`~discord.ext.commands.Context`
+    - :class:`~discord.ext.app.ApplicationContext`
     - :class:`~discord.Thread`
     """
 

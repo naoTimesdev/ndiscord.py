@@ -42,6 +42,7 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    overload,
 )
 
 import aiohttp
@@ -63,7 +64,7 @@ from .ext.app import (
     UserCommand,
 )
 from .ext.app._types import AppCommandT, BotT, CogT, ContextT
-from .flags import ApplicationFlags, Intents
+from .flags import ApplicationFlags, Intents, MemberCacheFlags
 from .gateway import *
 from .guild import Guild
 from .http import HTTPClient
@@ -98,10 +99,10 @@ Coro = TypeVar("Coro", bound=Callable[..., Coroutine[Any, Any, Any]])
 CoroShort = Coroutine[Any, Any, T]
 ApplicationCmdT = TypeVar("ApplicationCmdT", bound="Union[ApplicationCommand, RawApplicationCommand]")
 ApplicationCommandUnion = Union[
-    SlashCommand[CogT, BotT, ContextT],
-    UserCommand[CogT, BotT, ContextT],
-    MessageCommand[CogT, BotT, ContextT],
-    ApplicationCommand[CogT, BotT, ContextT],
+    SlashCommand[CogT, BotT],
+    UserCommand[CogT, BotT],
+    MessageCommand[CogT, BotT],
+    ApplicationCommand[CogT, BotT],
 ]
 
 
@@ -235,6 +236,31 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         The event loop that the client uses for asynchronous operations.
     """
 
+    @overload
+    def __init__(
+        self,
+        *,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+        shard_id: Optional[int] = None,
+        shard_count: Optional[int] = None,
+        connector: Optional[aiohttp.BaseConnector] = None,
+        proxy: Optional[str] = None,
+        proxy_auth: Optional[aiohttp.BasicAuth] = None,
+        assume_unsync_clock: bool = True,
+        enable_debug_events: bool = False,
+        # Option for ConnectionState
+        max_messages: int = 1000,
+        heartbeat_timeout: float = 60.0,
+        guild_ready_timeout: float = 2.0,
+        allowed_mentions: Optional[AllowedMentions] = None,
+        activity: Optional[BaseActivity] = None,
+        status: Optional[Status] = None,
+        intents: Optional[Intents] = None,
+        chunk_guilds_at_startup: bool = False,
+        member_cache_flags: Optional[MemberCacheFlags] = None,
+    ) -> None:
+        ...
+
     def __init__(
         self,
         *,
@@ -277,6 +303,22 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
     def _get_websocket(self, guild_id: Optional[int] = None, *, shard_id: Optional[int] = None) -> DiscordWebSocket:
         return self.ws
+
+    if TYPE_CHECKING:
+        @overload
+        def _get_state(
+            self,
+            max_messages: int = 1000,
+            heartbeat_timeout: float = 60.0,
+            guild_ready_timeout: float = 2.0,
+            allowed_mentions: Optional[AllowedMentions] = None,
+            activity: Optional[BaseActivity] = None,
+            status: Optional[Status] = None,
+            intents: Optional[Intents] = None,
+            chunk_guilds_at_startup: bool = False,
+            member_cache_flags: Optional[MemberCacheFlags] = None,
+        ) -> ConnectionState:
+            ...
 
     def _get_state(self, **options: Any) -> ConnectionState:
         return ConnectionState(
@@ -732,7 +774,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         pending_registration = self._pending_registration[:]
 
-        global_payloads: List[ApplicationCommand[CogT, BotT, AppCommandT]] = []
+        global_payloads: List[ApplicationCommand[CogT, BotT]] = []
         global_commands = await self.http.get_global_commands(self._app_cmd_ids)
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is None]:
             if len(global_commands) > 0:
@@ -747,7 +789,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             else:
                 global_payloads.append(command)
 
-        update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT, AppCommandT]]] = {}
+        update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT]]] = {}
         async for guild in self.fetch_guilds(limit=None):
             update_guild_commands[guild.id] = []
 
@@ -1786,7 +1828,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
     # application related
 
-    def get_applications(self) -> List[ApplicationCommand[CogT, BotT, T]]:
+    def get_applications(self) -> List[ApplicationCommand[CogT, BotT]]:
         """A list of application that are registered.
 
         .. versionadded:: 2.0

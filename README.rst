@@ -14,6 +14,9 @@ What this fork does not do:
 
 - Removing feature or doing radical changes to the project structure.
 
+This fork is maintained solely by **N4O#8868**. If you want to help, please contact me at Discord.
+You can also open a new PR or Issue if you want.
+
 ndiscord.py
 ==========
 

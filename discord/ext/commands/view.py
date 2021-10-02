@@ -48,9 +48,9 @@ _all_quotes = set(_quotes.keys()) | set(_quotes.values())
 
 
 class StringView:
-    def __init__(self, buffer):
+    def __init__(self, buffer: str):
         self.index = 0
-        self.buffer = buffer
+        self.buffer: str = buffer
         self.end = len(buffer)
         self.previous = 0
 
@@ -80,7 +80,7 @@ class StringView:
         self.index += pos
         return self.previous != self.index
 
-    def skip_string(self, string):
+    def skip_string(self, string: str):
         strlen = len(string)
         if self.buffer[self.index : self.index + strlen] == string:
             self.previous = self.index
@@ -94,7 +94,7 @@ class StringView:
         self.index = self.end
         return result
 
-    def read(self, n):
+    def read(self, n: int):
         result = self.buffer[self.index : self.index + n]
         self.previous = self.index
         self.index += n
