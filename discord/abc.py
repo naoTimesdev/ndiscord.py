@@ -1150,12 +1150,12 @@ class GuildChannel:
             The name of the event.
         description: Optional[:class:`str`]
             The description of the event. Could be ``None`` for no description.
-        privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
+        privacy_level: Optional[:class:`.GuildScheduledEventPrivacyLevel`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
-        entity_type: Optional[:class:`GuildScheduledEventType`]
+        entity_type: Optional[:class:`.GuildScheduledEventType`]
             The ``entity_type`` or ``type`` for the event.
             If you don't provide this, it will automatically check from the channel :attr:`type`.
 

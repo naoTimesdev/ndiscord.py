@@ -1354,7 +1354,7 @@ class Guild(Hashable):
         You must have the :attr:`~Permissions.manage_events` permission
         to create a guild event.
 
-        ..versionadded:: 2.0
+        .. versionadded:: 2.0
 
         Parameters
         -----------
@@ -1370,7 +1370,7 @@ class Guild(Hashable):
             The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
         entity_type: Optional[:class:`GuildScheduledEventType`]
-            The ``entity type`` or ``type`` for the event.
+            The ``entity_type`` or ``type`` for the event.
 
         Raises
         -------
