@@ -278,7 +278,6 @@ class GuildScheduledEvent(Hashable):
         name: str = MISSING,
         description: Optional[str] = MISSING,
         channel: Optional[GuildChannel] = MISSING,
-        # TODO: Maybe change this later
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         scheduled_start_time: Optional[datetime] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
@@ -332,7 +331,6 @@ class GuildScheduledEvent(Hashable):
             fields["channel_id"] = str(channel.id)
 
         if privacy_level is not MISSING and privacy_level is not None:
-            # TODO: Maybe change later
             fields["privacy_level"] = privacy_level.value
 
         if scheduled_start_time is not MISSING and entity_type is not None:

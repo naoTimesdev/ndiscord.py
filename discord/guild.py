@@ -52,6 +52,7 @@ from .enums import (
     AuditLogAction,
     ChannelType,
     ContentFilter,
+    GuildScheduledEventPrivacyLevel,
     GuildScheduledEventType,
     NotificationLevel,
     NSFWLevel,
@@ -1342,8 +1343,7 @@ class Guild(Hashable):
         scheduled_start_time: datetime.datetime,
         *,
         description: Optional[str] = MISSING,
-        # TODO: Maybe change this later
-        privacy_level: Optional[int] = MISSING,
+        privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         channel: Optional[GuildChannel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
     ) -> GuildScheduledEvent:
@@ -1364,12 +1364,12 @@ class Guild(Hashable):
             The description of the event. Could be ``None`` for no description.
         channel: Optional[:class:`abc.GuildChannel`]
             The channel where the event will be conducted.
-        privacy_level: Optional[:class:`int`]
+        privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
-        entity_type: Optional[:class`GuildScheduledEventType`]
+        entity_type: Optional[:class:`GuildScheduledEventType`]
             The ``entity type`` or ``type`` for the event.
 
         Raises
@@ -1394,10 +1394,9 @@ class Guild(Hashable):
         if channel is not MISSING:
             channel_id = str(channel.id)
 
-        privacy_level = 1
-        if privacy_level is not MISSING and entity_type is not None:
-            # TODO: Maybe Change later
-            privacy_level = privacy_level
+        privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
+        if privacy_level is not MISSING and privacy_level is not None:
+            privacy_level = privacy_level.value
 
         scheduled_start_time = scheduled_start_time.replace(tzinfo=datetime.timezone.utc).isoformat()
 
