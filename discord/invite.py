@@ -448,6 +448,8 @@ class Invite(Hashable):
         return self.url
 
     def __repr__(self) -> str:
+        if self.friend_invite:
+            return f"<Invite code={self.code!r} user={self.inviter!r}>"
         return (
             f"<Invite code={self.code!r} guild={self.guild!r} "
             f"online={self.approximate_presence_count} "
