@@ -41,6 +41,7 @@ class _InviteOptional(TypedDict, total=False):
     target_user: PartialUser
     target_type: InviteTargetType
     target_application: PartialAppInfo
+    channel: PartialChannel
 
 
 class _InviteMetadata(TypedDict, total=False):
@@ -58,7 +59,6 @@ class VanityInvite(_InviteMetadata):
 
 class IncompleteInvite(_InviteMetadata):
     code: str
-    channel: PartialChannel
 
 
 class Invite(IncompleteInvite, _InviteOptional):
