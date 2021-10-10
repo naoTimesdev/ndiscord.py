@@ -208,6 +208,7 @@ class Loop(Generic[LF]):
             count=self.count,
             reconnect=self.reconnect,
             loop=self.loop,
+            name=self._task_name,
         )
         copy._injected = obj
         copy._before_loop = self._before_loop
