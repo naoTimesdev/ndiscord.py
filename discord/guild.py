@@ -193,7 +193,6 @@ class Guild(Hashable):
 
         They are currently as follows:
 
-        - ``ANIMATED_BANNER``: Guild can upload an animated banner.
         - ``ANIMATED_ICON``: Guild can upload an animated icon.
         - ``BANNER``: Guild can upload and use a banner. (i.e. :attr:`.banner`)
         - ``COMMERCE``: Guild can sell things using store channels.
@@ -852,11 +851,7 @@ class Guild(Hashable):
 
     @property
     def banner(self) -> Optional[Asset]:
-        """Optional[:class:`Asset`]: Returns the guild's banner asset, if available.
-
-        .. versionchanged:: 2.0
-            Can be animated if the guild have ``ANIMATED_BANNER`` feature.
-        """
+        """Optional[:class:`Asset`]: Returns the guild's banner asset, if available."""
         if self._banner is None:
             return None
         return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
