@@ -87,6 +87,7 @@ class Loop(Generic[LF]):
         time: Union[datetime.time, Sequence[datetime.time]],
         count: Optional[int],
         reconnect: bool,
+        name: str,
         loop: asyncio.AbstractEventLoop,
     ) -> None:
         self.coro: LF = coro
@@ -97,6 +98,9 @@ class Loop(Generic[LF]):
         self._handle: SleepHandle = MISSING
         self._task: asyncio.Task[None] = MISSING
         self._injected = None
+        if name is MISSING:
+            name = self.coro.__name__
+        self._task_name: str = name
         self._valid_exception = (
             OSError,
             discord.GatewayNotFound,
@@ -204,6 +208,7 @@ class Loop(Generic[LF]):
             count=self.count,
             reconnect=self.reconnect,
             loop=self.loop,
+            name=self._task_name,
         )
         copy._injected = obj
         copy._before_loop = self._before_loop
@@ -251,6 +256,14 @@ class Loop(Generic[LF]):
         """
         if self._time is not MISSING:
             return self._time.copy()
+
+    @property
+    def name(self) -> str:
+        """:class:`str`: The name of the task
+
+        .. versionadded:: 2.0
+        """
+        return self._task_name
 
     @property
     def current_loop(self) -> int:
@@ -319,7 +332,8 @@ class Loop(Generic[LF]):
         if self.loop is MISSING:
             self.loop = asyncio.get_event_loop()
 
-        self._task = self.loop.create_task(self._loop(*args, **kwargs))
+        task_name = f"discord.tasks-{self._task_name}-loop_n-{self._current_loop}"
+        self._task = self.loop.create_task(self._loop(*args, **kwargs), name=task_name)
         return self._task
 
     def stop(self) -> None:
@@ -684,6 +698,7 @@ def loop(
     time: Union[datetime.time, Sequence[datetime.time]] = MISSING,
     count: Optional[int] = None,
     reconnect: bool = True,
+    name: str = MISSING,
     loop: asyncio.AbstractEventLoop = MISSING,
 ) -> Callable[[LF], Loop[LF]]:
     """A decorator that schedules a task in the background for you with
@@ -717,6 +732,11 @@ def loop(
         Whether to handle errors and restart the task
         using an exponential back-off algorithm similar to the
         one used in :meth:`discord.Client.connect`.
+    name: :class:`str`
+        The name of the loop, used for debugging purposes.
+        If you don't provide it, it will use the function/callback/coro name.
+
+        .. versionadded:: 2.0
     loop: :class:`asyncio.AbstractEventLoop`
         The loop to use to register the task, if not given
         defaults to :func:`asyncio.get_event_loop`.
@@ -739,6 +759,7 @@ def loop(
             count=count,
             time=time,
             reconnect=reconnect,
+            name=name,
             loop=loop,
         )
 

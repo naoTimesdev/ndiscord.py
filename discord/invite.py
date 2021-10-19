@@ -204,7 +204,8 @@ InviteT = TypeVar("InviteT", bound="Invite")
 
 
 class Invite(Hashable):
-    r"""Represents a Discord :class:`Guild` or :class:`abc.GuildChannel` invite.
+    r"""Represents a Discord :class:`Guild` or :class:`abc.GuildChannel` invite
+    or a :class:`User` invite.
 
     Depending on the way this object was created, some of the attributes can
     have a value of ``None``.
@@ -285,8 +286,14 @@ class Invite(Hashable):
 
         .. versionadded:: 2.0
 
-    channel: Union[:class:`abc.GuildChannel`, :class:`Object`, :class:`PartialInviteChannel`]
+    channel: Optional[Union[:class:`abc.GuildChannel`, :class:`Object`, :class:`PartialInviteChannel`]]
         The channel the invite is for.
+
+        .. versionchanged:: 2.0
+
+            The ``channel`` is now an optional attribute. If the invite is for a guild channel it will
+            be filled in, but if it's a friend invite it will be empty.
+
     target_type: :class:`InviteTarget`
         The type of target for the voice channel invite.
 
@@ -380,9 +387,12 @@ class Invite(Hashable):
                 # If it's not cached, then it has to be a partial guild
                 guild = PartialInviteGuild(state, guild_data, guild_id)
 
-        # As far as I know, invites always need a channel
-        # So this should never raise.
-        channel: Union[PartialInviteChannel, GuildChannel] = PartialInviteChannel(data["channel"])
+        # With the new friend invite, channel can be optional (or None)
+        # So we should check properly.
+        channel_data = data.get("channel")
+        channel: Optional[Union[PartialInviteChannel, GuildChannel]] = None
+        if channel_data is not None:
+            channel = PartialInviteChannel(channel_data)
         if guild is not None and not isinstance(guild, PartialInviteGuild):
             # Upgrade the partial data if applicable
             channel = guild.get_channel(channel.id) or channel
@@ -393,12 +403,17 @@ class Invite(Hashable):
     def from_gateway(cls: Type[InviteT], *, state: ConnectionState, data: GatewayInvitePayload) -> InviteT:
         guild_id: Optional[int] = _get_as_snowflake(data, "guild_id")
         guild: Optional[Union[Guild, Object]] = state._get_guild(guild_id)
-        channel_id = int(data["channel_id"])
-        if guild is not None:
-            channel = guild.get_channel(channel_id) or Object(id=channel_id)  # type: ignore
-        else:
-            guild = Object(id=guild_id) if guild_id is not None else None
-            channel = Object(id=channel_id)
+        # Check if channel_id is none, just in case
+        # I dont really know if friend invite gonna be dispatched via gateway but just in case.
+        channel_id = data.get("channel_id")
+        channel = None
+        if channel_id is not None:
+            channel_id = int(channel_id)
+            if guild is not None:
+                channel = guild.get_channel(channel_id) or Object(id=channel_id)  # type: ignore
+            else:
+                guild = Object(id=guild_id) if guild_id is not None else None
+                channel = Object(id=channel_id)
 
         return cls(state=state, data=data, guild=guild, channel=channel)  # type: ignore
 
@@ -433,6 +448,8 @@ class Invite(Hashable):
         return self.url
 
     def __repr__(self) -> str:
+        if self.friend_invite:
+            return f"<Invite code={self.code!r} user={self.inviter!r}>"
         return (
             f"<Invite code={self.code!r} guild={self.guild!r} "
             f"online={self.approximate_presence_count} "
@@ -450,6 +467,8 @@ class Invite(Hashable):
     @property
     def url(self) -> str:
         """:class:`str`: A property that retrieves the invite URL."""
+        if self.friend_invite:
+            return self.BASE + "/friend-invite/" + self.code
         return self.BASE + "/" + self.code
 
     @property
