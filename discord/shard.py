@@ -355,7 +355,7 @@ class AutoShardedClient(Client):
         self.__shards = {}
         self._connection._get_websocket = self._get_websocket
         self._connection._get_client = lambda: self
-        self.__queue = asyncio.PriorityQueue()
+        self.__queue = asyncio.PriorityQueue[EventItem]()
 
     def _get_websocket(self, guild_id: Optional[int] = None, *, shard_id: Optional[int] = None) -> DiscordWebSocket:
         if shard_id is None:
@@ -484,13 +484,12 @@ class AutoShardedClient(Client):
         await self.http.close()
         self.__queue.put_nowait(EventItem(EventType.clean_close, None, None))
 
-    async def on_shard_connect(self):
+    async def on_shard_connect(self, shard_id: int):
         """|coro|
 
         Initialize application registration to first shard.
         """
-        self.active_shard_count += 1
-        if self.active_shard_count == 1:
+        if shard_id == 0:
             await self.register_application_commands()
 
     async def change_presence(
