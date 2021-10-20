@@ -886,7 +886,7 @@ class ConnectionState:
         except ValueError:
             _log.debug("GUILD_SCHEDULED_EVENT_CREATE event ID is not an integer. Discarding")
             return
-        
+
         event = self._get_guild_event(event_id)
         if event is not None:
             _log.debug("GUILD_SCHEDULED_EVENT_CREATE event already exists. Discarding")
