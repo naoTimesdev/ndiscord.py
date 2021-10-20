@@ -28,12 +28,12 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from . import utils
-from .abc import GuildChannel
 from .asset import Asset
 from .enums import GuildScheduledEventPrivacyLevel, GuildScheduledEventStatus, GuildScheduledEventType, try_enum
 from .mixins import Hashable
 
 if TYPE_CHECKING:
+    from .abc import GuildChannel
     from .guild import Guild
     from .member import Member
     from .state import ConnectionState
@@ -161,7 +161,9 @@ class GuildScheduledEvent(Hashable):
         guild_or_channel: Union[Guild, GuildChannel],
         data: GuildScheduledEventPayload
     ):
-        if isinstance(guild_or_channel, GuildChannel):
+        # Bad way to check if it's Guild or a Channel.
+        # Need to do this because problem with circular imports.
+        if hasattr(guild_or_channel, "guild"):
             self.guild = guild_or_channel
             self._channel = guild_or_channel.guild
         else:
