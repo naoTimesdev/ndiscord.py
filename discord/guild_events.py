@@ -164,8 +164,8 @@ class GuildScheduledEvent(Hashable):
         # Bad way to check if it's Guild or a Channel.
         # Need to do this because problem with circular imports.
         if hasattr(guild_or_channel, "guild"):
-            self.guild = guild_or_channel
-            self._channel = guild_or_channel.guild
+            self.guild = guild_or_channel.guild
+            self._channel = guild_or_channel
         else:
             self._channel = None
             self.guild = guild_or_channel
