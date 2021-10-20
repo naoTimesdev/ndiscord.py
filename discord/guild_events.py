@@ -148,7 +148,8 @@ class GuildScheduledEvent(Hashable):
         attrs = [
             ("id", self.id),
             ("name", self.name),
-            ("guild", self.guild.name)
+            ("type", self.type.name),
+            ("guild", self.guild.name),
         ]
         joined = " ".join("%s=%r" % t for t in attrs)
         return f"<{self.__class__.__name__} {joined}>"
@@ -163,12 +164,12 @@ class GuildScheduledEvent(Hashable):
     ):
         # Bad way to check if it's Guild or a Channel.
         # Need to do this because problem with circular imports.
+        self._channel: Optional[GuildChannel] = None
         if hasattr(guild_or_channel, "guild"):
-            self.guild = guild_or_channel.guild
+            self.guild: Guild = guild_or_channel.guild
             self._channel = guild_or_channel
         else:
-            self._channel = None
-            self.guild = guild_or_channel
+            self.guild: Guild = guild_or_channel
 
         self.name: str = data["name"]
         self.description: Optional[str] = data.get("description", None)

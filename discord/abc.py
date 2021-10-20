@@ -1178,10 +1178,7 @@ class GuildChannel:
             The newly updated guild event.
         """
 
-        entity_type = GuildScheduledEventType.none
-        if entity_type is not MISSING and entity_type is not None:
-            entity_type = entity_type.value
-        else:
+        if entity_type is MISSING and entity_type is None:
             # Determine from channel type
             if self.type is ChannelType.stage_voice:
                 entity_type = GuildScheduledEventType.stage_instance

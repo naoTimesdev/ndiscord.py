@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import copy
 import unicodedata
+from datetime import timezone
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -1420,17 +1421,19 @@ class Guild(Hashable):
             channel_id = str(channel.id)
         fields["channel_id"] = channel_id
 
-        privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
         if privacy_level is not MISSING and privacy_level is not None:
             privacy_level = privacy_level.value
+        else:
+            privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
         fields["privacy_level"] = privacy_level
 
-        scheduled_start_time = scheduled_start_time.replace(tzinfo=datetime.timezone.utc).isoformat()
-        fields["scheduled_start_time"] = scheduled_start_time.isoformat()
+        scheduled_start_time = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()
+        fields["scheduled_start_time"] = scheduled_start_time
 
-        entity_type = GuildScheduledEventType.none.value
-        if entity_type is not MISSING and entity_type is not None:
-            entity_type = entity_type.value
+        if entity_type is not MISSING:
+            entity_type = entity_type.value or GuildScheduledEventType.none.value
+        else:
+            entity_type = GuildScheduledEventType.none.value
         fields["entity_type"] = entity_type
 
         if (
@@ -1454,7 +1457,7 @@ class Guild(Hashable):
         fields["entity_metadata"] = entity_metadata
         if entity_type == GuildScheduledEventType.location.value:
             if scheduled_end_time is not MISSING:
-                scheduled_end_time = scheduled_end_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+                scheduled_end_time = scheduled_end_time.replace(tzinfo=timezone.utc).isoformat()
                 fields["scheduled_end_time"] = scheduled_end_time.isoformat()
             else:
                 raise ValueError("scheduled_end_time is required for location event.")

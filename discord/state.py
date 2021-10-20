@@ -877,6 +877,20 @@ class ConnectionState:
         if guild is None:
             _log.debug("GUILD_SCHEDULED_EVENT_CREATE referencing an unknown guild ID: %s. Discarding", guild_id)
             return
+        event_id = data.get("id")
+        if event_id is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE missing event ID. Discarding")
+            return
+        try:
+            event_id = int(event_id)
+        except ValueError:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE event ID is not an integer. Discarding")
+            return
+        
+        event = self._get_guild_event(event_id)
+        if event is not None:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE event already exists. Discarding")
+            return
 
         guild_event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
         guild._add_guild_event(guild_event)
@@ -911,7 +925,13 @@ class ConnectionState:
             self.dispatch("guild_scheduled_event_create", event)
         else:
             old = copy.copy(event)
-            event._update(data)
+            try:
+                channel = guild.get_channel(int(data["channel_id"]))
+            except (KeyError, TypeError, ValueError):
+                channel = None
+            else:
+                guild = channel or guild
+            event._update(guild, data)
             self.dispatch("guild_scheduled_event_update", old, event)
 
     def parse_guild_scheduled_event_user_create(self, data) -> None:
@@ -927,7 +947,6 @@ class ConnectionState:
             _log.debug("GUILD_SCHEDULED_EVENT_USER_CREATE referencing an unknown member ID: %s. Discarding", member_id)
 
         event._add_member(member)
-        self._add_guild_event(event)  # Update
         self.dispatch("guild_scheduled_event_member_join", event, member)
 
     def parse_guild_scheduled_event_user_delete(self, data) -> None:
@@ -943,7 +962,6 @@ class ConnectionState:
             _log.debug("GUILD_SCHEDULED_EVENT_USER_DELETE referencing an unknown member ID: %s. Discarding", member_id)
 
         event._remove_member(member)
-        self._add_guild_event(event)  # Update
         self.dispatch("guild_scheduled_event_member_remove", event, member)
 
     def parse_thread_create(self, data) -> None:
