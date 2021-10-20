@@ -67,6 +67,7 @@ from .ext.app._types import AppCommandT, BotT, CogT, ContextT
 from .flags import ApplicationFlags, Intents, MemberCacheFlags
 from .gateway import *
 from .guild import Guild
+from .guild_events import GuildScheduledEvent
 from .http import HTTPClient
 from .invite import Invite
 from .iterators import GuildIterator
@@ -981,6 +982,23 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         """
         return self._connection._get_guild(id)
 
+    def get_guild_event(self, id: int, /) -> Optional[GuildScheduledEvent]:
+        """Returns a scheduled event with the given ID.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        Optional[:class:`.GuildScheduledEvent`]
+            The event or ``None`` if not found.
+        """
+        return self._connection._get_guild_event(id)
+
     def get_user(self, id: int, /) -> Optional[User]:
         """Returns a user with the given ID.
 
@@ -1474,6 +1492,61 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         data = await self.http.get_stage_instance(channel_id)
         guild = self.get_guild(int(data["guild_id"]))
         return StageInstance(guild=guild, state=self._connection, data=data)  # type: ignore
+
+    async def fetch_guild_event(self, event_id: int, /) -> GuildScheduledEvent:
+        """|coro|
+
+        Gets a :class:`.GuildScheduledEvent` for a guild event id.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        event_id: :class:`int`
+            The event ID.
+
+        Raises
+        -------
+        :exc:`.NotFound`
+            The event could not be found.
+        :exc:`.HTTPException`
+            Getting the event failed.
+
+        Returns
+        --------
+        :class:`.GuildScheduledEvent`
+            The event from the event ID.
+        """
+        data = await self.http.get_guild_scheduled_event(event_id)
+        return GuildScheduledEvent.from_gateway(state=self._connection, data=data)
+
+    async def fetch_guild_events(self, guild_id: int, /) -> List[GuildScheduledEvent]:
+        """|coro|
+
+        Gets a list of :class:`.GuildScheduledEvent` for a guild.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        guild_id: :class:`int`
+            The guild ID to get the events for.
+
+        Raises
+        -------
+        :exc:`.HTTPException`
+            Getting the guild events failed.
+
+        Returns
+        --------
+        List[:class:`.GuildScheduledEvent`]
+            The list of scheduled events for the guild.
+        """
+        data = await self.http.get_guild_scheduled_events(guild_id)
+        all_events = []
+        for event in data:
+            all_events.append(GuildScheduledEvent.from_gateway(state=self._connection, data=event))
+        return all_events
 
     # Invite management
 

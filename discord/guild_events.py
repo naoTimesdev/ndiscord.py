@@ -194,6 +194,9 @@ class GuildScheduledEvent(Hashable):
                 data=entity_metadata
             )
         self._member_count: Optional[int] = data.get("user_count")
+        # Add to guild data and state cache.
+        self.guild._add_guild_event(self)
+        self._state._add_guild_event(self)
 
     def _add_member(self, member: Member):
         self._members[member.id] = member
