@@ -99,6 +99,8 @@ class GuildScheduledEvent(Hashable):
         The event's name.
     description: Optional[:class:`str`]
         The event's description.
+    type: :class:`GuildScheduledEventType`
+        The guild event type.
     start_time: :class:`datetime.datetime`
         The event's scheduled start time.
     end_time: Optional[:class:`datetime.datetime`]
@@ -114,7 +116,7 @@ class GuildScheduledEvent(Hashable):
     __slots__ = (
         "_state",
         "id",
-        "_type",
+        "type",
         "_members",
         "guild",
         "_channel",
@@ -139,7 +141,6 @@ class GuildScheduledEvent(Hashable):
     ):
         self._state: ConnectionState = state
         self.id: int = int(data['id'])
-        self._type: int = data['entity_type']
         self._members: Dict[int, Member] = {}
         self._update(guild_or_channel, data)
 
@@ -175,6 +176,7 @@ class GuildScheduledEvent(Hashable):
         self.privacy_level: GuildScheduledEventPrivacyLevel = try_enum(
             GuildScheduledEventPrivacyLevel, data["privacy_level"]
         )
+        self.type = try_enum(GuildScheduledEventType, data.get("entity_type", 0))
 
         self.start_time: datetime = utils.parse_time(data["scheduled_start_time"])
         self.end_time = utils.parse_time(data.get("scheduled_end_time"))
@@ -194,11 +196,6 @@ class GuildScheduledEvent(Hashable):
 
     def _remove_member(self, member: Member):
         self._members.pop(member.id, None)
-
-    @property
-    def type(self) -> GuildScheduledEventType:
-        """:class:`GuildScheduledEventType`: The guild event Discord type."""
-        return try_enum(GuildScheduledEventType, self._type)
 
     @property
     def channel(self) -> Optional[GuildChannel]:
@@ -289,6 +286,7 @@ class GuildScheduledEvent(Hashable):
         channel: Optional[GuildChannel] = MISSING,
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         scheduled_start_time: Optional[datetime] = MISSING,
+        scheduled_end_time: Optional[datetime] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
         location: Optional[str] = MISSING,
         speakers: Optional[List[Union[Member, User]]] = MISSING,
@@ -311,8 +309,12 @@ class GuildScheduledEvent(Hashable):
         privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
             The event privacy level.
         scheduled_start_time: Optional[:class:`datetime.datetime`]
-            The new schedule start time, timezone must be UTC. If not it will be converted
+            The new scheduled start time, timezone must be UTC. If not it will be converted
             automatically.
+        scheduled_end_time: Optional[:class:`datetime.datetime`]
+            The new scheduled end time, timezone must be UTC.
+            If not it will be converted automatically.
+            It would be used if the event is a :attr:`GuildScheduledEventType.location` event.
         entity_type: Optional[:class:`GuildScheduledEventType`]
             The new ``entity type`` or ``type`` for the event.
         location: Optional[:class:`str`]
@@ -337,8 +339,9 @@ class GuildScheduledEvent(Hashable):
 
         http = self._state.http
 
-        fields: Dict[str, Any] = {}
-        if name is not MISSING and entity_type is not None:
+        fields = {}
+
+        if name is not MISSING:
             fields["name"] = name
 
         if description is not MISSING:
@@ -347,29 +350,44 @@ class GuildScheduledEvent(Hashable):
         if channel is not MISSING:
             fields["channel_id"] = str(channel.id)
 
+        privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
         if privacy_level is not MISSING and privacy_level is not None:
-            fields["privacy_level"] = privacy_level.value
+            privacy_level = privacy_level.value
+        fields["privacy_level"] = privacy_level
 
-        if scheduled_start_time is not MISSING and entity_type is not None:
-            fields["scheduled_start_time"] = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()
+        if scheduled_start_time is not MISSING:
+            scheduled_start_time = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()
+            fields["scheduled_start_time"] = scheduled_start_time.isoformat()
 
+        entity_type = self.type.value
         if entity_type is not MISSING and entity_type is not None:
-            fields["entity_type"] = entity_type.value
+            entity_type = entity_type.value
+        fields["entity_type"] = entity_type
 
         entity_metadata = {}
         if location is not MISSING:
             entity_metadata["location"] = location
+        elif self.location is not None:
+            entity_metadata["location"] = self.location
         if speakers is not MISSING:
-            entity_metadata["speaker_ids"] = [str(member.id) for member in speakers]
+            entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
+        elif self.speakers:
+            entity_metadata["speakers_ids"] = [str(s.id) for s in self.speakers]
 
-        if entity_metadata:
-            fields["entity_metadata"] = entity_metadata
+        if not entity_metadata:
+            entity_metadata = None
+        fields["entity_metadata"] = entity_metadata
+        if entity_type == GuildScheduledEventType.location.value:
+            if scheduled_end_time is not MISSING:
+                scheduled_end_time = scheduled_end_time.replace(tzinfo=timezone.utc).isoformat()
+                fields["scheduled_end_time"] = scheduled_end_time.isoformat()
+            elif self.end_time is not None:
+                fields["scheduled_end_time"] = self.end_time.isoformat()
 
         guild = self.guild
-
-        data = await http.edit_guild_scheduled_event(self.id, **fields)
+        data = await http.create_guild_scheduled_event(guild.id, **fields)
         try:
-            channel = guild.get_channel(int(data["channel_id"]))
+            channel = self.get_channel(int(data["channel_id"]))
         except KeyError:
             channel = None
         else:
@@ -387,10 +405,10 @@ class GuildScheduledEvent(Hashable):
 
         Raises
         --------
-        HTTPException
-            Deleting the guild event failed.
         Forbidden
             You do not have permissions to delete the guild event.
+        HTTPException
+            Deleting the guild event failed.
         """
 
         await self._state.http.delete_guild_scheduled_event(self.id)

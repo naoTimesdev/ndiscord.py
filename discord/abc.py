@@ -1134,6 +1134,7 @@ class GuildChannel:
         description: Optional[str] = MISSING,
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
+        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         """|coro|
 
@@ -1153,18 +1154,23 @@ class GuildChannel:
         privacy_level: Optional[:class:`.GuildScheduledEventPrivacyLevel`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
-            The schedule start time, timezone must be UTC. If not it will be converted
+            The scheduled start time, timezone must be UTC. If not it will be converted
             automatically.
         entity_type: Optional[:class:`.GuildScheduledEventType`]
             The ``entity_type`` or ``type`` for the event.
             If you don't provide this, it will automatically check from the channel :attr:`type`.
+        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
+            The speakers for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
         Forbidden
-            You do not have permissions to edit the guild event.
+            You do not have permissions to create the guild event.
         HTTPException
-            Editing the guild event failed.
+            Creating the guild event failed.
+        ValueError
+            Validation error occurred.
 
         Returns
         --------
@@ -1189,6 +1195,7 @@ class GuildChannel:
             privacy_level=privacy_level,
             channel=self,
             entity_type=entity_type,
+            speakers=speakers,
         )
 
 

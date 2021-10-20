@@ -1375,10 +1375,10 @@ class Guild(Hashable):
         privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
             The event privacy level, same thing as StageInstance PrivacyLevel
         scheduled_start_time: :class:`datetime.datetime`
-            The schedule start time, timezone must be UTC. If not it will be converted
+            The scheduled start time, timezone must be UTC. If not it will be converted
             automatically.
         scheduled_end_time: Optional[:class:`datetime.datetime`]
-            The schedule end time, timezone must be UTC.
+            The scheduled end time, timezone must be UTC.
             If not it will be converted automatically.
             It would be used if the event is a :attr:`GuildScheduledEventType.location` event.
         entity_type: Optional[:class:`GuildScheduledEventType`]
@@ -1393,9 +1393,11 @@ class Guild(Hashable):
         Raises
         -------
         Forbidden
-            You do not have permissions to edit the guild event.
+            You do not have permissions to create the guild event.
         HTTPException
-            Editing the guild event failed.
+            Creating the guild event failed.
+        ValueError
+            Validation error occurred.
 
         Returns
         --------
@@ -1404,7 +1406,9 @@ class Guild(Hashable):
         """
         http = self._state.http
 
-        fields = {}
+        fields = {
+            "name": name,
+        }
 
         description = None
         if description is not MISSING:
@@ -1428,18 +1432,31 @@ class Guild(Hashable):
             entity_type = entity_type.value
         fields["entity_type"] = entity_type
 
+        if (
+            entity_type in (GuildScheduledEventType.stage_instance.value, GuildScheduledEventType.voice.value)
+            and channel_id is None
+        ):
+            raise ValueError("Channel is required for entity_type `stage_instance` or `voice`")
+
         entity_metadata = {}
         if location is not MISSING:
             entity_metadata["location"] = location
+        elif entity_type == GuildScheduledEventType.location.value:
+            raise ValueError("location is required for location event")
         if speakers is not MISSING:
             entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
+        elif entity_type == GuildScheduledEventType.stage_instance.value:
+            entity_metadata["speakers_ids"] = []
 
         if not entity_metadata:
             entity_metadata = None
         fields["entity_metadata"] = entity_metadata
-        if entity_type == GuildScheduledEventType.location.value and scheduled_end_time is not MISSING:
-            scheduled_end_time = scheduled_end_time.replace(tzinfo=datetime.timezone.utc).isoformat()
-            fields["scheduled_end_time"] = scheduled_end_time.isoformat()
+        if entity_type == GuildScheduledEventType.location.value:
+            if scheduled_end_time is not MISSING:
+                scheduled_end_time = scheduled_end_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+                fields["scheduled_end_time"] = scheduled_end_time.isoformat()
+            else:
+                raise ValueError("scheduled_end_time is required for location event.")
 
         guild = self
         data = await http.create_guild_scheduled_event(guild.id, **fields)
