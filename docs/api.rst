@@ -3838,6 +3838,10 @@ Guild
 GuildScheduledEvent
 ~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+
+    Event is not fetched on startup, you need to fetch it manually for your guild via :meth:`Client.fetch_guild_events`.
+
 .. attributetable:: GuildScheduledEvent
 
 .. autoclass:: GuildScheduledEvent()
