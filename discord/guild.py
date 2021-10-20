@@ -1969,6 +1969,25 @@ class Guild(Hashable):
         channel: GuildChannel = factory(guild=self, state=self._state, data=data)  # type: ignore
         return channel
 
+    async def fetch_events(self) -> List[GuildScheduledEvent]:
+        """|coro|
+
+        Retrieves all the events that are scheduled or ongoing from the guild
+        as a :class:`list` of :class:`GuildScheduledEvent`.
+
+        Raises
+        -------
+        HTTPException
+            Retrieving the events failed.
+
+        Returns
+        --------
+        List[:class:`GuildScheduledEvent`]
+            A list of :class:`GuildScheduledEvent` objects.
+        """
+        data = await self._state.http.get_guild_scheduled_events(self.id)
+        return [GuildScheduledEvent.from_gateway(state=self._state, data=event) for event in data]
+
     async def bans(self) -> List[BanEntry]:
         """|coro|
 
