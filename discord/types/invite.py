@@ -43,6 +43,7 @@ class _InviteOptional(TypedDict, total=False):
     target_type: InviteTargetType
     target_application: PartialAppInfo
     guild_scheduled_event: GuildScheduledEvent
+    channel: PartialChannel
 
 
 class _InviteMetadata(TypedDict, total=False):
@@ -60,7 +61,6 @@ class VanityInvite(_InviteMetadata):
 
 class IncompleteInvite(_InviteMetadata):
     code: str
-    channel: PartialChannel
 
 
 class Invite(IncompleteInvite, _InviteOptional):

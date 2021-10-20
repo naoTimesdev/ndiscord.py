@@ -207,11 +207,15 @@ class Asset(AssetMixin):
 
     @classmethod
     def _from_guild_image(cls, state, guild_id: int, image: str, path: str) -> Asset:
+        format = "png"
+        animated = image.startswith("a_")
+        if path == "banners" and animated:
+            format = "gif"
         return cls(
             state,
-            url=f"{cls.BASE}/{path}/{guild_id}/{image}.png?size=1024",
+            url=f"{cls.BASE}/{path}/{guild_id}/{image}.{format}?size=1024",
             key=image,
-            animated=False,
+            animated=animated,
         )
 
     @classmethod
