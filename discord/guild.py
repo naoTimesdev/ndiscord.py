@@ -268,6 +268,7 @@ class Guild(Hashable):
         "_large",
         "_splash",
         "_voice_states",
+        "_guild_events",
         "_system_channel_id",
         "_system_channel_flags",
         "_discovery_splash",
