@@ -30,7 +30,6 @@ class GuildScheduledEventUser(TypedDict):
     user_id: str
 
 
-# TODO: Still can be changed, fix later if possible
 class GuildScheduledEventEntityMeta(TypedDict):
     speaker_ids: Optional[List[str]]
     location: Optional[str]
@@ -60,6 +59,4 @@ class GuildScheduledEvent(_GuildScheduledEventOptional):
     entity_type: GuildEventEntityType
     entity_metadata: GuildScheduledEventEntityMeta
     sku_ids: List[str]
-    # TODO: Change later when it's documented
-    # TODO: This seems like something similar to Application SKUs
     skus: list

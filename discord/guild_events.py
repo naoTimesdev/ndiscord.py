@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from . import utils
 from .asset import Asset
@@ -46,17 +46,26 @@ __all__ = ("GuildScheduledEvent", "GuildEventEntityMetadata")
 MISSING: Any = utils.MISSING
 
 
-# TODO: Still can be changed, fix later if possible
-class GuildEventEntityMetadata(NamedTuple):
-    speaker_ids: List[str]
-    location: Optional[str]
+class GuildEventEntityMetadata:
+    """
+    Represents metadata about a guild event.
 
-    @classmethod
-    def _from_data(cls, entity_data: GuildScheduledEventEntityMeta):
-        return cls(
-            speaker_ids=entity_data.get("speaker_ids", []),
-            location=entity_data.get("location", None),
-        )
+    Attributes
+    ----------
+    speaker_ids: List[:class:`int`]
+        A list of user IDs that are allowed to speak in the stage channel.
+        This will be filled if the event type is a :attr:`GuildScheduledEventType.stage_instance` event.
+    location: Optional[:class:`str`]
+        The location of the event, this will be filled if the event type
+        is :attr:`GuildScheduledEventType.location` event.
+    """
+
+    __slots__ = ("location", "speaker_ids")
+
+    def __init__(self, *, data: GuildScheduledEventEntityMeta):
+        speaker_ids = data.get("speaker_ids", [])
+        self.location: Optional[str] = data.get("location")
+        self.speaker_ids = list(map(int, speaker_ids))
 
 
 class GuildScheduledEvent(Hashable):
@@ -175,8 +184,8 @@ class GuildScheduledEvent(Hashable):
             self._entity_id = int(entity_id)
         else:
             self._entity_id = None
-        self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata._from_data(
-            data.get("entity_metadata", {})
+        self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata(
+            data=data.get("entity_metadata", {})
         )
         self._member_count: Optional[int] = data.get("user_count")
 
@@ -281,6 +290,8 @@ class GuildScheduledEvent(Hashable):
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         scheduled_start_time: Optional[datetime] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
+        location: Optional[str] = MISSING,
+        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         r"""|coro|
 
@@ -304,6 +315,12 @@ class GuildScheduledEvent(Hashable):
             automatically.
         entity_type: Optional[:class:`GuildScheduledEventType`]
             The new ``entity type`` or ``type`` for the event.
+        location: Optional[:class:`str`]
+            The new location for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.location` event.
+        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
+            The new list of speakers for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
@@ -339,6 +356,15 @@ class GuildScheduledEvent(Hashable):
         if entity_type is not MISSING and entity_type is not None:
             fields["entity_type"] = entity_type.value
 
+        entity_metadata = {}
+        if location is not MISSING:
+            entity_metadata["location"] = location
+        if speakers is not MISSING:
+            entity_metadata["speaker_ids"] = [str(member.id) for member in speakers]
+
+        if entity_metadata:
+            fields["entity_metadata"] = entity_metadata
+
         guild = self.guild
 
         data = await http.edit_guild_scheduled_event(self.id, **fields)
@@ -348,7 +374,8 @@ class GuildScheduledEvent(Hashable):
             channel = None
         else:
             guild = channel or guild
-        return self.__class__(state=self._state, guild_or_channel=guild, data=data)
+        self._update(guild, data)
+        return self
 
     async def delete(self) -> None:
         """|coro|

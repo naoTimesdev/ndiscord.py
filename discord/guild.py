@@ -1348,9 +1348,12 @@ class Guild(Hashable):
         scheduled_start_time: datetime.datetime,
         *,
         description: Optional[str] = MISSING,
+        scheduled_end_time: Optional[datetime.datetime] = MISSING,
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         channel: Optional[GuildChannel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
+        location: Optional[str] = MISSING,
+        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         """|coro|
 
@@ -1374,8 +1377,18 @@ class Guild(Hashable):
         scheduled_start_time: :class:`datetime.datetime`
             The schedule start time, timezone must be UTC. If not it will be converted
             automatically.
+        scheduled_end_time: Optional[:class:`datetime.datetime`]
+            The schedule end time, timezone must be UTC.
+            If not it will be converted automatically.
+            It would be used if the event is a :attr:`GuildScheduledEventType.location` event.
         entity_type: Optional[:class:`GuildScheduledEventType`]
             The ``entity_type`` or ``type`` for the event.
+        location: Optional[:class:`str`]
+            The location for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.location` event.
+        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
+            The speakers for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
@@ -1391,35 +1404,45 @@ class Guild(Hashable):
         """
         http = self._state.http
 
+        fields = {}
+
         description = None
         if description is not MISSING:
-            description = description
+            fields["description"] = description
 
         channel_id = None
         if channel is not MISSING:
             channel_id = str(channel.id)
+        fields["channel_id"] = channel_id
 
         privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
         if privacy_level is not MISSING and privacy_level is not None:
             privacy_level = privacy_level.value
+        fields["privacy_level"] = privacy_level
 
         scheduled_start_time = scheduled_start_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+        fields["scheduled_start_time"] = scheduled_start_time.isoformat()
 
         entity_type = GuildScheduledEventType.none.value
         if entity_type is not MISSING and entity_type is not None:
             entity_type = entity_type.value
+        fields["entity_type"] = entity_type
+
+        entity_metadata = {}
+        if location is not MISSING:
+            entity_metadata["location"] = location
+        if speakers is not MISSING:
+            entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
+
+        if not entity_metadata:
+            entity_metadata = None
+        fields["entity_metadata"] = entity_metadata
+        if entity_type == GuildScheduledEventType.location.value and scheduled_end_time is not MISSING:
+            scheduled_end_time = scheduled_end_time.replace(tzinfo=datetime.timezone.utc).isoformat()
+            fields["scheduled_end_time"] = scheduled_end_time.isoformat()
 
         guild = self
-
-        data = await http.create_guild_scheduled_event(
-            guild.id,
-            name=name,
-            entity_type=entity_type,
-            privacy_level=privacy_level,
-            scheduled_start_time=scheduled_start_time,
-            description=description,
-            channel_id=channel_id,
-        )
+        data = await http.create_guild_scheduled_event(guild.id, **fields)
 
         try:
             channel = self.get_channel(int(data["channel_id"]))
