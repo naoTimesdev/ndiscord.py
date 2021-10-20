@@ -188,9 +188,11 @@ class GuildScheduledEvent(Hashable):
             self._entity_id = int(entity_id)
         else:
             self._entity_id = None
-        self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata(
-            data=data.get("entity_metadata", {})
-        )
+        entity_metadata = data.get("entity_metadata")
+        if entity_metadata is not None:
+            self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata(
+                data=entity_metadata
+            )
         self._member_count: Optional[int] = data.get("user_count")
 
     def _add_member(self, member: Member):
