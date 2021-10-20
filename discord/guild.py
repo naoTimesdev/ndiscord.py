@@ -1464,7 +1464,7 @@ class Guild(Hashable):
 
         try:
             channel = self.get_channel(int(data["channel_id"]))
-        except KeyError:
+        except (KeyError, TypeError, ValueError):
             channel = None
         else:
             guild = channel or guild

@@ -271,7 +271,7 @@ class GuildScheduledEvent(Hashable):
 
         try:
             channel = guild.get_channel(int(data["channel_id"]))
-        except KeyError:
+        except (KeyError, TypeError, ValueError):
             channel = None
         else:
             guild = channel or guild
@@ -387,8 +387,8 @@ class GuildScheduledEvent(Hashable):
         guild = self.guild
         data = await http.create_guild_scheduled_event(guild.id, **fields)
         try:
-            channel = self.get_channel(int(data["channel_id"]))
-        except KeyError:
+            channel = guild.get_channel(int(data["channel_id"]))
+        except (KeyError, TypeError, ValueError):
             channel = None
         else:
             guild = channel or guild
