@@ -68,6 +68,13 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
         self._user_commands: Dict[str, UserCommand[CogT, BotT]] = {}
         self._message_commands: Dict[str, MessageCommand[CogT, BotT]] = {}
 
+    def __iter__(self):
+        all_contents = list(self._slash_commands.values())
+        all_contents.extend(list(self._user_commands.values()))
+        all_contents.extend(list(self._message_commands.values()))
+        for app_cmd in all_contents:
+            yield app_cmd
+
     @property
     def slash_commands(self):
         return self._slash_commands
@@ -89,7 +96,7 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
 
     values = all_commands
 
-    def add_command(self, command: AppCommandT):
+    def add_command(self, command: AppCommandT, *, force: bool = False):
         """Add a new command to the factories.
 
         If the command already exist, it will raise an :exc:`.ApplicationRegistrationError`.
@@ -98,6 +105,8 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
         -----------
         command: :class:`.ApplicationCommand` derived
             The command to register.
+        force: :class:`bool`
+            Force registration the command.
 
         Raises
         ---------
@@ -108,15 +117,15 @@ class ApplicationCommandFactory(Generic[CogT, BotT, ContextT, AppCommandT]):
         if command.type is None:
             return
         if command.type == ApplicationCommandType.slash:
-            if command.name in self._slash_commands:
+            if command.name in self._slash_commands and not force:
                 raise ApplicationRegistrationError(command.name)
             self._slash_commands[command.name] = command
         elif command.type == ApplicationCommandType.message:
-            if command.name in self._message_commands:
+            if command.name in self._message_commands and not force:
                 raise ApplicationRegistrationError(command.name)
             self._message_commands[command.name] = command
         elif command.type == ApplicationCommandType.user:
-            if command.name in self._user_commands:
+            if command.name in self._user_commands and not force:
                 raise ApplicationRegistrationError(command.name)
             self._user_commands[command.name] = command
 
@@ -273,7 +282,7 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
             pass
         return pop_out
 
-    def register_application(self, command: AppCommandT):
+    def register_application(self, command: AppCommandT, *, force: bool = False):
         """
         Register the command to the factories and remove from pending section.
         Please make sure the app already been registered to Discord.
@@ -282,12 +291,14 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         -----------
         command: :class:`.ApplicationCommand`
             The command to register.
+        force: :class:`bool`
+            If ``True``, the command will be registered even if it's not registered to Discord.
         """
         if command in self._pending_registration:
             self._pending_registration.remove(command)
-        if command.id is None:
+        if command.id is None and not force:
             raise TypeError(f"Cannot register {command.name} because missing application ID.")
-        self._app_factories.add_command(command)
+        self._app_factories.add_command(command, force=force)
 
     async def process_application_commands(self, interaction: Interaction):
         """|coro|

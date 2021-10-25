@@ -282,6 +282,9 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             connector, proxy=proxy, proxy_auth=proxy_auth, unsync_clock=unsync_clock, loop=self.loop
         )
         self._app_cmd_ids: Optional[int] = None
+        # To check if we're currently connecting first time
+        # or not, used for registering applications.
+        self._application_registering_watch: asyncio.Task = MISSING
 
         self._handlers: Dict[str, Callable] = {"ready": self._handle_ready}
 
@@ -655,6 +658,9 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         self._closed = True
 
+        # Cancel the application task if it exists
+        self._application_registering_watch.cancel()
+
         for voice in self.voice_clients:
             try:
                 await voice.disconnect(force=True)
@@ -762,17 +768,40 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         Or you can do ``super().on_connect()`` too.
         """
-        await self.register_application_commands()
+        if self._application_registering_watch is MISSING:
+            await self.register_application_commands()
+
+    async def _internal_application_register_scheduler(self):
+        """|coro|
+
+        Schedules a call to :meth:`register_application_commands` every 60 seconds.
+        This will only be called if the bot is not closed and there is
+        application that need to be registered.
+        """
+        try:
+            while True:
+                await asyncio.sleep(60)
+                count = len(self._pending_registration)
+                if count > 0 and not self.is_closed():
+                    _log.info(f"Application register dispatch, need to register {count} app commands")
+                    try:
+                        await self.register_application_commands()
+                    except Exception:
+                        _log.exception("Error while registering application commands, ignoring")
+        except asyncio.CancelledError:
+            pass
 
     async def register_application_commands(self):
         """|coro|
 
         Method to start registering and unregistering commands.
         """
-        app_data = await self.http.application_info()
-        self._app_cmd_ids = int(app_data["id"])
+        if self._app_cmd_ids is None:
+            app_data = await self.http.application_info()
+            self._app_cmd_ids = int(app_data["id"])
 
         pending_registration = self._pending_registration[:]
+        force_register = self._application_registering_watch is not MISSING
 
         global_payloads: List[ApplicationCommand[CogT, BotT]] = []
         global_commands = await self.http.get_global_commands(self._app_cmd_ids)
@@ -788,12 +817,26 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                     global_payloads.append(command)
             else:
                 global_payloads.append(command)
+        for command in self._app_factories:
+            match_this = utils.find(
+                lambda x: x["name"] == command.name and x.get("type", 1) == command.type.value, global_commands
+            )
+            if match_this is None:
+                global_payloads.append(command)
 
         update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT]]] = {}
-        async for guild in self.fetch_guilds(limit=None):
-            update_guild_commands[guild.id] = []
+        if not force_register:
+            async for guild in self.fetch_guilds(limit=None):
+                update_guild_commands[guild.id] = []
+        else:
+            for guild in self._connection.guilds:
+                update_guild_commands[guild.id] = []
 
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is not None]:
+            for guild_id in command.guild_ids:
+                to_update = update_guild_commands.get(guild_id, [])
+                update_guild_commands[guild_id] = to_update + [command]
+        for command in [cmd for cmd in self._app_factories if cmd.guild_ids is not None]:
             for guild_id in command.guild_ids:
                 to_update = update_guild_commands.get(guild_id, [])
                 update_guild_commands[guild_id] = to_update + [command]
@@ -817,7 +860,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                         type=ApplicationCommandType(cmd["type"]),
                     )
                     parsed_cmd.id = int(cmd["id"])
-                    self.register_application(parsed_cmd)
+                    self.register_application(parsed_cmd, force=force_register)
 
         # Update global commands
         update_globals = await self.http.bulk_upsert_global_commands(
@@ -831,7 +874,12 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 type=ApplicationCommandType(glb_payload["type"]),
             )
             parsed_cmd.id = int(glb_payload["id"])
-            self.register_application(parsed_cmd)
+            self.register_application(parsed_cmd, force=force_register)
+        if not force_register:
+            self._application_registering_watch = self.loop.create_task(
+                self._internal_application_register_scheduler(),
+                name="ndiscord.py-app-register-scheduler"
+            )
         self.dispatch("application_registered")
 
     # properties
