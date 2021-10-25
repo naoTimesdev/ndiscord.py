@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Literal, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, TypedDict, Union
 
 from .channel import ChannelType
 from .components import Component, ComponentType
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from .message import AllowedMentions, Message
 
 
-ApplicationCommandType = Literal[1, 2, 3]
+ApplicationCommandType = Literal[1, 2, 3, 4]
 
 
 class _ApplicationCommandOptional(TypedDict, total=False):
@@ -132,6 +132,12 @@ class _ApplicationCommandInteractionDataOptionNumber(_ApplicationCommandInteract
     value: float
 
 
+class _ApplicationCommandInteractionDataAutocomplete(_ApplicationCommandInteractionDataOption):
+    type: ApplicationCommandOptionType
+    value: Any
+    focused: bool
+
+
 ApplicationCommandInteractionDataOption = Union[
     _ApplicationCommandInteractionDataOptionString,
     _ApplicationCommandInteractionDataOptionInteger,
@@ -139,6 +145,7 @@ ApplicationCommandInteractionDataOption = Union[
     _ApplicationCommandInteractionDataOptionBoolean,
     _ApplicationCommandInteractionDataOptionSnowflake,
     _ApplicationCommandInteractionDataOptionNumber,
+    _ApplicationCommandInteractionDataAutocomplete,
 ]
 
 
@@ -206,7 +213,7 @@ class InteractionApplicationCommandCallbackData(TypedDict, total=False):
     components: List[Component]
 
 
-InteractionResponseType = Literal[1, 4, 5, 6, 7]
+InteractionResponseType = Literal[1, 4, 5, 6, 7, 8]
 
 
 class _InteractionResponseOptional(TypedDict, total=False):

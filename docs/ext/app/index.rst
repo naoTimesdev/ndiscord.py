@@ -15,4 +15,5 @@ This app framework follows closely the ``discord.ext.commands`` framework.
     :maxdepth: 2
 
     usage
+    autocomplete
     api

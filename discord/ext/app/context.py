@@ -28,14 +28,18 @@ from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, Union
 
 import discord.abc
 import discord.utils
+from discord.enums import InteractionResponseType, InteractionType
+from discord.errors import InteractionResponded
 from discord.guild import Guild
 from discord.interactions import Interaction, InteractionResponse
 from discord.member import Member
 from discord.state import ConnectionState
 from discord.user import ClientUser, User
 from discord.voice_client import VoiceProtocol
+from discord.webhook.async_ import async_context
 
 from ._types import BotT, CogT
+from .errors import ApplicationNoAutocomplete
 
 if TYPE_CHECKING:
     from discord.embeds import Embed
@@ -44,7 +48,7 @@ if TYPE_CHECKING:
     from discord.mentions import AllowedMentions
     from discord.ui import View
 
-    from .core import MessageCommand, SlashCommand, UserCommand
+    from .core import MessageCommand, OptionChoice, SlashCommand, UserCommand
 
 __all__ = ("ApplicationContext",)
 
@@ -83,6 +87,8 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         or invoked.
     invoked_subcommand: Optional[:class:`.SlashCommand`]
         The subcommand that was invoked, if any.
+    autocompleting: Optional[:class:`str`]
+        The argument name that needs to be autocompleted.
     """
 
     def __init__(
@@ -105,6 +111,9 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         # Subcommand stuff for /slash command
         self.invoked_subcommand: Optional[AppCommandT] = None
 
+        # Autcomplete related stuff
+        self.autocompleting: Optional[str] = None
+
         self._deferred: bool = False
         self._state: ConnectionState = self.interaction._state
 
@@ -123,6 +132,10 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         Might be none if the command is context menu.
         """
         return self.interaction.data.get("name")
+
+    def is_autocomplete(self) -> bool:
+        """is_autocomplete: :class:`bool`: Returns True if the interaction is an autocomplete."""
+        return self.interaction.type == InteractionType.autocomplete
 
     @property
     def responded(self) -> bool:
@@ -240,5 +253,70 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
     @discord.utils.copy_doc(InteractionResponse.pong)
     def pong(self):
         return self.interaction.response.pong
+
+    async def autocomplete(self, choices: List[Union[str, "OptionChoice"]]) -> None:
+        """|coro|
+
+        Response to an autocomplete interaction.
+
+        This method give the user choices to choose from.
+        If there's nothing to be autocopmleted, it will raise Error.
+
+        Parameters
+        ----------
+        choices : List[Union[:class:`str`, :class:`.OptionChoice`]]
+            The choices for autocompletion that will be sent to user.
+
+        Raises
+        -------
+        HTTPException
+            Autocompleting an option failed.
+        ValueError
+            If the choices has more than 25 choices.
+        InteractionResponded
+            This interaction has already been responded to before.
+        ApplicationNoAutocomplete
+            If the current context doesn't have any autocomplete to do.
+        """
+        if self.responded:
+            raise InteractionResponded(self.interaction)
+        if self.autocompleting is None:
+            raise ApplicationNoAutocomplete(self.command.name)
+
+        loaded_choices = []
+        for choice in choices:
+            if isinstance(choice, str):
+                loaded_choices.append(
+                    {
+                        "name": choice,
+                        "value": choice,
+                    }
+                )
+            # HACK: Bad way to check, since I want to avoid circular import.
+            elif hasattr(choice, "__class__") and choice.__class__.__name__ == "OptionChoice":
+                loaded_choices.append(
+                    {
+                        "name": choice.name,
+                        "value": choice.value,
+                    }
+                )
+
+        if len(loaded_choices) > 25:
+            raise ValueError(
+                "Too many choices for autocomplete (currently limited to 25 choices)"
+            )
+
+        payload: Dict[str, List[Dict[str, Any]]] = {
+            "choices": loaded_choices,
+        }
+
+        adapter = async_context.get()
+        await adapter.create_interaction_response(
+            self.interaction.id,
+            self.interaction.token,
+            session=self.interaction._session,
+            type=InteractionResponseType.autocomplete_result.value,
+            data=payload,
+        )
 
     send = respond
