@@ -311,7 +311,8 @@ class ApplicationCommandMixin(Generic[CogT, BotT, AppCommandT, ContextT]):
         interaction: :class:`discord.Interaction`
             The interaction to process
         """
-        if interaction.type != InteractionType.application_command:
+        _VALID_TYPE = (InteractionType.application_command, InteractionType.autocomplete)
+        if interaction.type not in _VALID_TYPE:
             return
 
         interaction_type = interaction.data.get("type", 1)
