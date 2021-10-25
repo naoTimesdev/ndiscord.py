@@ -1920,7 +1920,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         ------------
         id: :class:`int`
             The guild ID.
-        app_id: class:`int`
+        app_id: :class:`int`
             The application ID.
 
         Returns
