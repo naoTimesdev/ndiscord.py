@@ -486,13 +486,22 @@ def handle_message_parameters(
         files = [file]
 
     if files:
+        payload["attachments"] = []
+        for n, file in enumerate(files):
+            payload["attachments"].append(
+                {
+                    "id": n,
+                    "description": file.description,
+                    "filename": file.filename,
+                }
+            )
         multipart.append({"name": "payload_json", "value": utils._to_json(payload)})
         payload = None
         if len(files) == 1:
             file = files[0]
             multipart.append(
                 {
-                    "name": "file",
+                    "name": "files[0]",
                     "value": file.fp,
                     "filename": file.filename,
                     "content_type": "application/octet-stream",
@@ -502,7 +511,7 @@ def handle_message_parameters(
             for index, file in enumerate(files):
                 multipart.append(
                     {
-                        "name": f"file{index}",
+                        "name": f"files[{index}]",
                         "value": file.fp,
                         "filename": file.filename,
                         "content_type": "application/octet-stream",

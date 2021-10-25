@@ -126,6 +126,10 @@ class Attachment(Hashable):
     ------------
     id: :class:`int`
         The attachment ID.
+    description: Optional[:class:`str`]
+        The attachment description.
+
+        .. versionadded:: 2.0
     size: :class:`int`
         The attachment size in bytes.
     height: Optional[:class:`int`]
@@ -162,6 +166,7 @@ class Attachment(Hashable):
         self.width: Optional[int] = data.get("width")
         self.filename: str = data["filename"]
         self.url: str = data.get("url")
+        self.description: Optional[str] = data.get("description")
         self.proxy_url: str = data.get("proxy_url")
         self._http = state.http
         self.content_type: Optional[str] = data.get("content_type")
@@ -302,7 +307,7 @@ class Attachment(Hashable):
         """
 
         data = await self.read(use_cached=use_cached)
-        return File(io.BytesIO(data), filename=self.filename, spoiler=spoiler)
+        return File(io.BytesIO(data), filename=self.filename, description=self.description, spoiler=spoiler)
 
     def to_dict(self) -> AttachmentPayload:
         result: AttachmentPayload = {
@@ -313,6 +318,7 @@ class Attachment(Hashable):
             "url": self.url,
             "spoiler": self.is_spoiler(),
             "ephemeral": self.ephemeral,
+            "description": self.description,
         }
         if self.height:
             result["height"] = self.height
