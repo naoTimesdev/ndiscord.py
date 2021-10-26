@@ -44,6 +44,8 @@ __all__ = (
     "ApplicationRegistrationError",
     "ApplicationRegistrationMaxDepthError",
     "ApplicationRegistrationExistingParentOptions",
+    "ApplicationAutocompleteError",
+    "ApplicationNoAutocomplete",
     "ApplicationUserInputError",
     "ApplicationMissingRequiredArgument",
     "ApplicationTooManyArguments",
@@ -164,6 +166,36 @@ class ApplicationRegistrationExistingParentOptions(ClientException):
         super().__init__(
             f"The command '{name}' cannot be registered since the parent command contains option '{option.name}'"
             f" which is a type '{option.input_type.name}' (need to be subcommand or group)"
+        )
+
+
+class ApplicationAutocompleteError(ApplicationCommandError):
+    """The base exception type for errors that involve autocomplete.
+
+    This inherits from :exc:`ApplicationCommandError`.
+    """
+
+    pass
+
+
+class ApplicationNoAutocomplete(ApplicationAutocompleteError):
+    """An exception that will be raised if you try to respond with
+    autocomplete where there is nothing to be autocompleted.
+
+    This errors will be raised from client side and not server side.
+
+    This inherits from :exc:`ApplicationAutocompleteError`.
+
+    Attributes
+    -----------
+    name: :class:`str`
+        The command name that had the error.
+    """
+
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+        super().__init__(
+            f"The command '{name}' has no need to do anymore autocompletion respond currently."
         )
 
 
