@@ -107,6 +107,19 @@ Member Intent
 - Whether you want to request the guild member list through :meth:`Guild.chunk` or :meth:`Guild.fetch_members`.
 - Whether you want high accuracy member cache under :attr:`Guild.members`.
 
+.. _need_messages_intent:
+
+Message Content Intent
++++++++++++++++++++++++
+
+- Whether you need to see the content of the message, including attachments, embeds, and components.
+- Whether you want to see the message history of a channel.
+
+.. note::
+
+    This only affects the guild message and not DM, the message the bot sent, and
+    message that mention your bot.
+
 .. _intents_member_cache:
 
 Member Cache
