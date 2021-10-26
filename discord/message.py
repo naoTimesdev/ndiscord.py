@@ -519,7 +519,7 @@ class Message(Hashable):
     author: Union[:class:`Member`, :class:`abc.User`]
         A :class:`Member` that sent the message. If :attr:`channel` is a
         private channel or the user has the left the guild, then it is a :class:`User` instead.
-    content: :class:`str`
+    content: Optional[:class:`str`]
         The actual contents of the message.
     nonce: Optional[Union[:class:`str`, :class:`int`]]
         The value used by the discord guild and the client to verify that the message is successfully sent.
@@ -670,7 +670,7 @@ class Message(Hashable):
         self.flags: MessageFlags = MessageFlags._from_value(data.get("flags", 0))
         self.mention_everyone: bool = data["mention_everyone"]
         self.tts: bool = data["tts"]
-        self.content: str = data["content"]
+        self.content: str = data.get("content")
         self.nonce: Optional[Union[int, str]] = data.get("nonce")
         self.stickers: List[StickerItem] = [StickerItem(data=d, state=state) for d in data.get("sticker_items", [])]
         self.components: List[Component] = [_component_factory(d) for d in data.get("components", [])]
@@ -888,6 +888,8 @@ class Message(Hashable):
         This allows you to receive the user IDs of mentioned users
         even in a private message context.
         """
+        if self.content is None:
+            return []
         return [int(x) for x in re.findall(r"<@!?([0-9]{15,20})>", self.content)]
 
     @utils.cached_slot_property("_cs_raw_channel_mentions")
@@ -895,6 +897,8 @@ class Message(Hashable):
         """List[:class:`int`]: A property that returns an array of channel IDs matched with
         the syntax of ``<#channel_id>`` in the message content.
         """
+        if self.content is None:
+            return []
         return [int(x) for x in re.findall(r"<#([0-9]{15,20})>", self.content)]
 
     @utils.cached_slot_property("_cs_raw_role_mentions")
@@ -902,6 +906,8 @@ class Message(Hashable):
         """List[:class:`int`]: A property that returns an array of role IDs matched with
         the syntax of ``<@&role_id>`` in the message content.
         """
+        if self.content is None:
+            return []
         return [int(x) for x in re.findall(r"<@&([0-9]{15,20})>", self.content)]
 
     @utils.cached_slot_property("_cs_channel_mentions")
@@ -912,8 +918,8 @@ class Message(Hashable):
         return utils._unique(it)
 
     @utils.cached_slot_property("_cs_clean_content")
-    def clean_content(self) -> str:
-        """:class:`str`: A property that returns the content in a "cleaned up"
+    def clean_content(self) -> Optional[str]:
+        """Optional[:class:`str`]: A property that returns the content in a "cleaned up"
         manner. This basically means that mentions are transformed
         into the way the client shows it. e.g. ``<#id>`` will transform
         into ``#name``.
@@ -921,12 +927,19 @@ class Message(Hashable):
         This will also transform @everyone and @here mentions into
         non-mentions.
 
+        .. versionchanged:: 2.0
+
+            With the new Message Content Intent, this attribute
+            might be ``None``.
+
         .. note::
 
             This *does not* affect markdown. If you want to escape
             or remove markdown then use :func:`utils.escape_markdown` or :func:`utils.remove_markdown`
             respectively, along with this function.
         """
+        if self.content is None:
+            return None
 
         # fmt: off
         transformations = {
@@ -1007,9 +1020,11 @@ class Message(Hashable):
         this just returns the regular :attr:`Message.content`. Otherwise this
         returns an English message denoting the contents of the system message.
         """
-
         if self.type is MessageType.default:
             return self.content
+
+        if self.content is None:
+            return None
 
         if self.type is MessageType.recipient_add:
             if self.channel.type is ChannelType.group:

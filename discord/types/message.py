@@ -118,7 +118,7 @@ class Message(_MessageOptional):
     id: Snowflake
     channel_id: Snowflake
     author: User
-    content: str
+    content: Optional[str]
     timestamp: str
     edited_timestamp: Optional[str]
     tts: bool
