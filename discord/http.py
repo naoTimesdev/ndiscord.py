@@ -269,7 +269,7 @@ class HTTPClient:
                         f.reset(seek=tries)
 
                 if form:
-                    form_data = aiohttp.FormData()
+                    form_data = aiohttp.FormData(quote_fields=False)
                     for params in form:
                         form_data.add_field(**params)
                     kwargs["data"] = form_data
