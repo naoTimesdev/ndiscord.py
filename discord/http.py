@@ -269,7 +269,7 @@ class HTTPClient:
                         f.reset(seek=tries)
 
                 if form:
-                    form_data = aiohttp.FormData()
+                    form_data = aiohttp.FormData(quote_fields=False)
                     for params in form:
                         form_data.add_field(**params)
                     kwargs["data"] = form_data
@@ -500,13 +500,23 @@ class HTTPClient:
             payload["components"] = components
         if stickers:
             payload["sticker_ids"] = stickers
+        attachments = []
+        for n, file in enumerate(files):
+            attachments.append(
+                {
+                    "id": n,
+                    "description": file.description,
+                    "filename": file.filename,
+                }
+            )
+        payload["attachments"] = attachments
 
         form.append({"name": "payload_json", "value": utils._to_json(payload)})
         if len(files) == 1:
             file = files[0]
             form.append(
                 {
-                    "name": "file",
+                    "name": "files[0]",
                     "value": file.fp,
                     "filename": file.filename,
                     "content_type": "application/octet-stream",
@@ -516,7 +526,7 @@ class HTTPClient:
             for index, file in enumerate(files):
                 form.append(
                     {
-                        "name": f"file{index}",
+                        "name": f"files[{index}]",
                         "value": file.fp,
                         "filename": file.filename,
                         "content_type": "application/octet-stream",

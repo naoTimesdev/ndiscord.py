@@ -224,12 +224,12 @@ class ApplicationContext(discord.abc.Messageable, Generic[BotT, CogT]):
         self,
         content: Optional[str] = MISSING,
         *,
-        embeds: List["Embed"] = MISSING,
-        embed: Optional["Embed"] = MISSING,
-        file: "File" = MISSING,
-        files: List["File"] = MISSING,
-        view: Optional["View"] = MISSING,
-        allowed_mentions: Optional["AllowedMentions"] = None,
+        embeds: List[Embed] = MISSING,
+        embed: Optional[Embed] = MISSING,
+        file: File = MISSING,
+        files: List[File] = MISSING,
+        view: Optional[View] = MISSING,
+        allowed_mentions: Optional[AllowedMentions] = None,
     ):
         return self.interaction.edit_original_message(
             content=content,
