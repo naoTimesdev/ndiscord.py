@@ -66,7 +66,7 @@ class File:
         Whether the attachment is a spoiler.
     """
 
-    __slots__ = ("fp", "filename", "spoiler", "_original_pos", "_owner", "_closer")
+    __slots__ = ("fp", "filename", "description", "spoiler", "_original_pos", "_owner", "_closer")
 
     if TYPE_CHECKING:
         fp: io.BufferedIOBase
