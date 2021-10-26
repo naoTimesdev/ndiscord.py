@@ -28,6 +28,7 @@ import asyncio
 import logging
 import signal
 import sys
+import time
 import traceback
 from typing import (
     TYPE_CHECKING,
@@ -58,6 +59,8 @@ from .errors import *
 from .ext.app import (
     ApplicationCommand,
     ApplicationCommandMixin,
+    ApplicationPermissions,
+    ApplicationPermissionsType,
     ApplicationRegistrationError,
     MessageCommand,
     SlashCommand,
@@ -89,6 +92,7 @@ if TYPE_CHECKING:
     from .channel import DMChannel
     from .member import Member
     from .message import Message
+    from .team import TeamMember
     from .types.interactions import ApplicationCommand as RawApplicationCommand
     from .voice_client import VoiceProtocol
 
@@ -142,6 +146,28 @@ def _cleanup_loop(loop: asyncio.AbstractEventLoop) -> None:
     finally:
         _log.info("Closing the event loop.")
         loop.close()
+
+
+class _CachedApplicationInfo:
+    def __init__(self, app_info: AppInfo):
+        self._cache = app_info
+        # Cache for 2 days
+        self._expires = time.time() + (48 * 60 * 60)
+
+    @property
+    def app_info(self) -> AppInfo:
+        return self._cache
+
+    @app_info.setter
+    def app_info(self, value: AppInfo) -> None:
+        self._cache = value
+        self._expires = time.time() + (48 * 60 * 60)
+
+    def expired(self):
+        current = time.time()
+        if current > self._expires:
+            return True
+        return False
 
 
 class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
@@ -791,14 +817,60 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         except asyncio.CancelledError:
             pass
 
+    async def fetch_owners(self, *, bust_cache: bool = False) -> List[Union[User, TeamMember]]:
+        """|coro|
+
+        Gets the applications or bots owners.
+
+        This function will always returns a :class:`list`.
+        It will also checks if the application is in teams.
+
+        Parameters
+        ----------
+        bust_cache: :class:`bool`
+            Whether to ignore cache and force a request to the Discord API.
+
+        Returns
+        -------
+        List[Union[:class:`User`, :class:`TeamMember`]]
+            A list of owners.
+        """
+        app_info = await self.application_info(bust_cache=bust_cache)
+        to_user = lambda x: self.get_user(x) or x
+        team_data = app_info.team
+        if team_data is None:
+            return [app_info.owner]
+        else:
+            team_owner = team_data.owner
+            members_list = team_data.members
+
+            team_members = [team_owner]
+            for member in members_list:
+                if member.id == team_owner.id:
+                    continue
+                team_members.append(to_user(member))
+
+            return team_members
+
     async def register_application_commands(self):
         """|coro|
 
         Method to start registering and unregistering commands.
+
+        Raises
+        --------
+        ValueError
+            If the permissions override of one the command went pass
+            10 permissions override.
         """
         if self._app_cmd_ids is None:
             app_data = await self.http.application_info()
             self._app_cmd_ids = int(app_data["id"])
+
+        # Wait until bot ready
+        # Saves a lot of resouce when trying to register
+        # Guild commands too.
+        await self.wait_until_ready()
 
         pending_registration = self._pending_registration[:]
         force_register = self._application_registering_watch is not MISSING
@@ -825,12 +897,17 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                 global_payloads.append(command)
 
         update_guild_commands: Dict[int, List[ApplicationCommand[CogT, BotT]]] = {}
-        if not force_register:
+        temporary_global_permissions: Dict[int, Dict[int, List[dict]]] = {}
+        if not self._ready.is_set():
+            # Bot is not ready, fetch via API
             async for guild in self.fetch_guilds(limit=None):
                 update_guild_commands[guild.id] = []
+                temporary_global_permissions[guild.id] = {}
         else:
+            # Bot ready, use cache
             for guild in self._connection.guilds:
                 update_guild_commands[guild.id] = []
+                temporary_global_permissions[guild.id] = {}
 
         for command in [cmd for cmd in pending_registration if cmd.guild_ids is not None]:
             for guild_id in command.guild_ids:
@@ -839,7 +916,40 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         for command in [cmd for cmd in self._app_factories if cmd.guild_ids is not None]:
             for guild_id in command.guild_ids:
                 to_update = update_guild_commands.get(guild_id, [])
-                update_guild_commands[guild_id] = to_update + [command]
+                match_this = utils.find(
+                    lambda x: x["name"] == command.name and x.get("type", 1) == command.type.value, to_update
+                )
+                if match_this is None:
+                    update_guild_commands[guild_id] = to_update + [command]
+
+        # Let's iterate through all commands and make sure to raise any error
+        # if any of the permissions override went pass 10.
+        for guild_id, commands in update_guild_commands.items():
+            for command in commands:
+                if len(command.permissions) > 10:
+                    raise ValueError(
+                        f"{command.name} has {len(command.permissions)} permissions, "
+                        "maximum is 10 permissions overwrites."
+                    )
+        for command in global_payloads:
+            if len(command.permissions) > 10:
+                raise ValueError(
+                    f"{command.name} has {len(command.permissions)} permissions, "
+                    "maximum is 10 permissions overwrites."
+                )
+
+        async def _parse_permissions(permissions: List[ApplicationPermissions]):
+            payload_perms: List[ApplicationPermissions] = []
+            for perms in permissions:
+                if perms.type is ApplicationPermissionsType.owner:
+                    owner_ids = await self.fetch_owners()
+                    payload_perms.extend(
+                        ApplicationPermissions(owner, ApplicationPermissionsType.owner, perms.allow)
+                        for owner in owner_ids
+                    )
+                else:
+                    payload_perms.append(perms)
+            return payload_perms
 
         for guild_id, payloads in update_guild_commands.items():
             try:
@@ -861,11 +971,24 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
                     )
                     parsed_cmd.id = int(cmd["id"])
                     self.register_application(parsed_cmd, force=force_register)
+                    if parsed_cmd.permissions:
+                        permissions = await _parse_permissions(parsed_cmd.permissions)
+                        if parsed_cmd.id not in temporary_global_permissions[guild_id]:
+                            temporary_global_permissions[guild_id][parsed_cmd.id] = []
+                        if len(permissions) > 10:
+                            raise ValueError(
+                                f"{parsed_cmd.name} has {len(permissions)} permissions, "
+                                "maximum is 10 permissions overwrites."
+                            )
+                        temporary_global_permissions[guild_id][parsed_cmd.id].append(
+                            [p.to_dict() for p in permissions]
+                        )
 
         # Update global commands
         update_globals = await self.http.bulk_upsert_global_commands(
             self._app_cmd_ids, [p.to_dict() for p in global_payloads]
         )
+        # to_permission_update_global = []
 
         for glb_payload in update_globals:
             parsed_cmd = utils.get(
@@ -875,6 +998,43 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
             )
             parsed_cmd.id = int(glb_payload["id"])
             self.register_application(parsed_cmd, force=force_register)
+            if parsed_cmd.permissions:
+                parsed_perms = await _parse_permissions(parsed_cmd.permissions)
+                for perms in parsed_perms:
+                    if perms.type is ApplicationPermissionsType.owner:
+                        for guild_id, app_guild_perms in temporary_global_permissions.items():
+                            if parsed_cmd.id not in app_guild_perms:
+                                app_guild_perms[parsed_cmd.id] = []
+                            app_guild_perms[parsed_cmd.id].append(
+                                [p.to_dict() for p in parsed_cmd.permissions]
+                            )
+                            if len(app_guild_perms[parsed_cmd.id]) > 10:
+                                raise ValueError(
+                                    f"{parsed_cmd.name} has {len(app_guild_perms[parsed_cmd.id])} permissions, "
+                                    "maximum is 10 permissions overwrites."
+                                )
+                            temporary_global_permissions[guild_id] = app_guild_perms
+
+        # Update permissions
+        for guild_id, app_perms in temporary_global_permissions.items():
+            for app_id, perms in app_perms.items():
+                if not perms:
+                    continue
+                payloads = {
+                    "id": str(app_id),
+                    "permissions": perms,
+                }
+                try:
+                    cmds = await self.http.bulk_edit_guild_application_command_permissions(
+                        self._app_cmd_ids, guild_id, payloads
+                    )
+                except Forbidden:
+                    if not update_guild_commands[guild_id]:
+                        continue
+                    else:
+                        _log.debug("Failed to bulk upsert guild commands for %s", str(guild_id))
+                        raise
+
         if not force_register:
             self._application_registering_watch = self.loop.create_task(
                 self._internal_application_register_scheduler(),
@@ -1627,10 +1787,17 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         return Widget(state=self._connection, data=data)
 
-    async def application_info(self) -> AppInfo:
+    async def application_info(self, *, bust_cache: bool = False) -> AppInfo:
         """|coro|
 
         Retrieves the bot's application information.
+
+        Parameters
+        -----------
+        bust_cache: :class:`bool`
+            If the cache should be forcibly invalidated.
+
+            .. versionadded:: 2.0
 
         Raises
         -------
@@ -1642,10 +1809,15 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         :class:`.AppInfo`
             The bot's application information.
         """
+        _cached: Optional[_CachedApplicationInfo] = getattr(self, "_cached_application_info", None)
+        if not bust_cache and _cached is not None and not _cached.expired():
+            return _cached.app_info
         data = await self.http.application_info()
         if "rpc_origins" not in data:
             data["rpc_origins"] = None
-        return AppInfo(self._connection, data)
+        app_info = AppInfo(self._connection, data)
+        setattr(self, "_cached_application_info", _CachedApplicationInfo(app_info))
+        return app_info
 
     async def fetch_user(self, user_id: int, /) -> User:
         """|coro|

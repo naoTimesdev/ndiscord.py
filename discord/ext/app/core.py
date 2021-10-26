@@ -28,7 +28,9 @@ import asyncio
 import functools
 import inspect
 from collections import OrderedDict
+from enum import Enum
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
@@ -47,10 +49,12 @@ from typing import (
 from typing_extensions import Concatenate, ParamSpec, TypeGuard
 
 import discord
+from discord import abc
 from discord.enums import ApplicationCommandType, ChannelType, SlashCommandOptionType
 from discord.errors import ClientException, HTTPException
 from discord.member import Member
 from discord.message import Message
+from discord.mixins import Hashable
 from discord.user import User
 
 from ._types import (
@@ -76,10 +80,15 @@ from .cooldowns import (
 )
 from .errors import *
 
+if TYPE_CHECKING:
+    from discord.types.interactions import ApplicationCommandPermissions as ApplicationCommandPermissionsPayload
+
 __all__ = (
     "ApplicationCommand",
     "Option",
     "OptionChoice",
+    "ApplicationPermissionsType",
+    "ApplicationPermissions",
     "SlashCommand",
     "ContextMenuApplication",
     "UserCommand",
@@ -217,6 +226,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
 
     _buckets: ClassVar[ApplicationCooldownMapping]
     _max_concurrency: ClassVar[ApplicationMaxConcurrency]
+    permissions: ClassVar[List[ApplicationPermissions]]
 
     # Error/checks handler, etc.
     on_error: Error
@@ -225,6 +235,7 @@ class ApplicationCommand(_BaseApplication, Generic[CogT, BotT]):
         self = super().__new__(cls)
         self.__original_kwargs__ = kwargs
         self.checks = []
+        self.permissions = []
 
         return self
 
@@ -779,6 +790,51 @@ class OptionChoice:
         return {"name": self.name, "value": self.value}
 
 
+class ApplicationPermissionsType(Enum):
+    """An enumeration of application permissions.
+
+    This is a custom permissions that only be used internally.
+    """
+
+    role = 1
+    user = 2
+    owner = 3
+
+    def map_discord(self) -> int:
+        """Map the result into the real value.
+
+        Returns
+        --------
+        :class:`int`
+            The discord permission value.
+        """
+        if self == ApplicationPermissionsType.owner:
+            return ApplicationPermissionsType.user.value
+        return self.value
+
+
+class ApplicationPermissions(Hashable):
+    r"""A class that implement an permission for :class:`.ApplicationCommand`
+
+    You can pass this directly to the ``permissions`` arguments in :class:`.ApplicationCommand`.
+    """
+
+    def __init__(self, id: Union[int, abc.Snowflake], type: ApplicationPermissionsType, allow: bool = True):
+        if hasattr(id, "id"):
+            self.id = id.id
+        else:
+            self.id = id
+        self.type = type
+        self.allow = allow
+
+    def to_dict(self) -> ApplicationCommandPermissionsPayload:
+        return {
+            "id": self.id,
+            "type": self.type.map_discord(),
+            "permission": self.allow,
+        }
+
+
 class SlashCommand(ApplicationCommand[CogT, BotT]):
     r"""A class that implements an application command that can be invoked through a
     via Discord /slash command.
@@ -844,6 +900,8 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
         name: Optional[str] = ...,
         description: Optional[str] = ...,
         guild_ids: Optional[List[int]] = ...,
+        permissions: Optional[List[ApplicationPermissions]] = ...,
+        default_permissions: Optional[bool] = ...,
         checks: Optional[List[Check]] = ...,
         cooldown: Optional[ApplicationCooldownMapping] = ...,
         max_concurrency: Optional[ApplicationMaxConcurrency] = ...,
@@ -868,8 +926,15 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
 
         self.params = get_signature_parameters(callback)
         self.options: List[Option] = self.parse_options()
+        self.permissions: List[ApplicationPermissions] = kwargs.get("permissions", [])
+        permission_from_func = getattr(callback, "__application_permissions__", [])
+        if permission_from_func:
+            for p in permission_from_func:
+                if p not in self.permissions:
+                    self.permissions.append(p)
 
         self._children: Dict[str, SlashCommand] = {}
+        self.default_permissions: bool = kwargs.get("default_permissions", True)
 
         try:
             checks = callback.__commands_checks__
@@ -967,6 +1032,21 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
 
     def __eq__(self, other: SlashCommand) -> bool:
         return isinstance(other, SlashCommand) and other.name == self.name
+
+    @property
+    def callback(self) -> ApplicationCallback:
+        return self._callback
+
+    @callback.setter
+    def callback(self, function: ApplicationCallback):
+        self._callback = function
+        self.params = get_signature_parameters(function)
+
+        permission_from_func = getattr(function, "__application_permissions__", [])
+        if permission_from_func:
+            for p in permission_from_func:
+                if p not in self.permissions:
+                    self.permissions.append(p)
 
     async def _parse_arguments(self, ctx: ApplicationContext[BotT, CogT]):
         _INVALID_TYPE = [SlashCommandOptionType.sub_command.value, SlashCommandOptionType.sub_command_group.value]
@@ -1181,6 +1261,7 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
             del dict_res["type"]
         elif self.has_parent():
             dict_res["type"] = self.sub_type.value
+        dict_res["default_permissions"] = self.default_permissions
         return dict_res
 
     # Decorator
