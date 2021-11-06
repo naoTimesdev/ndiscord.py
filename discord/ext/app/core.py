@@ -686,6 +686,12 @@ class Option:
     channel_types: Optional[List[:class:`.ChannelType`]]
         A list of channel types that the option is valid for.
         If provided, the user can only use the defined channel type for the option.
+    min_value: Optional[:class:`int`]
+        The minimum value of the number option, the ``input_type`` must be
+        :attr:`.SlashCommandOptionType.number` or :attr:`.SlashCommandOptionType.integer`.
+    max_value: Optional[:class:`int`]
+        The maximum value of the number option, the ``input_type`` must be
+        :attr:`.SlashCommandOptionType.number` or :attr:`.SlashCommandOptionType.integer`.
     autocomplete: Optional[:class:`bool`]
         Indicates if the argument should be autocompleted.
 
@@ -707,6 +713,9 @@ class Option:
         default: Optional[Any] = ...,
         choices: Optional[List[OptionChoice]] = ...,
         channel_types: Optional[List[ChannelType]] = ...,
+        options: Optional[List[Option]] = ...,
+        min_value: Optional[int] = ...,
+        max_value: Optional[int] = ...,
         autocomplete: Optional[bool] = ...,
     ):
         ...
@@ -734,6 +743,21 @@ class Option:
         if self.default is not None:
             self.required = False
         self.channel_types: Optional[List[ChannelType]] = kwargs.pop("channel_types", None)
+        self.min_value: Optional[int] = kwargs.pop("min_value", None)
+        self.max_value: Optional[int] = kwargs.pop("max_value", None)
+        any_float = isinstance(self.min_value, float) or isinstance(self.max_value, float)
+        if isinstance(self.min_value, (int, float)) or isinstance(self.max_value, (int, float)):
+            if not isinstance(self.input_type, (SlashCommandOptionType.number, SlashCommandOptionType.integer)):
+                raise ValueError("\"input_type\" must be an number or integer if you provide min/max value.")
+            else:
+                self.input_type = SlashCommandOptionType.number if any_float else SlashCommandOptionType.integer
+        options = kwargs.pop("options", None)
+        valid_options: List[Option] = []
+        if isinstance(options, list):
+            for option in options:
+                if isinstance(option, Option):
+                    valid_options.append(option)
+        self.options: List[Option] = valid_options
         self.autocomplete: bool = kwargs.pop("autocomplete", False)
 
         if self.autocomplete and self.choices:
@@ -752,6 +776,12 @@ class Option:
         }
         if self.channel_types:
             data["channel_types"] = [c.value for c in self.channel_types]
+        if isinstance(self.min_value, (int, float)):
+            data["min_value"] = self.min_value
+        if isinstance(self.max_value, (int, float)):
+            data["max_value"] = self.max_value
+        if self.options:
+            data["options"] = [o.to_dict() for o in self.options]
         return data
 
     def __repr__(self):
@@ -1540,6 +1570,9 @@ def option(
     choices: List[Union[OptionChoice, str]] = [],
     default: Optional[Any] = ...,
     channel_types: Optional[List[ChannelType]] = ...,
+    options: Optional[List[Option]] = ...,
+    min_value: Optional[int] = ...,
+    max_value: Optional[int] = ...,
     autocomplete: bool = False,
 ) -> Option:
     ...

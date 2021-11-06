@@ -56,6 +56,9 @@ class ApplicationCommand(_ApplicationCommandOptional):
 class _ApplicationCommandOptionOptional(TypedDict, total=False):
     choices: List[ApplicationCommandOptionChoice]
     options: List[ApplicationCommandOption]
+    min_value: int
+    max_value: int
+    channel_types: List[ChannelType]
 
 
 ApplicationCommandOptionType = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
