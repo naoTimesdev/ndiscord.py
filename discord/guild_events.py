@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
 from . import utils
 from .asset import Asset
@@ -271,7 +271,9 @@ class GuildScheduledEvent(Hashable):
         return self._entity_metadata.location
 
     @classmethod
-    def from_gateway(cls, *, state: ConnectionState, data: GuildScheduledEventPayload) -> Optional[GuildScheduledEvent]:
+    def from_gateway(
+        cls: Type[GuildScheduledEvent], *, state: ConnectionState, data: GuildScheduledEventPayload
+    ) -> Optional[GuildScheduledEvent]:
         guild_id = int(data["guild_id"])
         guild: Optional[Guild] = state._get_guild(guild_id)
         if guild is None:
@@ -393,7 +395,7 @@ class GuildScheduledEvent(Hashable):
                 fields["scheduled_end_time"] = self.end_time.isoformat()
 
         guild = self.guild
-        data = await http.create_guild_scheduled_event(guild.id, **fields)
+        data = await http.edit_guild_scheduled_event(guild.id, self.id, **fields)
         try:
             channel = guild.get_channel(int(data["channel_id"]))
         except (KeyError, TypeError, ValueError):
@@ -419,4 +421,4 @@ class GuildScheduledEvent(Hashable):
             Deleting the guild event failed.
         """
 
-        await self._state.http.delete_guild_scheduled_event(self.id)
+        await self._state.http.delete_guild_scheduled_event(self.guild.id, self.id)

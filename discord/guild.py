@@ -702,6 +702,38 @@ class Guild(Hashable):
         """
         return self._threads.get(thread_id)
 
+    async def fetch_event(self, event_id: int, /) -> GuildScheduledEvent:
+        """|coro|
+
+        Returns a event with the given ID.
+        This function will request to the API directly, you might want to use
+        :meth:`get_event` instead.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        event_id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The requested scheduled event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have the proper permissions to get the event.
+        HTTPException
+            An error occurred while fetching the event.
+        """
+        data = await self._state.http.get_guild_scheduled_event(self.id, event_id)
+        cached = GuildScheduledEvent.from_gateway(data=data, state=self._state)
+        if cached.id not in self._guild_events:
+            self._guild_events[event_id] = cached
+        return cached
+
     @property
     def system_channel(self) -> Optional[TextChannel]:
         """Optional[:class:`TextChannel`]: Returns the guild's channel used for system messages.

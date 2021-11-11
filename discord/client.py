@@ -1493,7 +1493,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         guild = self.get_guild(int(data["guild_id"]))
         return StageInstance(guild=guild, state=self._connection, data=data)  # type: ignore
 
-    async def fetch_guild_event(self, event_id: int, /) -> GuildScheduledEvent:
+    async def fetch_guild_event(self, guild_id: int, event_id: int, /) -> GuildScheduledEvent:
         """|coro|
 
         Gets a :class:`.GuildScheduledEvent` for a guild event id.
@@ -1517,7 +1517,7 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         :class:`.GuildScheduledEvent`
             The event from the event ID.
         """
-        data = await self.http.get_guild_scheduled_event(event_id)
+        data = await self.http.get_guild_scheduled_event(guild_id, event_id)
         return GuildScheduledEvent.from_gateway(state=self._connection, data=data)
 
     async def fetch_guild_events(self, guild_id: int, /) -> List[GuildScheduledEvent]:

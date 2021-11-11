@@ -1978,28 +1978,43 @@ class HTTPClient:
 
     def get_guild_scheduled_event(
         self,
+        guild_id: Snowflake,
         event_id: Snowflake,
     ) -> Response[guild_events.GuildScheduledEvent]:
-        return self.request(Route("GET", "/guild-events/{event_id}", event_id=event_id))
+        return self.request(
+            Route("GET", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
+        )
 
     def create_guild_scheduled_event(
         self,
         guild_id: Snowflake,
         **fields: Any,
     ) -> Response[guild_events.GuildScheduledEvent]:
-        r = Route("POST", "/guilds/{guild_id}/events", guild_id=guild_id)
+        r = Route("POST", "/guilds/{guild_id}/scheduled-events", guild_id=guild_id)
         return self.request(r, json=fields)
 
     def edit_guild_scheduled_event(
         self,
+        guild_id: Snowflake,
         event_id: Snowflake,
         **fields: Any,
     ) -> Response[guild_events.GuildScheduledEvent]:
-        r = Route("PATCH", "/guild-events/{event_id}", event_id=event_id)
+        r = Route("PATCH", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
         return self.request(r, json=fields)
 
-    def delete_guild_scheduled_event(self, event_id: Snowflake) -> Response[None]:
-        return self.request(Route("DELETE", "/guild-events/{event_id}", event_id=event_id))
+    def delete_guild_scheduled_event(self, guild_id: Snowflake, event_id: Snowflake) -> Response[None]:
+        r = Route("DELETE", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
+        return self.request(r)
+
+    def get_guild_scheduled_event_rsvp(
+        self,
+        guild_id: Snowflake,
+        event_id: Snowflake,
+    ) -> Response[None]:
+        r = Route(
+            "GET", "/guilds/{guild_id}/scheduled-events/{event_id}/users", guild_id=guild_id, event_id=event_id
+        )
+        return self.request(r)
 
     # Misc
 
