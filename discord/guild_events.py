@@ -463,3 +463,45 @@ class GuildScheduledEvent(Hashable):
         """
 
         await self._state.http.delete_guild_scheduled_event(self.guild.id, self.id)
+
+    async def fetch_members(self, *, limit: int = 100) -> List[Union[Member, User]]:
+        """|coro|
+
+        Retrieves all :class:`Member` that are attending the event.
+
+        .. note::
+
+            This method is an API call. For general usage, consider :attr:`members` instead.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to fetch the members.
+        HTTPException
+            Fetching the members failed.
+
+        Returns
+        --------
+        List[Union[:class:`Member`, :class:`User`]]
+            The members that are attending the event.
+        """
+        guild = self.guild
+        state = self._state
+        data = await state.http.get_guild_scheduled_event_rsvp(guild.id, self.id, limit=limit)
+        if not data:
+            return []
+
+        def convert(d):
+            user = guild.get_member(d["id"])
+            if user is None:
+                user = self._state.get_user(d["id"])
+            return user
+
+        users = data.get("users", [])
+        if not users:
+            return []
+
+        members = list(filter(lambda x: x is not None, map(convert, users)))
+        for member in members:
+            self._add_member(member)
+        return members
