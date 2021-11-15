@@ -2010,11 +2010,18 @@ class HTTPClient:
         self,
         guild_id: Snowflake,
         event_id: Snowflake,
-    ) -> Response[None]:
+        *,
+        limit: int = 100,
+        with_member: bool = True
+    ) -> Response[guild_events.GuildScheduledEventRSVP]:
+        params = {
+            "limit": limit,
+            "with_member": int(with_member),
+        }
         r = Route(
             "GET", "/guilds/{guild_id}/scheduled-events/{event_id}/users", guild_id=guild_id, event_id=event_id
         )
-        return self.request(r)
+        return self.request(r, params=params)
 
     # Misc
 

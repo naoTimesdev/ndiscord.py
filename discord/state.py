@@ -934,22 +934,22 @@ class ConnectionState:
             event._update(guild, data)
             self.dispatch("guild_scheduled_event_update", old, event)
 
-    def parse_guild_scheduled_event_user_create(self, data) -> None:
+    def parse_guild_scheduled_event_user_add(self, data) -> None:
         event_id = int(data["guild_scheduled_event_id"])
         member_id = int(data["user_id"])
         event: Optional[GuildScheduledEvent] = self._get_guild_event(event_id)
         if event is None:
-            _log.debug("GUILD_SCHEDULED_EVENT_USER_CREATE referencing an unknown event ID: %s. Discarding", event_id)
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown event ID: %s. Discarding", event_id)
             return
 
         member = event.guild.get_member(member_id)
         if member is None:
-            _log.debug("GUILD_SCHEDULED_EVENT_USER_CREATE referencing an unknown member ID: %s. Discarding", member_id)
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown member ID: %s. Discarding", member_id)
 
         event._add_member(member)
         self.dispatch("guild_scheduled_event_member_join", event, member)
 
-    def parse_guild_scheduled_event_user_delete(self, data) -> None:
+    def parse_guild_scheduled_event_user_remove(self, data) -> None:
         event_id = int(data["guild_scheduled_event_id"])
         member_id = int(data["user_id"])
         event: Optional[GuildScheduledEvent] = self._get_guild_event(event_id)

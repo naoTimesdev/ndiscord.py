@@ -60,12 +60,30 @@ class GuildEventEntityMetadata:
         is :attr:`GuildScheduledEventType.location` event.
     """
 
-    __slots__ = ("location", "speaker_ids")
+    __slots__ = ("location", "_speaker_ids", "_state", "_guild")
 
-    def __init__(self, *, data: GuildScheduledEventEntityMeta):
+    def __init__(self, *, state: ConnectionState, guild: Guild, data: GuildScheduledEventEntityMeta):
         speaker_ids = data.get("speaker_ids", [])
+        self._guild: Guild = guild
+        self._state: ConnectionState = state
         self.location: Optional[str] = data.get("location")
-        self.speaker_ids = list(map(int, speaker_ids))
+        self._speaker_ids = list(map(int, speaker_ids))
+
+    @property
+    def speakers(self) -> List[Union[Member, User]]:
+        """List[Union[:class:`Member`, :class:`User`]]: Return the list of speakers for the event.
+        This will be filled if the event type is a :attr:`GuildScheduledEventType.stage_instance` event.
+        """
+        all_speakers = []
+        for speaker in self._speaker_ids:
+            member = self._guild.get_member(int(speaker))
+            if not member:
+                member = self._state.get_user(int(speaker))
+                if not member:
+                    # TODO: Maybe better handling?
+                    continue
+            all_speakers.append(member)
+        return all_speakers
 
 
 class GuildScheduledEvent(Hashable):
@@ -129,7 +147,8 @@ class GuildScheduledEvent(Hashable):
         "end_time",
         "_entity_id",
         "_entity_metadata",
-        "_member_count"
+        "_member_count",
+        "_creator_id",
     )
 
     def __init__(
@@ -184,6 +203,10 @@ class GuildScheduledEvent(Hashable):
         self.start_time: datetime = utils.parse_time(data["scheduled_start_time"])
         self.end_time = utils.parse_time(data.get("scheduled_end_time"))
 
+        self._creator_id = data.get("creator_id")
+        if self._creator_id is not None:
+            self._creator_id = int(self._creator_id)
+
         entity_id = data.get("entity_id", None)
         if entity_id:
             self._entity_id = int(entity_id)
@@ -192,7 +215,12 @@ class GuildScheduledEvent(Hashable):
         entity_metadata = data.get("entity_metadata")
         if entity_metadata is not None:
             self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata(
-                data=entity_metadata
+                state=self._state, guild=self.guild, data=entity_metadata
+            )
+        else:
+            # Init empty metadata
+            self._entity_metadata: GuildEventEntityMetadata = GuildEventEntityMetadata(
+                state=self._state, guild=self.guild, data={}
             )
         self._member_count: Optional[int] = data.get("user_count")
         # Add to guild data and state cache.
@@ -253,22 +281,35 @@ class GuildScheduledEvent(Hashable):
     @property
     def speakers(self) -> List[Union[Member, User]]:
         """List[Union[:class:`Member`, :class:`User`]]: Return the list of speakers for the event"""
-        speakers_ids = self._entity_metadata.speaker_ids
-        all_speakers = []
-        for speaker in speakers_ids:
-            member = self.guild.get_member(int(speaker))
-            if not member:
-                member = self._state.get_user(int(speaker))
-                if not member:
-                    # TODO: Maybe better handling?
-                    continue
-            all_speakers.append(member)
-        return all_speakers
+        return self._entity_metadata.speakers
 
     @property
     def location(self) -> Optional[str]:
         """Optional[:class:`str`]: Location of the event"""
         return self._entity_metadata.location
+
+    @property
+    def metadata(self) -> GuildEventEntityMetadata:
+        """:class:`GuildEventEntityMetadata`: Get the entity metadata of the event.
+
+        This attribute or class will contains:
+
+        - :attr:`GuildEventEntityMetadata.speakers`
+        - :attr:`GuildEventEntityMetadata.location`
+
+        Not all of the fields will be filled, it will depends on what the event type is.
+        """
+        return self._entity_metadata
+
+    @property
+    def creator(self) -> Optional[Union[Member, User]]:
+        """Optional[Union[:class:`Member`, :class:`User`]]: The user that created the event"""
+        if self._creator_id is None:
+            return None
+        member = self.guild.get_member(self._creator_id)
+        if not member:
+            member = self._state.get_user(self._creator_id)
+        return member
 
     @classmethod
     def from_gateway(

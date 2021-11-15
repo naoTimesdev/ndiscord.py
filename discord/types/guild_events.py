@@ -24,14 +24,22 @@ DEALINGS IN THE SOFTWARE.
 
 from typing import List, Literal, Optional, TypedDict
 
+from .snowflake import Snowflake, SnowflakeList
+from .user import User
+
 
 class GuildScheduledEventUser(TypedDict):
-    guild_scheduled_event_id: str
-    user_id: str
+    guild_scheduled_event_id: Snowflake
+    user_id: Snowflake
+    guild_id: Snowflake
+
+
+class GuildScheduledEventRSVP(TypedDict):
+    users: List[User]
 
 
 class GuildScheduledEventEntityMeta(TypedDict):
-    speaker_ids: Optional[List[str]]
+    speaker_ids: Optional[SnowflakeList]
     location: Optional[str]
 
 
@@ -42,6 +50,8 @@ class _GuildScheduledEventOptional(TypedDict, total=False):
     scheduled_end_time: str
     entity_id: str
     user_count: int
+    creator_id: Snowflake
+    creator: User
 
 
 GuildEventPrivacyLevel = Literal[1, 2]
@@ -50,8 +60,8 @@ GuildEventEntityType = Literal[0, 1, 2, 3]
 
 
 class GuildScheduledEvent(_GuildScheduledEventOptional):
-    id: str
-    guild_id: str
+    id: Snowflake
+    guild_id: Snowflake
     name: str
     scheduled_start_time: str
     privacy_level: GuildEventPrivacyLevel

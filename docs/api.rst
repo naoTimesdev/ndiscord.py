@@ -3308,9 +3308,9 @@ AuditLogDiff
 
     .. attribute:: privacy_level
 
-        The privacy level of the stage instance.
+        The privacy level of the stage instance or guild events.
 
-        :type: :class:`StagePrivacyLevel`
+        :type: Union[:class:`StagePrivacyLevel`, :class:`GuildScheduledEventStatus`]
 
     .. attribute:: roles
 
@@ -3500,9 +3500,9 @@ AuditLogDiff
 
     .. attribute:: description
 
-        The description of a sticker being changed.
+        The description of a sticker or guild events being changed.
 
-        See also :attr:`GuildSticker.description`
+        See also :attr:`GuildSticker.description` and :attr:`GuildScheduledEvent.description`.
 
         :type: :class:`str`
 
@@ -3557,6 +3557,13 @@ AuditLogDiff
         The list of SKU ID(s) for scheduled guild event being changed.
 
         :type: List[:class:`int`]
+
+    .. attribute:: location
+
+        The location for scheduled guild event being changed.
+
+        :type: :class:`str`
+
     .. attribute:: unicode_emoji
 
         The unicode emoji that represents when role got changed.
@@ -3845,6 +3852,11 @@ GuildScheduledEvent
 .. attributetable:: GuildScheduledEvent
 
 .. autoclass:: GuildScheduledEvent()
+    :members:
+
+.. attributetable:: GuildEventEntityMetadata
+
+.. autoclass:: GuildEventEntityMetadata()
     :members:
 
 
