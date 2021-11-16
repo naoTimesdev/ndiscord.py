@@ -68,5 +68,3 @@ class GuildScheduledEvent(_GuildScheduledEventOptional):
     status: GuildEventStatus
     entity_type: GuildEventEntityType
     entity_metadata: GuildScheduledEventEntityMeta
-    sku_ids: List[str]
-    skus: list

@@ -465,6 +465,7 @@ class GuildScheduledEventType(Enum):
     none = 0
     stage_instance = 1
     voice = 2
+    external = 3
     location = 3
 
 
