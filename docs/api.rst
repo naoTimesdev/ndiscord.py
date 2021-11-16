@@ -2515,9 +2515,11 @@ of :class:`enum.Enum`.
 
         Possible attribute for :class:`AuditLogDiff`:
 
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
         - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
         - :attr:`~AuditLogDiff.status`
-        - :attr:`~AuditLogDiff.sku_ids`
 
         .. versionadded:: 2.0
 
@@ -2531,9 +2533,11 @@ of :class:`enum.Enum`.
 
         Possible attribute for :class:`AuditLogDiff`:
 
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
         - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
         - :attr:`~AuditLogDiff.status`
-        - :attr:`~AuditLogDiff.sku_ids`
 
         .. versionadded:: 2.0
 
@@ -2547,9 +2551,11 @@ of :class:`enum.Enum`.
 
         Possible attribute for :class:`AuditLogDiff`:
 
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
         - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
         - :attr:`~AuditLogDiff.status`
-        - :attr:`~AuditLogDiff.sku_ids`
 
         .. versionadded:: 2.0
 
@@ -3551,12 +3557,6 @@ AuditLogDiff
         The status for scheduled guild event being changed.
 
         :type: :class:`GuildScheduledEventStatus`
-
-    .. attribute:: sku_ids
-
-        The list of SKU ID(s) for scheduled guild event being changed.
-
-        :type: List[:class:`int`]
 
     .. attribute:: location
 
