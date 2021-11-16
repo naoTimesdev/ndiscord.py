@@ -52,9 +52,6 @@ class GuildEventEntityMetadata:
 
     Attributes
     ----------
-    speaker_ids: List[:class:`int`]
-        A list of user IDs that are allowed to speak in the stage channel.
-        This will be filled if the event type is a :attr:`GuildScheduledEventType.stage_instance` event.
     location: Optional[:class:`str`]
         The location of the event, this will be filled if the event type
         is :attr:`GuildScheduledEventType.location` event.
