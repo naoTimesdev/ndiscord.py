@@ -659,7 +659,8 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
         self._closed = True
 
         # Cancel the application task if it exists
-        self._application_registering_watch.cancel()
+        if self._application_registering_watch is not None and self._application_registering_watch is not MISSING:
+            self._application_registering_watch.cancel()
 
         for voice in self.voice_clients:
             try:
