@@ -47,6 +47,7 @@ if TYPE_CHECKING:
     from . import abc
     from .emoji import Emoji
     from .guild import Guild
+    from .guild_events import GuildScheduledEvent
     from .member import Member
     from .role import Role
     from .stage_instance import StageInstance
@@ -213,6 +214,8 @@ class AuditLogChanges:
         'privacy_level':                 (None, _enum_transformer(enums.StagePrivacyLevel)),
         'format_type':                   (None, _enum_transformer(enums.StickerFormatType)),
         'type':                          (None, _transform_type),
+        'entity_type':                   (None, _enum_transformer(enums.GuildScheduledEventType)),
+        'status':                        (None, _enum_transformer(enums.GuildScheduledEventStatus))
     }
     # fmt: on
 
@@ -529,6 +532,9 @@ class AuditLogEntry(Hashable):
 
     def _convert_target_sticker(self, target_id: int) -> Union[GuildSticker, Object]:
         return self._state.get_sticker(target_id) or Object(id=target_id)
+
+    def _convert_target_guild_scheduled_event(self, target_id: int) -> Union[GuildScheduledEvent, Object]:
+        return self._state._get_guild_event(target_id) or Object(id=target_id)
 
     def _convert_target_thread(self, target_id: int) -> Union[Thread, Object]:
         return self.guild.get_thread(target_id) or Object(id=target_id)

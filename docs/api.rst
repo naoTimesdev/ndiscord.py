@@ -701,6 +701,58 @@ to handle it, which defaults to print a traceback and ignoring the exception.
     :param last_pin: The latest message that was pinned as an aware datetime in UTC. Could be ``None``.
     :type last_pin: Optional[:class:`datetime.datetime`]
 
+.. function:: on_guild_scheduled_event_create(event)
+
+    Called whenever a scheduled event is created from a guild.
+
+    .. TODO check if this requires any Intents.
+
+    .. versionadded:: 2.0
+
+    :param event: The scheduled event that got created.
+    :type event: :class:`GuildScheduledEvent`
+
+.. function:: guild_scheduled_event_remove(event)
+
+    Called whenever a scheduled event is removed from a guild.
+
+    .. TODO check if this requires any Intents.
+
+    .. versionadded:: 2.0
+
+    :param event: The scheduled event that got removed.
+    :type event: :class:`GuildScheduledEvent`
+
+.. function:: guild_scheduled_event_update(before, after)
+
+    Called whenever a scheduled event is updated from a guild.
+
+    .. TODO check if this requires any Intents.
+
+    .. versionadded:: 2.0
+
+    :param before: The scheduled event before it got updated.
+    :type before: :class:`GuildScheduledEvent`
+    :param after: The scheduled event after it got updated.
+    :type after: :class:`GuildScheduledEvent`
+
+.. function:: on_guild_scheduled_event_member_join(event, member)
+              on_guild_scheduled_event_member_remove(event, member)
+
+    Called whenever a :class:`Member` leaves or joins a :class:`GuildScheduledEvent`
+
+    You can later access the member via :meth:`GuildScheduledEvent.get_member` or
+    :attr:`GuildScheduledEvent.members`.
+
+    .. TODO check if this requires any Intents.
+
+    .. versionadded:: 2.0
+
+    :param event: The scheduled event that got updated.
+    :type event: :class:`GuildScheduledEvent`
+    :param member: The member who joined or left the event.
+    :type member: :class:`Member`
+
 .. function:: on_thread_join(thread)
 
     Called whenever a thread is joined or created. Note that from the API's perspective there is no way to
@@ -2453,6 +2505,60 @@ of :class:`enum.Enum`.
 
         .. versionadded:: 2.0
 
+    .. attribute:: guild_scheduled_event_create
+
+        A guild scheduled event was created.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`GuildScheduledEvent` or :class:`Object` with the ID of the
+        scheduled guild event which was created.
+
+        Possible attribute for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
+        - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
+        - :attr:`~AuditLogDiff.status`
+
+        .. versionadded:: 2.0
+
+    .. attribute:: guild_scheduled_event_update
+
+        A guild scheduled event was updated.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`GuildScheduledEvent` or :class:`Object` with the ID of the
+        scheduled guild event which was updated.
+
+        Possible attribute for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
+        - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
+        - :attr:`~AuditLogDiff.status`
+
+        .. versionadded:: 2.0
+
+    .. attribute:: guild_scheduled_event_delete
+
+        A guild scheduled event was deleted.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`GuildScheduledEvent` or :class:`Object` with the ID of the
+        scheduled guild event which was deleted.
+
+        Possible attribute for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.description`
+        - :attr:`~AuditLogDiff.channel`
+        - :attr:`~AuditLogDiff.entity_type`
+        - :attr:`~AuditLogDiff.privacy_level`
+        - :attr:`~AuditLogDiff.status`
+
+        .. versionadded:: 2.0
+
     .. attribute:: thread_create
 
         A thread was created.
@@ -2726,6 +2832,69 @@ of :class:`enum.Enum`.
     .. attribute:: age_restricted
 
         The guild may contain NSFW content.
+
+.. class:: GuildScheduledEventType
+
+    Represents the type of a guild scheduled event.
+
+    .. versionadded:: 2.0
+
+    .. TODO Change this description
+
+    .. attribute:: none
+
+        The guild event has not been categorised yet.
+
+    .. attribute:: stage_instance
+
+        The guild event is a stage instance.
+
+    .. attribute:: voice
+
+        The guild event is a voice event.
+
+    .. attribute:: location
+
+        The guild event is a location based event.
+
+.. class:: GuildScheduledEventStatus
+
+    Represents the status of a guild scheduled event.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: scheduled
+
+        The guild event is scheduled/upcoming.
+
+    .. attribute:: active
+
+        The guild event is currently ongoing.
+
+    .. attribute:: completed
+
+        The guild event is already finished.
+
+    .. attribute:: canceled
+
+        The guild event is canceled.
+
+
+.. class:: GuildScheduledEventPrivacyLevel
+
+    Represents the privacy level of a guild scheduled event.
+    Almost the same as :class:`StagePrivacyLevel`.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: public
+
+        The guild event is public and can be seen from discovery.
+
+    .. attribute:: members_only
+
+        The guild event is only visible and can only be joined by the members of the guild
+
 
 Async Iterator
 ----------------
@@ -3145,9 +3314,9 @@ AuditLogDiff
 
     .. attribute:: privacy_level
 
-        The privacy level of the stage instance.
+        The privacy level of the stage instance or guild events.
 
-        :type: :class:`StagePrivacyLevel`
+        :type: Union[:class:`StagePrivacyLevel`, :class:`GuildScheduledEventStatus`]
 
     .. attribute:: roles
 
@@ -3337,9 +3506,9 @@ AuditLogDiff
 
     .. attribute:: description
 
-        The description of a sticker being changed.
+        The description of a sticker or guild events being changed.
 
-        See also :attr:`GuildSticker.description`
+        See also :attr:`GuildSticker.description` and :attr:`GuildScheduledEvent.description`.
 
         :type: :class:`str`
 
@@ -3376,6 +3545,24 @@ AuditLogDiff
         The default auto archive duration for newly created threads being changed.
 
         :type: :class:`int`
+
+    .. attribute:: entity_type
+
+        The type for scheduled guild event being changed.
+
+        :type: :class:`GuildScheduledEventType`
+
+    .. attribute:: status
+
+        The status for scheduled guild event being changed.
+
+        :type: :class:`GuildScheduledEventStatus`
+
+    .. attribute:: location
+
+        The location for scheduled guild event being changed.
+
+        :type: :class:`str`
 
     .. attribute:: unicode_emoji
 
@@ -3653,6 +3840,24 @@ Guild
         The :class:`User` that was banned.
 
         :type: :class:`User`
+
+
+GuildScheduledEvent
+~~~~~~~~~~~~~~~~~~~~
+
+.. warning::
+
+    Event is not fetched on startup, you need to fetch it manually for your guild via :meth:`Client.fetch_guild_events`.
+
+.. attributetable:: GuildScheduledEvent
+
+.. autoclass:: GuildScheduledEvent()
+    :members:
+
+.. attributetable:: GuildEventEntityMetadata
+
+.. autoclass:: GuildEventEntityMetadata()
+    :members:
 
 
 Integration

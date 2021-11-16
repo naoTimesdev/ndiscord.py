@@ -75,6 +75,7 @@ if TYPE_CHECKING:
         embed,
         emoji,
         guild,
+        guild_events,
         integration,
         interactions,
         invite,
@@ -1456,12 +1457,19 @@ class HTTPClient:
         return self.request(r, reason=reason, json=payload)
 
     def get_invite(
-        self, invite_id: str, *, with_counts: bool = True, with_expiration: bool = True
+        self,
+        invite_id: str,
+        *,
+        with_counts: bool = True,
+        with_expiration: bool = True,
+        guild_scheduled_event_id: Optional[Snowflake] = None
     ) -> Response[invite.Invite]:
         params = {
             "with_counts": int(with_counts),
             "with_expiration": int(with_expiration),
         }
+        if guild_scheduled_event_id:
+            params["guild_scheduled_event_id"] = str(guild_scheduled_event_id)
         return self.request(Route("GET", "/invites/{invite_id}", invite_id=invite_id), params=params)
 
     def invites_from(self, guild_id: Snowflake) -> Response[List[invite.Invite]]:
@@ -1964,6 +1972,66 @@ class HTTPClient:
             guild_id=guild_id,
         )
         return self.request(r, json=payload)
+
+    # Guild events
+
+    def get_guild_scheduled_events(
+        self,
+        guild_id: Snowflake,
+        *,
+        with_user_count: bool = True,
+    ) -> Response[List[guild_events.GuildScheduledEvent]]:
+        params = {
+            "with_user_count": int(with_user_count),
+        }
+        return self.request(Route("GET", "/guilds/{guild_id}/events", guild_id=guild_id), params=params)
+
+    def get_guild_scheduled_event(
+        self,
+        guild_id: Snowflake,
+        event_id: Snowflake,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        return self.request(
+            Route("GET", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
+        )
+
+    def create_guild_scheduled_event(
+        self,
+        guild_id: Snowflake,
+        **fields: Any,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        r = Route("POST", "/guilds/{guild_id}/scheduled-events", guild_id=guild_id)
+        return self.request(r, json=fields)
+
+    def edit_guild_scheduled_event(
+        self,
+        guild_id: Snowflake,
+        event_id: Snowflake,
+        **fields: Any,
+    ) -> Response[guild_events.GuildScheduledEvent]:
+        r = Route("PATCH", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
+        return self.request(r, json=fields)
+
+    def delete_guild_scheduled_event(self, guild_id: Snowflake, event_id: Snowflake) -> Response[None]:
+        r = Route("DELETE", "/guilds/{guild_id}/scheduled-events/{event_id}", guild_id=guild_id, event_id=event_id)
+        return self.request(r)
+
+    def get_guild_scheduled_event_rsvp(
+        self,
+        guild_id: Snowflake,
+        event_id: Snowflake,
+        *,
+        limit: int = 100,
+        with_member: bool = True
+    ) -> Response[guild_events.GuildScheduledEventRSVP]:
+        params = {
+            "limit": limit,
+            "with_member": int(with_member),
+        }
+        r = Route(
+            "GET", "/guilds/{guild_id}/scheduled-events/{event_id}/users", guild_id=guild_id, event_id=event_id
+        )
+        return self.request(r, params=params)
 
     # Misc
 

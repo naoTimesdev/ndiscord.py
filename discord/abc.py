@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import asyncio
 import copy
+from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -44,7 +45,7 @@ from typing import (
 
 from . import utils
 from .context_managers import Typing
-from .enums import ChannelType
+from .enums import ChannelType, GuildScheduledEventPrivacyLevel, GuildScheduledEventType
 from .errors import ClientException, InvalidArgument
 from .file import File
 from .invite import Invite
@@ -67,14 +68,13 @@ __all__ = (
 T = TypeVar("T", bound=VoiceProtocol)
 
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from .asset import Asset
     from .channel import CategoryChannel, DMChannel, GroupChannel, PartialMessageable, TextChannel
     from .client import Client
     from .embeds import Embed
     from .enums import InviteTarget
     from .guild import Guild
+    from .guild_events import GuildScheduledEvent
     from .member import Member
     from .message import Message, MessageReference, PartialMessage
     from .state import ConnectionState
@@ -1125,6 +1125,75 @@ class GuildChannel:
         data = await state.http.invites_from_channel(self.id)
         guild = self.guild
         return [Invite(state=state, data=invite, channel=self, guild=guild) for invite in data]
+
+    async def create_event(
+        self,
+        name: str,
+        scheduled_start_time: datetime,
+        *,
+        description: Optional[str] = MISSING,
+        privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
+        entity_type: Optional[GuildScheduledEventType] = MISSING,
+        speakers: Optional[List[Union[Member, User]]] = MISSING,
+    ) -> GuildScheduledEvent:
+        """|coro|
+
+        Create a new guild event with this channel.
+
+        You must have the :attr:`~Permissions.manage_events` permission
+        to create a guild event.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        name: :class:`str`
+            The name of the event.
+        description: Optional[:class:`str`]
+            The description of the event. Could be ``None`` for no description.
+        privacy_level: Optional[:class:`.GuildScheduledEventPrivacyLevel`]
+            The event privacy level, same thing as StageInstance PrivacyLevel
+        scheduled_start_time: :class:`datetime.datetime`
+            The scheduled start time, timezone must be UTC. If not it will be converted
+            automatically.
+        entity_type: Optional[:class:`.GuildScheduledEventType`]
+            The ``entity_type`` or ``type`` for the event.
+            If you don't provide this, it will automatically check from the channel :attr:`type`.
+        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
+            The speakers for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.stage_instance` event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to create the guild event.
+        HTTPException
+            Creating the guild event failed.
+        ValueError
+            Validation error occurred.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The newly updated guild event.
+        """
+
+        if entity_type is MISSING and entity_type is None:
+            # Determine from channel type
+            if self.type is ChannelType.stage_voice:
+                entity_type = GuildScheduledEventType.stage_instance
+            elif self.type is ChannelType.voice:
+                entity_type = GuildScheduledEventType.voice
+
+        return await self.guild.create_event(
+            name=name,
+            scheduled_start_time=scheduled_start_time,
+            description=description,
+            privacy_level=privacy_level,
+            channel=self,
+            entity_type=entity_type,
+            speakers=speakers,
+        )
 
 
 class Messageable:

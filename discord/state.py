@@ -56,6 +56,7 @@ from .emoji import Emoji
 from .enums import ChannelType, Status, try_enum
 from .flags import ApplicationFlags, Intents, MemberCacheFlags
 from .guild import Guild
+from .guild_events import GuildScheduledEvent
 from .integrations import _integration_factory
 from .interactions import Interaction
 from .invite import Invite
@@ -286,6 +287,7 @@ class ConnectionState:
         self._emojis: Dict[int, Emoji] = {}
         self._stickers: Dict[int, GuildSticker] = {}
         self._guilds: Dict[int, Guild] = {}
+        self._guilds_events: Dict[int, GuildScheduledEvent] = {}
         if views:
             self._view_store: ViewStore = ViewStore(self)
 
@@ -425,6 +427,20 @@ class ConnectionState:
             self._stickers.pop(sticker.id, None)
 
         del guild
+
+    @property
+    def guilds_events(self) -> List[GuildScheduledEvent]:
+        return list(self._guilds_events.values())
+
+    def _get_guild_event(self, event_id: Optional[int]) -> Optional[GuildScheduledEvent]:
+        return self._guilds_events.get(event_id)
+
+    def _add_guild_event(self, event: GuildScheduledEvent) -> None:
+        self._guilds_events[event.id] = event
+
+    def _remove_guild_event(self, event: GuildScheduledEvent) -> None:
+        self._guilds_events.pop(event.id, None)
+        del event
 
     @property
     def emojis(self) -> List[Emoji]:
@@ -854,6 +870,99 @@ class ConnectionState:
             self.dispatch("private_channel_pins_update", channel, last_pin)
         else:
             self.dispatch("guild_channel_pins_update", channel, last_pin)
+
+    def parse_guild_scheduled_event_create(self, data) -> None:
+        guild_id = int(data["guild_id"])
+        guild: Optional[Guild] = self._get_guild(guild_id)
+        if guild is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE referencing an unknown guild ID: %s. Discarding", guild_id)
+            return
+        event_id = data.get("id")
+        if event_id is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE missing event ID. Discarding")
+            return
+        try:
+            event_id = int(event_id)
+        except ValueError:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE event ID is not an integer. Discarding")
+            return
+
+        event = self._get_guild_event(event_id)
+        if event is not None:
+            _log.debug("GUILD_SCHEDULED_EVENT_CREATE event already exists. Discarding")
+            return
+
+        guild_event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
+        guild._add_guild_event(guild_event)
+        self._add_guild_event(guild_event)
+        self.dispatch("guild_scheduled_event_create", guild_event)
+
+    def parse_guild_scheduled_event_delete(self, data) -> None:
+        guild_id = int(data["guild_id"])
+        guild: Optional[Guild] = self._get_guild(guild_id)
+        if guild is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_DELETE referencing an unknown guild ID: %s. Discarding", guild_id)
+            return
+
+        guild_event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
+        guild._remove_guild_event(guild_event)
+        self._remove_guild_event(guild_event)
+        self.dispatch("guild_scheduled_event_remove", guild_event)
+
+    def parse_guild_scheduled_event_update(self, data) -> None:
+        guild_id = int(data["guild_id"])
+        guild: Optional[Guild] = self._get_guild(guild_id)
+        if guild is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_UPDATE referencing an unknown guild ID: %s. Discarding", guild_id)
+            return
+
+        event_id = int(data["id"])
+        event = guild.get_event(event_id)
+        if event is None:
+            event = GuildScheduledEvent.from_gateway(state=guild._state, data=data)
+            guild._add_guild_event(event)
+            self._add_guild_event(event)
+            self.dispatch("guild_scheduled_event_create", event)
+        else:
+            old = copy.copy(event)
+            try:
+                channel = guild.get_channel(int(data["channel_id"]))
+            except (KeyError, TypeError, ValueError):
+                channel = None
+            else:
+                guild = channel or guild
+            event._update(guild, data)
+            self.dispatch("guild_scheduled_event_update", old, event)
+
+    def parse_guild_scheduled_event_user_add(self, data) -> None:
+        event_id = int(data["guild_scheduled_event_id"])
+        member_id = int(data["user_id"])
+        event: Optional[GuildScheduledEvent] = self._get_guild_event(event_id)
+        if event is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown event ID: %s. Discarding", event_id)
+            return
+
+        member = event.guild.get_member(member_id)
+        if member is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown member ID: %s. Discarding", member_id)
+
+        event._add_member(member)
+        self.dispatch("guild_scheduled_event_member_join", event, member)
+
+    def parse_guild_scheduled_event_user_remove(self, data) -> None:
+        event_id = int(data["guild_scheduled_event_id"])
+        member_id = int(data["user_id"])
+        event: Optional[GuildScheduledEvent] = self._get_guild_event(event_id)
+        if event is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_DELETE referencing an unknown event ID: %s. Discarding", event_id)
+            return
+
+        member = event.guild.get_member(member_id)
+        if member is None:
+            _log.debug("GUILD_SCHEDULED_EVENT_USER_DELETE referencing an unknown member ID: %s. Discarding", member_id)
+
+        event._remove_member(member)
+        self.dispatch("guild_scheduled_event_member_remove", event, member)
 
     def parse_thread_create(self, data) -> None:
         guild_id = int(data["guild_id"])

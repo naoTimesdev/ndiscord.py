@@ -650,6 +650,65 @@ class MemberIterator(_AsyncIterator["Member"]):
         return Member(data=data, guild=self.guild, state=self.state)
 
 
+class GuildEventMemberIterator(_AsyncIterator["Member"]):
+    def __init__(
+        self,
+        event_id: int,
+        guild: Guild,
+        limit: Optional[int] = 100,
+    ):
+        self.event_id = event_id
+        self.guild = guild
+        self.limit = limit
+
+        self.state = self.guild._state
+        self.get_members = self.state.http.get_guild_scheduled_event_rsvp
+        self.members = asyncio.Queue[Member]()
+
+    async def next(self) -> Member:
+        if self.members.empty():
+            await self.fill_members()
+
+        try:
+            return self.members.get_nowait()
+        except asyncio.QueueEmpty:
+            raise NoMoreItems()
+
+    def _get_retrieve(self):
+        limit = self.limit
+        if limit is None or limit > 100:
+            r = 100
+        else:
+            r = limit
+        self.retrive = r
+        return r > 0
+
+    async def fill_members(self):
+        if self._get_retrieve():
+            data = await self.get_members(self.guild.id, self.event_id, limit=self.limit)
+            if not data:
+                # no data, terminate
+                return
+
+            users = data.get("users", [])
+            if not users:
+                # no data, terminate
+                return
+
+            if len(users) < 100:
+                self.limit = 0  # terminate loop
+
+            self.after = Object(id=int(users[-1]["id"]))
+
+            for element in reversed(users):
+                await self.members.put(self.create_member(element))
+
+    def create_member(self, data):
+        from .member import Member
+
+        return Member(data=data, guild=self.guild, state=self.state)
+
+
 class ArchivedThreadIterator(_AsyncIterator["Thread"]):
     def __init__(
         self,

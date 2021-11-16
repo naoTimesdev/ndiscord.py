@@ -866,6 +866,24 @@ class Intents(BaseFlags):
         """
         return 1 << 14
 
+    @flag_value
+    def guild_scheduled_events(self):
+        """:class:`bool`: Whether guild scheduled events related events are enabled.
+
+        This corresponds to the following events:
+
+        - :func:`on_guild_scheduled_event_create`
+        - :func:`on_guild_scheduled_event_remove`
+        - :func:`on_guild_scheduled_event_update`
+        - :func:`on_guild_scheduled_event_member_join`
+        - :func:`on_guild_scheduled_event_member_remove`
+
+        This also corresponds to the following attributes and classes in terms of cache:
+
+        - :attr:`Guild.events`
+        """
+        return 1 << 16
+
 
 @fill_with_flags()
 class MemberCacheFlags(BaseFlags):

@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import copy
 import unicodedata
+from datetime import timezone
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -52,6 +53,8 @@ from .enums import (
     AuditLogAction,
     ChannelType,
     ContentFilter,
+    GuildScheduledEventPrivacyLevel,
+    GuildScheduledEventType,
     NotificationLevel,
     NSFWLevel,
     VerificationLevel,
@@ -62,6 +65,7 @@ from .enums import (
 from .errors import ClientException, InvalidArgument, InvalidData
 from .file import File
 from .flags import SystemChannelFlags
+from .guild_events import GuildScheduledEvent
 from .integrations import Integration, _integration_factory
 from .invite import Invite
 from .iterators import AuditLogIterator, MemberIterator
@@ -265,6 +269,7 @@ class Guild(Hashable):
         "_large",
         "_splash",
         "_voice_states",
+        "_guild_events",
         "_system_channel_id",
         "_system_channel_flags",
         "_discovery_splash",
@@ -286,6 +291,7 @@ class Guild(Hashable):
         self._channels: Dict[int, GuildChannel] = {}
         self._members: Dict[int, Member] = {}
         self._voice_states: Dict[int, VoiceState] = {}
+        self._guild_events: Dict[int, GuildScheduledEvent] = {}
         self._threads: Dict[int, Thread] = {}
         self._state: ConnectionState = state
         self._from_data(data)
@@ -309,6 +315,12 @@ class Guild(Hashable):
 
     def _remove_member(self, member: Snowflake, /) -> None:
         self._members.pop(member.id, None)
+
+    def _add_guild_event(self, event: GuildScheduledEvent, /) -> None:
+        self._guild_events[event.id] = event
+
+    def _remove_guild_event(self, event: GuildScheduledEvent, /) -> None:
+        self._guild_events.pop(event.id, None)
 
     def _add_thread(self, thread: Thread, /) -> None:
         self._threads[thread.id] = thread
@@ -497,6 +509,11 @@ class Guild(Hashable):
         return list(self._channels.values())
 
     @property
+    def events(self) -> List[GuildScheduledEvent]:
+        """List[:class:`GuildScheduledEvent`]: A list of guild events that belong to this guild."""
+        return list(self._guild_events.values())
+
+    @property
     def threads(self) -> List[Thread]:
         """List[:class:`Thread`]: A list of threads that you have permission to view.
 
@@ -651,6 +668,23 @@ class Guild(Hashable):
         """
         return self._channels.get(channel_id)
 
+    def get_event(self, event_id: int, /) -> Optional[GuildScheduledEvent]:
+        """Returns a event with the given ID.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        event_id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        Optional[:class:`GuildScheduledEvent`]
+            The returned event or ``None`` if not found.
+        """
+        return self._guild_events.get(event_id)
+
     def get_thread(self, thread_id: int, /) -> Optional[Thread]:
         """Returns a thread with the given ID.
 
@@ -667,6 +701,36 @@ class Guild(Hashable):
             The returned thread or ``None`` if not found.
         """
         return self._threads.get(thread_id)
+
+    async def fetch_event(self, event_id: int, /) -> GuildScheduledEvent:
+        """|coro|
+
+        Returns a event with the given ID.
+
+        This function will request to the API directly, you might want to use
+        :meth:`get_event` instead.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        event_id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The requested scheduled event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have the proper permissions to get the event.
+        HTTPException
+            An error occurred while fetching the event.
+        """
+        data = await self._state.http.get_guild_scheduled_event(self.id, event_id)
+        return GuildScheduledEvent.from_gateway(data=data, state=self._state)
 
     @property
     def system_channel(self) -> Optional[TextChannel]:
@@ -1310,6 +1374,141 @@ class Guild(Hashable):
 
     create_category_channel = create_category
 
+    async def create_event(
+        self,
+        name: str,
+        scheduled_start_time: datetime.datetime,
+        *,
+        description: Optional[str] = MISSING,
+        scheduled_end_time: Optional[datetime.datetime] = MISSING,
+        privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
+        channel: Optional[GuildChannel] = MISSING,
+        entity_type: Optional[GuildScheduledEventType] = MISSING,
+        location: Optional[str] = MISSING,
+        speakers: Optional[List[Union[Member, User]]] = MISSING,
+    ) -> GuildScheduledEvent:
+        """|coro|
+
+        Create a new guild event.
+
+        You must have the :attr:`~Permissions.manage_events` permission
+        to create a guild event.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        name: :class:`str`
+            The name of the event.
+        description: Optional[:class:`str`]
+            The description of the event. Could be ``None`` for no description.
+        channel: Optional[:class:`abc.GuildChannel`]
+            The channel where the event will be conducted.
+        privacy_level: Optional[:class:`GuildScheduledEventPrivacyLevel`]
+            The event privacy level, same thing as StageInstance PrivacyLevel
+        scheduled_start_time: :class:`datetime.datetime`
+            The scheduled start time, timezone must be UTC. If not it will be converted
+            automatically.
+        scheduled_end_time: Optional[:class:`datetime.datetime`]
+            The scheduled end time, timezone must be UTC.
+            If not it will be converted automatically.
+            It would be used if the event is a :attr:`GuildScheduledEventType.location` event.
+        entity_type: Optional[:class:`GuildScheduledEventType`]
+            The ``entity_type`` or ``type`` for the event.
+        location: Optional[:class:`str`]
+            The location for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.location` event.
+        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
+            The speakers for the event. It would be used if the event is a
+            :attr:`GuildScheduledEventType.stage_instance` event.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to create the guild event.
+        HTTPException
+            Creating the guild event failed.
+        ValueError
+            Validation error occurred.
+
+        Returns
+        --------
+        :class:`GuildScheduledEvent`
+            The newly updated guild event.
+        """
+        http = self._state.http
+
+        fields = {
+            "name": name,
+        }
+
+        description = None
+        if description is not MISSING:
+            fields["description"] = description
+
+        channel_id = None
+        if channel is not MISSING:
+            channel_id = str(channel.id)
+        fields["channel_id"] = channel_id
+
+        if privacy_level is not MISSING and privacy_level is not None:
+            privacy_level = privacy_level.value
+        else:
+            privacy_level = GuildScheduledEventPrivacyLevel.members_only.value
+        fields["privacy_level"] = privacy_level
+
+        scheduled_start_time = scheduled_start_time.replace(tzinfo=timezone.utc).isoformat()
+        fields["scheduled_start_time"] = scheduled_start_time
+
+        if entity_type is not MISSING:
+            entity_type = entity_type.value or GuildScheduledEventType.none.value
+        else:
+            entity_type = GuildScheduledEventType.none.value
+        fields["entity_type"] = entity_type
+
+        if (
+            entity_type in (GuildScheduledEventType.stage_instance.value, GuildScheduledEventType.voice.value)
+            and channel_id is None
+        ):
+            raise ValueError("Channel is required for entity_type `stage_instance` or `voice`")
+
+        entity_metadata = {}
+        if location is not MISSING:
+            entity_metadata["location"] = location
+        elif entity_type == GuildScheduledEventType.location.value:
+            raise ValueError("location is required for location event")
+        if speakers is not MISSING:
+            entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
+        elif entity_type == GuildScheduledEventType.stage_instance.value:
+            entity_metadata["speakers_ids"] = []
+
+        if not entity_metadata:
+            entity_metadata = None
+        fields["entity_metadata"] = entity_metadata
+        if entity_type == GuildScheduledEventType.location.value:
+            if scheduled_end_time is not MISSING:
+                scheduled_end_time = scheduled_end_time.replace(tzinfo=timezone.utc).isoformat()
+                fields["scheduled_end_time"] = scheduled_end_time.isoformat()
+            else:
+                raise ValueError("scheduled_end_time is required for location event.")
+
+        guild = self
+        data = await http.create_guild_scheduled_event(guild.id, **fields)
+
+        try:
+            channel = self.get_channel(int(data["channel_id"]))
+        except (KeyError, TypeError, ValueError):
+            channel = None
+        else:
+            guild = channel or guild
+
+        event = GuildScheduledEvent(state=self._state, guild=guild, data=data)
+        # temporarily add to the cache
+        self._guild_events[event.id] = event
+        return event
+
+    create_scheduled_event = create_event
+
     async def leave(self) -> None:
         """|coro|
 
@@ -1799,6 +1998,27 @@ class Guild(Hashable):
 
         channel: GuildChannel = factory(guild=self, state=self._state, data=data)  # type: ignore
         return channel
+
+    async def fetch_events(self) -> List[GuildScheduledEvent]:
+        """|coro|
+
+        Retrieves all the events that are scheduled or ongoing from the guild
+        as a :class:`list` of :class:`GuildScheduledEvent`.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        HTTPException
+            Retrieving the events failed.
+
+        Returns
+        --------
+        List[:class:`GuildScheduledEvent`]
+            A list of :class:`GuildScheduledEvent` objects.
+        """
+        data = await self._state.http.get_guild_scheduled_events(self.id)
+        return [GuildScheduledEvent.from_gateway(state=self._state, data=event) for event in data]
 
     async def bans(self) -> List[BanEntry]:
         """|coro|
