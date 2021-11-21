@@ -258,6 +258,18 @@ class Asset(AssetMixin):
             animated=animated,
         )
 
+    @classmethod
+    def _from_channel_banner(cls, state, channel_id: int, banner_hash: str) -> Asset:
+        animated = banner_hash.startswith("a_")
+        format = "gif" if animated else "png"
+        # TODO: Change url format when API is finalized.
+        return cls(
+            state,
+            url=f"{cls.BASE}/channel-banners/{channel_id}/{banner_hash}.{format}",
+            key=banner_hash,
+            animated=animated,
+        )
+
     def __str__(self) -> str:
         return self._url
 

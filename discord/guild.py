@@ -200,6 +200,7 @@ class Guild(Hashable):
         - ``ANIMATED_BANNER``: Guild can upload an animated banner.
         - ``ANIMATED_ICON``: Guild can upload an animated icon.
         - ``BANNER``: Guild can upload and use a banner. (i.e. :attr:`.banner`)
+        - ``CHANNEL_BANNER``: Guild can upload and use a channel banner. (i.e. :attr:`TextChannel.banner`)
         - ``COMMERCE``: Guild can sell things using store channels.
         - ``COMMUNITY``: Guild is a community server.
         - ``DISCOVERABLE``: Guild shows up in Server Discovery.
@@ -234,6 +235,8 @@ class Guild(Hashable):
         The guild's NSFW level.
 
         .. versionadded:: 2.0
+    premium_progress_bar: :class:`bool`
+        Whether the guild has and enabled premium progress bar.
     """
 
     __slots__ = (
@@ -259,6 +262,7 @@ class Guild(Hashable):
         "premium_subscription_count",
         "preferred_locale",
         "nsfw_level",
+        "premium_progress_bar",
         "_members",
         "_channels",
         "_icon",
@@ -453,6 +457,7 @@ class Guild(Hashable):
         self._rules_channel_id: Optional[int] = utils._get_as_snowflake(guild, "rules_channel_id")
         self._public_updates_channel_id: Optional[int] = utils._get_as_snowflake(guild, "public_updates_channel_id")
         self.nsfw_level: NSFWLevel = try_enum(NSFWLevel, guild.get("nsfw_level", 0))
+        self.premium_progress_bar: bool = guild.get("premium_progress_bar_enabled", False)
 
         self._stage_instances: Dict[int, StageInstance] = {}
         for s in guild.get("stage_instances", []):
@@ -1578,6 +1583,7 @@ class Guild(Hashable):
         preferred_locale: str = MISSING,
         rules_channel: Optional[TextChannel] = MISSING,
         public_updates_channel: Optional[TextChannel] = MISSING,
+        premium_progress_bar: bool = MISSING,
     ) -> Guild:
         r"""|coro|
 
@@ -1593,7 +1599,7 @@ class Guild(Hashable):
             The `discovery_splash` and `community` keyword-only parameters were added.
 
         .. versionchanged:: 2.0
-            The newly updated guild is returned.
+            The newly updated guild is returned and a new `premium_progress_bar` parameter was added.
 
         Parameters
         ----------
@@ -1655,6 +1661,8 @@ class Guild(Hashable):
             The new channel that is used for public updates from Discord. This is only available to
             guilds that contain ``PUBLIC`` in :attr:`Guild.features`. Could be ``None`` for no
             public updates channel.
+        premium_progress_bar: Optional[:class:`bool`]
+            Whether the guild should display the premium progress bar.
         reason: Optional[:class:`str`]
             The reason for editing this guild. Shows up on the audit log.
 
@@ -1785,6 +1793,9 @@ class Guild(Hashable):
                     )
 
             fields["features"] = features
+
+        if premium_progress_bar is not MISSING:
+            fields["premium_progress_bar_enabled"] = premium_progress_bar
 
         data = await http.edit_guild(self.id, reason=reason, **fields)
         return Guild(data=data, state=self._state)

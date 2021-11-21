@@ -79,6 +79,7 @@ GuildFeature = Literal[
     "ANIMATED_BANNER",
     "ANIMATED_ICON",
     "BANNER",
+    "CHANNEL_BANNER",
     "COMMERCE",
     "COMMUNITY",
     "DISCOVERABLE",
@@ -142,6 +143,7 @@ class Guild(_BaseGuildPreview, _GuildOptional):
     premium_tier: PremiumTier
     preferred_locale: str
     public_updates_channel_id: Optional[Snowflake]
+    premium_progress_bar_enabled: bool
 
 
 class InviteGuild(Guild, total=False):
