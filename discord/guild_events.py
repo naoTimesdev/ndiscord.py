@@ -30,10 +30,11 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 from . import utils
 from .asset import Asset
 from .enums import GuildScheduledEventPrivacyLevel, GuildScheduledEventStatus, GuildScheduledEventType, try_enum
+# from .iterators import GuildEventMemberIterator
 from .mixins import Hashable
 
 if TYPE_CHECKING:
-    from .abc import GuildChannel
+    from .abc import GuildChannel, SnowflakeTime
     from .guild import Guild
     from .member import Member
     from .state import ConnectionState
@@ -60,27 +61,9 @@ class GuildEventEntityMetadata:
     __slots__ = ("location", "_speaker_ids", "_state", "_guild")
 
     def __init__(self, *, state: ConnectionState, guild: Guild, data: GuildScheduledEventEntityMeta):
-        speaker_ids = data.get("speaker_ids", [])
         self._guild: Guild = guild
         self._state: ConnectionState = state
         self.location: Optional[str] = data.get("location")
-        self._speaker_ids = list(map(int, speaker_ids))
-
-    @property
-    def speakers(self) -> List[Union[Member, User]]:
-        """List[Union[:class:`Member`, :class:`User`]]: Return the list of speakers for the event.
-        This will be filled if the event type is a :attr:`GuildScheduledEventType.stage_instance` event.
-        """
-        all_speakers = []
-        for speaker in self._speaker_ids:
-            member = self._guild.get_member(int(speaker))
-            if not member:
-                member = self._state.get_user(int(speaker))
-                if not member:
-                    # TODO: Maybe better handling?
-                    continue
-            all_speakers.append(member)
-        return all_speakers
 
 
 class GuildScheduledEvent(Hashable):
@@ -157,7 +140,7 @@ class GuildScheduledEvent(Hashable):
     ):
         self._state: ConnectionState = state
         self.id: int = int(data['id'])
-        self._members: Dict[int, Member] = {}
+        self._members: Dict[int, Union[Member, User]] = {}
         self._update(guild_or_channel, data)
 
     def __repr__(self) -> str:
@@ -224,10 +207,10 @@ class GuildScheduledEvent(Hashable):
         self.guild._add_guild_event(self)
         self._state._add_guild_event(self)
 
-    def _add_member(self, member: Member):
+    def _add_member(self, member: Union[Member, User]):
         self._members[member.id] = member
 
-    def _remove_member(self, member: Member):
+    def _remove_member(self, member: Union[Member, User]):
         self._members.pop(member.id, None)
 
     @property
@@ -249,11 +232,11 @@ class GuildScheduledEvent(Hashable):
         )
 
     @property
-    def members(self) -> List[Member]:
-        """List[Union[:class:`Member`]]: List of user that subscribed to the event."""
+    def members(self) -> List[Union[Member, User]]:
+        """List[Union[:class:`Member`, :class:`User`]]: List of user that subscribed to the event."""
         return list(self._members.values())
 
-    def get_member(self, user_id: int, /) -> Optional[Member]:
+    def get_member(self, user_id: int, /) -> Optional[Union[Member, User]]:
         """Returns a member with the given ID.
 
         Parameters
@@ -263,7 +246,7 @@ class GuildScheduledEvent(Hashable):
 
         Returns
         --------
-        Optional[:class:`Member`]
+        Optional[Union[:class:`Member`, :class:`User`]]
             The member or ``None`` if not found.
         """
         return self._members.get(user_id)
@@ -276,11 +259,6 @@ class GuildScheduledEvent(Hashable):
         return _counted if _from_data is None and _from_data > 0 else _from_data
 
     @property
-    def speakers(self) -> List[Union[Member, User]]:
-        """List[Union[:class:`Member`, :class:`User`]]: Return the list of speakers for the event"""
-        return self._entity_metadata.speakers
-
-    @property
     def location(self) -> Optional[str]:
         """Optional[:class:`str`]: Location of the event"""
         return self._entity_metadata.location
@@ -291,7 +269,6 @@ class GuildScheduledEvent(Hashable):
 
         This attribute or class will contains:
 
-        - :attr:`GuildEventEntityMetadata.speakers`
         - :attr:`GuildEventEntityMetadata.location`
 
         Not all of the fields will be filled, it will depends on what the event type is.
@@ -337,7 +314,6 @@ class GuildScheduledEvent(Hashable):
         scheduled_end_time: Optional[datetime] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
         location: Optional[str] = MISSING,
-        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         r"""|coro|
 
@@ -368,9 +344,6 @@ class GuildScheduledEvent(Hashable):
         location: Optional[:class:`str`]
             The new location for the event. It would be used if the event is a
             :attr:`GuildScheduledEventType.location` event.
-        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
-            The new list of speakers for the event. It would be used if the event is a
-            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
@@ -417,10 +390,6 @@ class GuildScheduledEvent(Hashable):
             entity_metadata["location"] = location
         elif self.location is not None:
             entity_metadata["location"] = self.location
-        if speakers is not MISSING:
-            entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
-        elif self.speakers:
-            entity_metadata["speakers_ids"] = [str(s.id) for s in self.speakers]
 
         if not entity_metadata:
             entity_metadata = None
@@ -461,14 +430,48 @@ class GuildScheduledEvent(Hashable):
 
         await self._state.http.delete_guild_scheduled_event(self.guild.id, self.id)
 
-    async def fetch_members(self, *, limit: int = 100) -> List[Union[Member, User]]:
-        """|coro|
+    def fetch_members(self, *, limit: Optional[int] = 100, before: SnowflakeTime = None, after: SnowflakeTime = None):
+        """Retrieves an :class:`.AsyncIterator` that enables receiving your guild event members.
 
-        Retrieves all :class:`Member` that are attending the event.
+        .. note::
+
+            If the member joining the event is not in the guild,
+            it will return :class:`User` instead of :class:`Member`.
 
         .. note::
 
             This method is an API call. For general usage, consider :attr:`members` instead.
+
+        Examples
+        ---------
+
+        Usage ::
+
+            async for member in event.fetch_members(limit=100):
+                print(member.name)
+
+        Flattening into a list ::
+
+            members = await event.fetch_members(limit=100).flatten()
+            # members is now a list of User or Member...
+
+        All parameters are optional.
+
+        Parameters
+        -----------
+        limit: Optional[:class:`int`]
+            The number of members to retrieve.
+            If ``None``, it retrieves every members you have access to. Note, however,
+            that this would make it a slow operation.
+            Defaults to ``100``, maximum is ``100`.
+        before: Union[:class:`.abc.Snowflake`, :class:`datetime.datetime`]
+            Retrieves members before this date or object (user id).
+            If a datetime is provided, it is recommended to use a UTC aware datetime.
+            If the datetime is naive, it is assumed to be local time.
+        after: Union[:class:`.abc.Snowflake`, :class:`datetime.datetime`]
+            Retrieve members after this date or object (user id).
+            If a datetime is provided, it is recommended to use a UTC aware datetime.
+            If the datetime is naive, it is assumed to be local time.
 
         Raises
         -------
@@ -477,28 +480,11 @@ class GuildScheduledEvent(Hashable):
         HTTPException
             Fetching the members failed.
 
-        Returns
+        Yields
         --------
-        List[Union[:class:`Member`, :class:`User`]]
-            The members that are attending the event.
+        Union[:class:`Member`, :class:`User`]
+            The member or user that are attending the event.
         """
-        guild = self.guild
-        state = self._state
-        data = await state.http.get_guild_scheduled_event_rsvp(guild.id, self.id, limit=limit)
-        if not data:
-            return []
+        from .iterators import GuildEventMemberIterator
 
-        def convert(d):
-            user = guild.get_member(d["id"])
-            if user is None:
-                user = self._state.get_user(d["id"])
-            return user
-
-        users = data.get("users", [])
-        if not users:
-            return []
-
-        members = list(filter(lambda x: x is not None, map(convert, users)))
-        for member in members:
-            self._add_member(member)
-        return members
+        return GuildEventMemberIterator(self.id, self.guild, limit, before, after)

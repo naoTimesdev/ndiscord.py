@@ -22,9 +22,10 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from typing import List, Literal, Optional, TypedDict
+from typing import Literal, Optional, TypedDict
 
-from .snowflake import Snowflake, SnowflakeList
+from .member import Member
+from .snowflake import Snowflake
 from .user import User
 
 
@@ -34,17 +35,20 @@ class GuildScheduledEventUser(TypedDict):
     guild_id: Snowflake
 
 
-class GuildScheduledEventRSVP(TypedDict):
-    users: List[User]
+class _GuildScheduledEventRSVPOptional(TypedDict, total=False):
+    guild_member: Member
+
+
+class GuildScheduledEventRSVP(_GuildScheduledEventRSVPOptional):
+    guild_scheduled_event_id: Snowflake
+    user: User
 
 
 class GuildScheduledEventEntityMeta(TypedDict):
-    speaker_ids: Optional[SnowflakeList]
     location: Optional[str]
 
 
 class _GuildScheduledEventOptional(TypedDict, total=False):
-    channel_id: str
     description: str
     image: str
     scheduled_end_time: str
@@ -60,6 +64,7 @@ GuildEventEntityType = Literal[0, 1, 2, 3]
 
 
 class GuildScheduledEvent(_GuildScheduledEventOptional):
+    channel_id: Optional[str]
     id: Snowflake
     guild_id: Snowflake
     name: str

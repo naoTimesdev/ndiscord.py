@@ -944,7 +944,10 @@ class ConnectionState:
 
         member = event.guild.get_member(member_id)
         if member is None:
-            _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown member ID: %s. Discarding", member_id)
+            member = self.get_user(member_id)
+            if member is None:
+                _log.debug("GUILD_SCHEDULED_EVENT_USER_ADD referencing an unknown member ID: %s. Discarding", member_id)
+                return
 
         event._add_member(member)
         self.dispatch("guild_scheduled_event_member_join", event, member)
@@ -957,9 +960,10 @@ class ConnectionState:
             _log.debug("GUILD_SCHEDULED_EVENT_USER_DELETE referencing an unknown event ID: %s. Discarding", event_id)
             return
 
-        member = event.guild.get_member(member_id)
+        member = event.get_member(member_id)
         if member is None:
             _log.debug("GUILD_SCHEDULED_EVENT_USER_DELETE referencing an unknown member ID: %s. Discarding", member_id)
+            return
 
         event._remove_member(member)
         self.dispatch("guild_scheduled_event_member_remove", event, member)

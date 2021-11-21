@@ -49,6 +49,7 @@ if TYPE_CHECKING:
     from .threads import Thread
     from .types.audit_log import AuditLog as AuditLogPayload
     from .types.guild import Guild as GuildPayload
+    from .types.guild_events import GuildScheduledEventRSVP
     from .types.message import Message as MessagePayload
     from .types.threads import Thread as ThreadPayload
     from .types.user import PartialUser as PartialUserPayload
@@ -650,20 +651,39 @@ class MemberIterator(_AsyncIterator["Member"]):
         return Member(data=data, guild=self.guild, state=self.state)
 
 
-class GuildEventMemberIterator(_AsyncIterator["Member"]):
+class GuildEventMemberIterator(_AsyncIterator[Union["Member", "User"]]):
     def __init__(
         self,
         event_id: int,
         guild: Guild,
         limit: Optional[int] = 100,
+        before: Optional[Union[int, datetime.datetime]] = None,
+        after: Optional[Union[int, datetime.datetime]] = None,
     ):
+        if isinstance(before, datetime.datetime):
+            before = Object(id=time_snowflake(before, high=False))
+        if isinstance(after, datetime.datetime):
+            after = Object(id=time_snowflake(after, high=True))
+
         self.event_id = event_id
         self.guild = guild
         self.limit = limit
+        self.before: Object = before
+        self.after: Object = after
 
         self.state = self.guild._state
         self.get_members = self.state.http.get_guild_scheduled_event_rsvp
-        self.members = asyncio.Queue[Member]()
+        self.members = asyncio.Queue[Union[Member, User]]()
+
+        self._filter = None
+
+        if self.before and self.after:
+            self._retrieve_members = self._retrieve_members_before_strategy
+            self._filter = lambda m: int(m["user"]["id"]) > self.after.id
+        elif self.after:
+            self._retrieve_members = self._retrieve_members_after_strategy
+        else:
+            self._retrieve_members = self._retrieve_members_before_strategy
 
     async def next(self) -> Member:
         if self.members.empty():
@@ -680,33 +700,64 @@ class GuildEventMemberIterator(_AsyncIterator["Member"]):
             r = 100
         else:
             r = limit
-        self.retrive = r
+        self.retrieve = r
         return r > 0
 
     async def fill_members(self):
         if self._get_retrieve():
-            data = await self.get_members(self.guild.id, self.event_id, limit=self.limit)
-            if not data:
-                # no data, terminate
-                return
+            data = await self._retrieve_members(self.retrieve)
+            if self.limit is None or len(data) < 100:
+                self.limit = 0
 
-            users = data.get("users", [])
-            if not users:
-                # no data, terminate
-                return
+            if self._filter:
+                data = filter(self._filter, data)
 
-            if len(users) < 100:
-                self.limit = 0  # terminate loop
-
-            self.after = Object(id=int(users[-1]["id"]))
-
-            for element in reversed(users):
+            for element in data:
                 await self.members.put(self.create_member(element))
 
-    def create_member(self, data):
-        from .member import Member
+    async def _retrieve_members(self, retrieve: int) -> List[Union[Member, User]]:
+        """Retrieve guilds and update next parameters."""
+        raise NotImplementedError
 
-        return Member(data=data, guild=self.guild, state=self.state)
+    async def _retrieve_members_before_strategy(self, retrieve: int):
+        """Retrieve members using before parameter."""
+        before = self.before.id if self.before else None
+        data: List[GuildScheduledEventRSVP] = await self.get_members(
+            self.guild.id, self.event_id, limit=retrieve, before=before
+        )
+        if len(data):
+            if self.limit is not None:
+                self.limit -= retrieve
+            self.before = Object(id=int(data[-1]["user"]["id"]))
+        return data
+
+    async def _retrieve_members_after_strategy(self, retrieve: int):
+        """Retrieve members using after parameter."""
+        after = self.after.id if self.after else None
+        data: List[GuildScheduledEventRSVP] = await self.get_members(
+            self.guild.id, self.event_id, limit=retrieve, after=after
+        )
+        if len(data):
+            if self.limit is not None:
+                self.limit -= retrieve
+            self.after = Object(id=int(data[0]["user"]["id"]))
+        return data
+
+    def create_member(self, data: GuildScheduledEventRSVP):
+        from .user import User
+
+        guild_member = self.guild.get_member(data["user"]["id"])
+        if not guild_member:
+            guild_member = self.state.get_user(data["user"]["id"])
+            if guild_member is None:
+                guild_member = User(state=self.state, data=data["user"])
+
+        # Inject into guild events member list
+        event = self.guild.get_event(self.event_id)
+        event._add_member(guild_member)
+        self.guild._add_guild_event(event)
+        self.guild._state._add_guild_event(event)
+        return guild_member
 
 
 class ArchivedThreadIterator(_AsyncIterator["Thread"]):

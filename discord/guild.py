@@ -1385,7 +1385,6 @@ class Guild(Hashable):
         channel: Optional[GuildChannel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
         location: Optional[str] = MISSING,
-        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         """|coro|
 
@@ -1393,6 +1392,26 @@ class Guild(Hashable):
 
         You must have the :attr:`~Permissions.manage_events` permission
         to create a guild event.
+
+        .. note::
+
+            Another extra permissions is required for different type of ``entity_type``.
+
+            If your entity type is :attr:`GuildScheduledEventType.stage_instance`,
+            you must have the following extra permissions:
+
+            - :attr:`~Permissions.manage_channels`
+            - :attr:`~Permissions.mute_members`
+            - :attr:`~Permissions.move_members`
+
+            If your entity type is :attr:`GuildScheduledEventType.voice`,
+            you must have the following extra permissions:
+
+            - :attr:`~Permissions.view_channel` for ``channel`` associated with the event.
+            - :attr:`~Permissions.connect` for ``channel`` associated with the event.
+
+            If your entity type is :attr:`GuildScheduledEventType.external`,
+            you dont need any extra permissions.
 
         .. versionadded:: 2.0
 
@@ -1418,9 +1437,6 @@ class Guild(Hashable):
         location: Optional[:class:`str`]
             The location for the event. It would be used if the event is a
             :attr:`GuildScheduledEventType.location` event.
-        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
-            The speakers for the event. It would be used if the event is a
-            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
@@ -1475,22 +1491,18 @@ class Guild(Hashable):
         entity_metadata = {}
         if location is not MISSING:
             entity_metadata["location"] = location
-        elif entity_type == GuildScheduledEventType.location.value:
-            raise ValueError("location is required for location event")
-        if speakers is not MISSING:
-            entity_metadata["speakers_ids"] = [str(s.id) for s in speakers]
-        elif entity_type == GuildScheduledEventType.stage_instance.value:
-            entity_metadata["speakers_ids"] = []
+        elif entity_type == GuildScheduledEventType.external.value:
+            raise ValueError("location is required for external event")
 
         if not entity_metadata:
             entity_metadata = None
         fields["entity_metadata"] = entity_metadata
-        if entity_type == GuildScheduledEventType.location.value:
+        if entity_type == GuildScheduledEventType.external.value:
             if scheduled_end_time is not MISSING:
                 scheduled_end_time = scheduled_end_time.replace(tzinfo=timezone.utc).isoformat()
                 fields["scheduled_end_time"] = scheduled_end_time.isoformat()
             else:
-                raise ValueError("scheduled_end_time is required for location event.")
+                raise ValueError("scheduled_end_time is required for external event.")
 
         guild = self
         data = await http.create_guild_scheduled_event(guild.id, **fields)

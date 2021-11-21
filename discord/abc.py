@@ -1134,7 +1134,6 @@ class GuildChannel:
         description: Optional[str] = MISSING,
         privacy_level: Optional[GuildScheduledEventPrivacyLevel] = MISSING,
         entity_type: Optional[GuildScheduledEventType] = MISSING,
-        speakers: Optional[List[Union[Member, User]]] = MISSING,
     ) -> GuildScheduledEvent:
         """|coro|
 
@@ -1142,6 +1141,26 @@ class GuildChannel:
 
         You must have the :attr:`~Permissions.manage_events` permission
         to create a guild event.
+
+        .. note::
+
+            Another extra permissions is required for different type of ``entity_type``.
+
+            If your entity type is :attr:`GuildScheduledEventType.stage_instance`,
+            you must have the following extra permissions:
+
+            - :attr:`~Permissions.manage_channels`
+            - :attr:`~Permissions.mute_members`
+            - :attr:`~Permissions.move_members`
+
+            If your entity type is :attr:`GuildScheduledEventType.voice`,
+            you must have the following extra permissions:
+
+            - :attr:`~Permissions.view_channel` for ``channel`` associated with the event.
+            - :attr:`~Permissions.connect` for ``channel`` associated with the event.
+
+            If your entity type is :attr:`GuildScheduledEventType.external`,
+            you dont need any extra permissions.
 
         .. versionadded:: 2.0
 
@@ -1159,9 +1178,6 @@ class GuildChannel:
         entity_type: Optional[:class:`.GuildScheduledEventType`]
             The ``entity_type`` or ``type`` for the event.
             If you don't provide this, it will automatically check from the channel :attr:`type`.
-        speakers: Optional[List[Union[:class:`Member`, :class:`User`]]]
-            The speakers for the event. It would be used if the event is a
-            :attr:`GuildScheduledEventType.stage_instance` event.
 
         Raises
         -------
@@ -1192,7 +1208,6 @@ class GuildChannel:
             privacy_level=privacy_level,
             channel=self,
             entity_type=entity_type,
-            speakers=speakers,
         )
 
 

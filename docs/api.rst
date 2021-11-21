@@ -705,29 +705,29 @@ to handle it, which defaults to print a traceback and ignoring the exception.
 
     Called whenever a scheduled event is created from a guild.
 
-    .. TODO check if this requires any Intents.
+    This requires :attr:`Intents.guild_scheduled_events` to be enabled.
 
     .. versionadded:: 2.0
 
     :param event: The scheduled event that got created.
     :type event: :class:`GuildScheduledEvent`
 
-.. function:: guild_scheduled_event_remove(event)
+.. function:: on_guild_scheduled_event_remove(event)
 
     Called whenever a scheduled event is removed from a guild.
 
-    .. TODO check if this requires any Intents.
+    This requires :attr:`Intents.guild_scheduled_events` to be enabled.
 
     .. versionadded:: 2.0
 
     :param event: The scheduled event that got removed.
     :type event: :class:`GuildScheduledEvent`
 
-.. function:: guild_scheduled_event_update(before, after)
+.. function:: on_guild_scheduled_event_update(before, after)
 
     Called whenever a scheduled event is updated from a guild.
 
-    .. TODO check if this requires any Intents.
+    This requires :attr:`Intents.guild_scheduled_events` to be enabled.
 
     .. versionadded:: 2.0
 
@@ -739,19 +739,19 @@ to handle it, which defaults to print a traceback and ignoring the exception.
 .. function:: on_guild_scheduled_event_member_join(event, member)
               on_guild_scheduled_event_member_remove(event, member)
 
-    Called whenever a :class:`Member` leaves or joins a :class:`GuildScheduledEvent`
+    Called whenever a :class:`Member` or an :class:`User` leaves or joins a :class:`GuildScheduledEvent`
 
     You can later access the member via :meth:`GuildScheduledEvent.get_member` or
     :attr:`GuildScheduledEvent.members`.
 
-    .. TODO check if this requires any Intents.
+    This requires :attr:`Intents.guild_scheduled_events` to be enabled.
 
     .. versionadded:: 2.0
 
     :param event: The scheduled event that got updated.
     :type event: :class:`GuildScheduledEvent`
     :param member: The member who joined or left the event.
-    :type member: :class:`Member`
+    :type member: Union[:class:`Member`, :class:`User`]
 
 .. function:: on_thread_join(thread)
 
@@ -3853,6 +3853,10 @@ GuildScheduledEvent
 
 .. autoclass:: GuildScheduledEvent()
     :members:
+    :exclude-members: fetch_members
+
+    .. automethod:: GuildScheduledEvent.fetch_members
+        :async-for:
 
 .. attributetable:: GuildEventEntityMetadata
 

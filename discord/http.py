@@ -2022,12 +2022,18 @@ class HTTPClient:
         event_id: Snowflake,
         *,
         limit: int = 100,
+        before: Optional[Snowflake] = None,
+        after: Optional[Snowflake] = None,
         with_member: bool = True
-    ) -> Response[guild_events.GuildScheduledEventRSVP]:
+    ) -> Response[List[guild_events.GuildScheduledEventRSVP]]:
         params = {
             "limit": limit,
             "with_member": int(with_member),
         }
+        if before is not None:
+            params["before"] = before
+        if after is not None:
+            params["after"] = after
         r = Route(
             "GET", "/guilds/{guild_id}/scheduled-events/{event_id}/users", guild_id=guild_id, event_id=event_id
         )
