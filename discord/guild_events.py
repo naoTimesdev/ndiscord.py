@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 from . import utils
 from .asset import Asset
 from .enums import GuildScheduledEventPrivacyLevel, GuildScheduledEventStatus, GuildScheduledEventType, try_enum
-# from .iterators import GuildEventMemberIterator
 from .mixins import Hashable
 
 if TYPE_CHECKING:
