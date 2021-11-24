@@ -27,6 +27,7 @@ from typing import List, Literal, Optional, TypedDict
 from .activity import PartialPresenceUpdate
 from .channel import GuildChannel
 from .emoji import Emoji
+from .guild_events import GuildScheduledEvent
 from .member import Member
 from .role import Role
 from .snowflake import Snowflake
@@ -67,6 +68,7 @@ class _GuildOptional(TypedDict, total=False):
     max_members: int
     premium_subscription_count: int
     max_video_channel_users: int
+    guild_scheduled_events: List[GuildScheduledEvent]
 
 
 DefaultMessageNotificationLevel = Literal[0, 1]

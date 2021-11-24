@@ -503,6 +503,17 @@ class Guild(Hashable):
             for thread in threads:
                 self._add_thread(Thread(guild=self, state=self._state, data=thread))
 
+        for event in data.get("guild_scheduled_events", []):
+            guild = self
+            try:
+                channel = self.get_channel(int(event["channel_id"]))
+            except (KeyError, TypeError, ValueError):
+                channel = None
+            else:
+                guild = channel or guild
+            guild_event = GuildScheduledEvent(state=self._state, data=event, guild_or_channel=guild)
+            self._add_guild_event(guild_event)
+
     @property
     def channels(self) -> List[GuildChannel]:
         """List[:class:`abc.GuildChannel`]: A list of channels that belongs to this guild."""
