@@ -458,7 +458,8 @@ class AuditLogEntry(Hashable):
     def target(
         self,
     ) -> Union[
-        Guild, abc.GuildChannel, Member, User, Role, Invite, Emoji, StageInstance, GuildSticker, Thread, Object, None
+        Guild, abc.GuildChannel, Member, User, Role, Invite, Emoji, StageInstance,
+        GuildSticker, Thread, GuildScheduledEvent, Object, None
     ]:
         try:
             converter = getattr(self, "_convert_target_" + self.action.target_type)
