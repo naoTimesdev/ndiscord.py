@@ -27,8 +27,8 @@ from __future__ import annotations
 from typing import List, Literal, Optional, TypedDict, Union
 
 from .channel import ChannelType, PermissionOverwrite, VideoQualityMode
-from .guild_events import GuildScheduledEvent
 from .guild import DefaultMessageNotificationLevel, ExplicitContentFilterLevel, MFALevel, VerificationLevel
+from .guild_events import GuildScheduledEvent
 from .integration import IntegrationExpireBehavior, PartialIntegration
 from .role import Role
 from .snowflake import Snowflake
