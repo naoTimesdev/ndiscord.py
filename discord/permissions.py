@@ -564,7 +564,7 @@ class Permissions(BaseFlags):
 
     @flag_value
     def moderate_members(self) -> int:
-        """":class:`bool`: Returns ``True`` if a user can moderate members in a guild.
+        """:class:`bool`: Returns ``True`` if a user can moderate members in a guild.
 
         Moderating members includes the abilities to mute user that disables them
         to post messages and reacting from chat and threads.
