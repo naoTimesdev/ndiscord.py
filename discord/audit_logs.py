@@ -140,6 +140,10 @@ def _guild_hash_transformer(path: str) -> Callable[[AuditLogEntry, Optional[str]
     return _transform
 
 
+def _transform_iso8601(entry: AuditLogEntry, data: Optional[str]) -> Optional[datetime.datetime]:
+    return utils.parse_time(data)
+
+
 T = TypeVar("T", bound=enums.Enum)
 
 
@@ -215,7 +219,8 @@ class AuditLogChanges:
         'format_type':                   (None, _enum_transformer(enums.StickerFormatType)),
         'type':                          (None, _transform_type),
         'entity_type':                   (None, _enum_transformer(enums.GuildScheduledEventType)),
-        'status':                        (None, _enum_transformer(enums.GuildScheduledEventStatus))
+        'status':                        (None, _enum_transformer(enums.GuildScheduledEventStatus)),
+        'communication_disabled_until':  ('muted_until', _transform_iso8601),
     }
     # fmt: on
 
