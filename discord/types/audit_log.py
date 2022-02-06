@@ -99,6 +99,7 @@ class _AuditLogChange_Str(TypedDict):
         "deny",
         "permissions",
         "tags",
+        "communication_disabled_until",
     ]
     new_value: str
     old_value: str

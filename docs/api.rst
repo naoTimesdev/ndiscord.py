@@ -3570,6 +3570,12 @@ AuditLogDiff
 
         :type: :class:`str`
 
+    .. attribute:: muted_until
+
+        The remaining timeout for a member being muted.
+
+        :type: :class:`datetime.datetime`
+
 .. this is currently missing the following keys: reason and application_id
    I'm not sure how to about porting these
 
