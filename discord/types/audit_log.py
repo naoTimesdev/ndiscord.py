@@ -28,6 +28,7 @@ from typing import List, Literal, Optional, TypedDict, Union
 
 from .channel import ChannelType, PermissionOverwrite, VideoQualityMode
 from .guild import DefaultMessageNotificationLevel, ExplicitContentFilterLevel, MFALevel, VerificationLevel
+from .guild_events import GuildScheduledEvent
 from .integration import IntegrationExpireBehavior, PartialIntegration
 from .role import Role
 from .snowflake import Snowflake
@@ -269,3 +270,4 @@ class AuditLog(TypedDict):
     audit_log_entries: List[AuditLogEntry]
     integrations: List[PartialIntegration]
     threads: List[Thread]
+    guild_scheduled_events: List[GuildScheduledEvent]
