@@ -37,6 +37,7 @@ from ..components import ActionRow as ActionRowComponent
 from ..components import Button as ButtonComponent
 from ..components import Component
 from ..components import SelectMenu as SelectComponent
+from ..components import TextInput as TextInputComponent
 from ..components import _component_factory
 from .item import Item, ItemCallbackType
 
@@ -67,6 +68,10 @@ def _component_to_item(component: Component) -> Item:
         from .select import Select
 
         return Select.from_component(component)
+    if isinstance(component, TextInputComponent):
+        from .text import Text
+
+        return Text.from_component(component)
     return Item.from_component(component)
 
 
