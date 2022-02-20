@@ -50,7 +50,7 @@ import discord
 from discord.enums import ApplicationCommandType, ChannelType, SlashCommandOptionType
 from discord.errors import ClientException, HTTPException
 from discord.member import Member
-from discord.message import Message
+from discord.message import Attachment, Message
 from discord.user import User
 
 from ._types import (
@@ -1019,7 +1019,11 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
                 if has_focused:
                     ctx.autocompleting = op.name
 
-            if SlashCommandOptionType.user.value <= op.input_type.value <= SlashCommandOptionType.role.value:
+            if (
+                SlashCommandOptionType.user.value <= op.input_type.value <= SlashCommandOptionType.role.value
+            ) or (
+                SlashCommandOptionType.number.value == op.input_type.value
+            ):
                 name = "member" if op.input_type == "user" else op.input_type.name
                 try:
                     arg = await discord.utils.get_or_fetch(ctx.guild, name, int(arg))
@@ -1030,13 +1034,15 @@ class SlashCommand(ApplicationCommand[CogT, BotT]):
                         raise ApplicationMemberNotFound(_real_val)
                     else:
                         raise ApplicationUserNotFound(_real_val)
-            elif op.input_type == SlashCommandOptionType.mentionable:
+            elif op.input_type.value == SlashCommandOptionType.mentionable.value:
                 arg_id = int(arg)
                 arg = await discord.utils.get_or_fetch(ctx.guild, "member", arg_id)
                 if arg is None:
                     arg = ctx.guild.get_role(arg_id)
                     if arg is None and op.default is None and not op._is_default_nonetype:
                         raise ApplicationMentionableNotFound(_real_val)
+            elif op.input_type.value == SlashCommandOptionType.attachment.value:
+                arg = Attachment(data=arg, state=ctx._state)
             if arg is None:
                 # Determine if we should pass something.
                 if op._is_default_nonetype:
