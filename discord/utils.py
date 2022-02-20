@@ -188,7 +188,7 @@ def cached_slot_property(name: str) -> Callable[[Callable[[T], T_co]], CachedSlo
     return decorator
 
 
-class SequenceProxy(Generic[T_co], collections.abc.Sequence):
+class SequenceProxy(Generic[T_co], collections.abc.Sequence):  # type: ignore
     """Read-only proxy of a Sequence."""
 
     def __init__(self, proxied: Sequence[T_co]):

@@ -35,7 +35,7 @@ from .snowflake import Snowflake
 from .user import User
 
 if TYPE_CHECKING:
-    from .message import AllowedMentions, Message
+    from .message import AllowedMentions, Attachment, Message
 
 
 ApplicationCommandType = Literal[1, 2, 3, 4]
@@ -61,7 +61,7 @@ class _ApplicationCommandOptionOptional(TypedDict, total=False):
     channel_types: List[ChannelType]
 
 
-ApplicationCommandOptionType = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+ApplicationCommandOptionType = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
 
 class ApplicationCommandOption(_ApplicationCommandOptionOptional):
@@ -135,6 +135,11 @@ class _ApplicationCommandInteractionDataOptionNumber(_ApplicationCommandInteract
     value: float
 
 
+class _ApplicationCommandInteractionDataAttachment(_ApplicationCommandInteractionDataOption):
+    type: Literal[11]
+    value: Attachment
+
+
 class _ApplicationCommandInteractionDataAutocomplete(_ApplicationCommandInteractionDataOption):
     type: ApplicationCommandOptionType
     value: Any
@@ -149,6 +154,7 @@ ApplicationCommandInteractionDataOption = Union[
     _ApplicationCommandInteractionDataOptionSnowflake,
     _ApplicationCommandInteractionDataOptionNumber,
     _ApplicationCommandInteractionDataAutocomplete,
+    _ApplicationCommandInteractionDataAttachment,
 ]
 
 
