@@ -23,12 +23,13 @@ DEALINGS IN THE SOFTWARE.
 """
 
 from __future__ import annotations
+
 import inspect
 import os
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Type, TypeVar
 
 from ..components import TextInput as TextInputComponent
-from ..enums import TextInputStyle, ComponentType
+from ..enums import ComponentType, TextInputStyle
 from .item import Item, ItemCallbackType
 
 __all__ = (
