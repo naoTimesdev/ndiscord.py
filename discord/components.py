@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
-from .enums import ButtonStyle, ComponentType, try_enum
+from .enums import ButtonStyle, ComponentType, TextInputStyle, try_enum
 from .partial_emoji import PartialEmoji, _EmojiTag
 from .utils import MISSING, get_slots
 
@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from .types.components import Component as ComponentPayload
     from .types.components import SelectMenu as SelectMenuPayload
     from .types.components import SelectOption as SelectOptionPayload
+    from .types.components import TextInput as TextInputPayload
 
 
 __all__ = (
@@ -44,6 +45,7 @@ __all__ = (
     "ActionRow",
     "Button",
     "SelectMenu",
+    "TextInput",
     "SelectOption",
 )
 
@@ -261,6 +263,88 @@ class SelectMenu(Component):
 
         if self.placeholder:
             payload["placeholder"] = self.placeholder
+
+        return payload
+
+
+class TextInput(Component):
+    """Represents a text input from the Discord Bot UI Kit.
+
+    A select menu is functionally the same as a dropdown, however
+    on mobile it renders a bit differently.
+
+    A text input functions to take input from user in a single-line manner
+    or paragprah.
+
+    .. note::
+
+        The user constructible and usable type to create a select menu is
+        :class:`discord.ui.Text` not this one.
+
+    .. versionadded:: 2.0
+
+    Attributes
+    ------------
+    custom_id: :class:`str`
+        The ID of the text input that gets received during an interaction.
+    style: :class:`.TextInputStyle`
+        The style of the text input, either a single or multi line input.
+    label: :class:`str`
+        The label for this component.
+    required: :class:`bool`
+        Whether this component is required to be filled, default to ``True``
+    min_length: Optional[:class:`int`]
+        The minimum input length for a text input.
+        Defaults to ``None`` and must be between 0 to 4000.
+    max_length: Optional[:class:`int`]
+        The maximum input length for a text input.
+        Defaults to ``None`` and must be between 1 to 4000.
+    value: Optional[:class:`str`]
+        A pre-filled value for this component, max 4000 characters.
+    placeholder: Optional[:class:`str`]
+        The placeholder text that is shown if nothing is selected, if any.
+    """
+
+    __slots__ = (
+        "min_length",
+        "max_length",
+        "required",
+        "value",
+        "placeholder",
+        "custom_id",
+        "style",
+        "label",
+    )
+
+    def __init__(self, data: TextInputPayload):
+        self.type = ComponentType.text_input
+        self.min_length: Optional[int] = data.get("min_length")
+        self.max_length: Optional[int] = data.get("max_length")
+        self.required: bool = data.get("required", True)
+        self.value: Optional[str] = data.get("value")
+        self.placeholder: Optional[str] = data.get("placeholder")
+
+        self.custom_id = data["custom_id"]
+        self.style = try_enum(TextInputStyle, data["style"])
+        self.label = data["label"]
+
+    def to_dict(self) -> TextInputPayload:
+        payload: TextInputPayload = {
+            "type": self.type.value,
+            "custom_id": self.custom_id,
+            "style": self.style.value,
+            "label": self.label,
+            "required": self.required,
+        }
+
+        if self.placeholder is not None:
+            payload["placeholder"] = self.placeholder
+        if self.value is not None:
+            payload["value"] = self.value
+        if self.min_length is not None:
+            payload["min_length"] = self.min_length
+        if self.max_length is not None:
+            payload["max_length"] = self.max_length
 
         return payload
 

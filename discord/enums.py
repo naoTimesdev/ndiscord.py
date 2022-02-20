@@ -56,6 +56,7 @@ __all__ = (
     "VideoQualityMode",
     "ComponentType",
     "ButtonStyle",
+    "TextInputStyle",
     "StagePrivacyLevel",
     "InteractionType",
     "InteractionResponseType",
@@ -596,7 +597,7 @@ class SlashCommandOptionType(Enum):
     role = 8
     mentionable = 9
     number = 10
-    custom = 11
+    attachment = 11
 
     @classmethod
     def from_datatype(cls, datatype):
@@ -624,6 +625,8 @@ class SlashCommandOptionType(Enum):
             return cls.role
         if datatype.__name__ == "Mentionable":
             return cls.mentionable
+        if datatype.__name__ == "Attachment":
+            return cls.attachment
 
         # TODO: Improve the error message
         raise TypeError("Invalid class-type used as input type for Option")
@@ -641,6 +644,7 @@ class ComponentType(Enum):
     action_row = 1
     button = 2
     select = 3
+    text_input = 4
 
     def __int__(self):
         return self.value
@@ -660,6 +664,18 @@ class ButtonStyle(Enum):
     green = 3
     red = 4
     url = 5
+
+    def __int__(self):
+        return self.value
+
+
+class TextInputStyle(Enum):
+    short = 1
+    paragraph = 2
+
+    # Aliases
+    single = 1
+    multi = 2
 
     def __int__(self):
         return self.value
