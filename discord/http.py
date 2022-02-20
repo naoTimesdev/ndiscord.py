@@ -72,6 +72,7 @@ if TYPE_CHECKING:
         audit_log,
         channel,
         components,
+        discovery,
         embed,
         emoji,
         guild,
@@ -1107,6 +1108,57 @@ class HTTPClient:
         payload = {k: v for k, v in fields.items() if k in valid_keys}
 
         return self.request(Route("PATCH", "/guilds/{guild_id}", guild_id=guild_id), json=payload, reason=reason)
+
+    # discovery metadata
+
+    def get_discovery_categories(self) -> Response[List[discovery.DiscoveryCategory]]:
+        return self.request(Route("GET", "/discovery/categories"))
+
+    def validate_discovery_search_term(self, term: str) -> Response[discovery.DiscoverySearchTermValidation]:
+        payload = {"term": term}
+        return self.request(Route("GET", "/discovery/valid-term"), json=payload)
+
+    def get_guild_discovery_metadata(
+        self,
+        guild_id: Snowflake,
+    ) -> Response[discovery.DiscoveryMetadata]:
+        return self.request(Route("GET", "/guilds/{guild_id}/discovery-metadata", guild_id=guild_id))
+
+    def edit_guild_discovery_metadata(
+        self,
+        guild_id: Snowflake,
+        *,
+        primary_category_id: int = 0,
+        keywords: List[str] = [],
+        emoji_discoverability_enabled: bool = True,
+    ) -> Response[discovery.DiscoveryMetadata]:
+        payload = {
+            "primary_category_id": primary_category_id,
+            "keywords": keywords,
+            "emoji_discoverability_enabled": emoji_discoverability_enabled,
+        }
+
+        return self.request(Route("PATCH", "/guilds/{guild_id}/discovery-metadata", guild_id=guild_id), json=payload)
+
+    def add_guild_discovery_subcategory(
+        self, guild_id: Snowflake, category_id: int
+    ) -> Response[discovery.DiscoverySubcategory]:
+        r = Route(
+            "POST",
+            "/guilds/{guild_id}/discovery-categories/{category_id}",
+            guild_id=guild_id,
+            category_id=category_id,
+        )
+        return self.request(r)
+
+    def remove_guild_discovory_subcategory(self, guild_id: Snowflake, category_id: int) -> Response[None]:
+        r = Route(
+            "DELETE",
+            "/guilds/{guild_id}/discovery-categories/{category_id}",
+            guild_id=guild_id,
+            category_id=category_id,
+        )
+        return self.request(r)
 
     def get_template(self, code: str) -> Response[template.Template]:
         return self.request(Route("GET", "/guilds/templates/{code}", code=code))

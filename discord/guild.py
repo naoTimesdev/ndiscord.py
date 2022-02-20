@@ -48,6 +48,7 @@ from .asset import Asset
 from .channel import *  # noqa
 from .channel import _guild_channel_factory, _threaded_guild_channel_factory
 from .colour import Colour
+from .discovery import DiscoveryMetadata
 from .emoji import Emoji
 from .enums import (
     AuditLogAction,
@@ -203,6 +204,7 @@ class Guild(Hashable):
         - ``COMMERCE``: Guild can sell things using store channels.
         - ``COMMUNITY``: Guild is a community server.
         - ``DISCOVERABLE``: Guild shows up in Server Discovery.
+        - ``DISCOVERABLE_DISABLED``: Guild does not show up in Server Discovery.
         - ``FEATURABLE``: Guild is able to be featured in Server Discovery.
         - ``INVITE_SPLASH``: Guild's invite page can have a special splash.
         - ``MEMBER_VERIFICATION_GATE_ENABLED``: Guild has Membership Screening enabled.
@@ -3190,6 +3192,35 @@ class Guild(Hashable):
             payload["enabled"] = enabled
 
         await self._state.http.edit_widget(self.id, payload=payload)
+
+    async def discovery_metadata(self) -> DiscoveryMetadata:
+        """|coro|
+
+        Returns the discovery metadata of the guild.
+
+        You must have the :attr:`~Permissions.manage_guild` permission to
+        do this.
+
+        .. note::
+            The guild must have ``DISCOVERABLE`` in :attr:`.features` to
+            get this information.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        Forbidden
+            You do not have permission to access the discovery metadata.
+        HTTPException
+            Retrieving the discovery metadata failed.
+        Returns
+        --------
+        :class:`DiscoveryMetadata`
+            The guild's discovery metadata.
+        """
+
+        data = await self._state.http.get_guild_discovery_metadata(self.id)
+        return DiscoveryMetadata(state=self._state, guild=self, data=data)
 
     async def chunk(self, *, cache: bool = True) -> None:
         """|coro|

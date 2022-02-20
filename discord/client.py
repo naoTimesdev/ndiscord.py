@@ -52,6 +52,7 @@ from .activity import ActivityTypes, BaseActivity, create_activity
 from .appinfo import AppInfo
 from .backoff import ExponentialBackoff
 from .channel import PartialMessageable, _threaded_channel_factory
+from .discovery import DiscoveryCategory
 from .emoji import Emoji
 from .enums import ApplicationCommandType, ChannelType, Status, VoiceRegion
 from .errors import *
@@ -1683,6 +1684,55 @@ class Client(ApplicationCommandMixin[CogT, BotT, AppCommandT, ContextT]):
 
         invite_id = utils.resolve_invite(invite)
         await self.http.delete_invite(invite_id)
+
+    # discovery stuff
+
+    async def fetch_discovery_categories(self) -> List[DiscoveryCategory]:
+        """|coro|
+
+        Gets the list of discovery categories.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        :exc:`.HTTPException`
+            Retrieving the discovery categories failed.
+
+        Returns
+        --------
+        List[:class:`.DiscoveryCategory`]
+            The list of discovery categories.
+        """
+
+        all_categories = await self.http.get_discovery_categories()
+        return [DiscoveryCategory(data=category) for category in all_categories]
+
+    async def validate_discovery_term(self, term: str) -> bool:
+        """|coro|
+
+        Validates a discovery search term.
+
+        .. versionadded:: 2.0
+
+        Parameters
+        -----------
+        term: :class:`str`
+            The search term to validate.
+
+        Raises
+        -------
+        :exc:`.HTTPException`
+            Validating the search term failed.
+
+        Returns
+        --------
+        :class:`bool`
+            Whether the search term is valid.
+        """
+
+        data = await self.http.validate_discovery_search_term(term)
+        return data.get("valid", False)
 
     # Miscellaneous stuff
 
