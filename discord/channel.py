@@ -164,6 +164,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
         "_type",
         "last_message_id",
         "default_auto_archive_duration",
+        "_banner",
     )
 
     def __init__(self, *, state: ConnectionState, guild: Guild, data: TextChannelPayload):
@@ -195,6 +196,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
         self.slowmode_delay: int = data.get("rate_limit_per_user", 0)
         self.default_auto_archive_duration: ThreadArchiveDuration = data.get("default_auto_archive_duration", 1440)
         self._type: int = data.get("type", self._type)
+        self._banner: Optional[str] = data.get("banner", None)
         self.last_message_id: Optional[int] = utils._get_as_snowflake(data, "last_message_id")
         self._fill_overwrites(data)
 
@@ -239,6 +241,20 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
     def is_news(self) -> bool:
         """:class:`bool`: Checks if the channel is a news channel."""
         return self._type == ChannelType.news.value
+
+    @property
+    def banner(self) -> Optional[Asset]:
+        """Optional[:class:`Asset`]: The banner of the channel.
+
+        .. note::
+
+            The associated guild must have ``CHANNEL_BANNER`` features to have this enabled.
+
+        .. versionadded:: 2.0
+        """
+        if self._banner is None:
+            return None
+        return Asset._from_channel_banner(self._state, self.id, self._banner)
 
     @property
     def last_message(self) -> Optional[Message]:

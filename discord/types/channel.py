@@ -60,6 +60,7 @@ class PartialChannel(_BaseChannel):
 
 class _TextChannelOptional(TypedDict, total=False):
     topic: str
+    banner: Optional[str]
     last_message_id: Optional[Snowflake]
     last_pin_timestamp: str
     rate_limit_per_user: int
